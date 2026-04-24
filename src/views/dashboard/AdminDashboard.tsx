@@ -27,9 +27,9 @@ const AdminDashboard = () => {
   return (
     <>
       <PageHeader
-        title="eSIM Market: 3M Command Center"
-        description="Comprehensive control over marketplace liquidity, supplier health, and agent distribution tiers"
-        breadcrumbs={[{ label: 'Home', href: '/' }, { label: 'Admin' }, { label: 'Command Center' }]}
+        title="Trung tâm Điều hành 3M"
+        description="Kiểm soát toàn diện thanh khoản thị trường, sức khỏe nhà cung cấp và các tầng phân phối đại lý"
+        breadcrumbs={[{ label: 'Trang chủ', href: '/' }, { label: 'Quản trị' }, { label: 'Trung tâm điều hành' }]}
         className='mbe-6'
       />
 
@@ -39,17 +39,17 @@ const AdminDashboard = () => {
           <Card className='border-none shadow-sm'>
             <CardContent>
               <Box className='flex items-center justify-between mbe-6'>
-                <Typography variant='h5' className='font-black'>Marketplace Pulse</Typography>
+                <Typography variant='h5' className='font-black'>Nhịp đập Thị trường</Typography>
                 <Box className='flex gap-2'>
-                  <Button variant='tonal' size='small' color='primary' startIcon={<i className='tabler-refresh' />}>Sync Upstream</Button>
-                  <Button variant='contained' size='small' color='primary' startIcon={<i className='tabler-adjustments-horizontal' />}>Pricing Engine</Button>
+                  <Button variant='tonal' size='small' color='primary' startIcon={<i className='tabler-refresh' />}>Đồng bộ Nguồn</Button>
+                  <Button variant='contained' size='small' color='primary' startIcon={<i className='tabler-adjustments-horizontal' />}>Công cụ Định giá</Button>
                 </Box>
               </Box>
               <Grid2 container spacing={6}>
                 <Grid2 size={{ xs: 12, sm: 6, md: 3 }}>
                   <CardStatsSquare
                     stats={stats.totalSales}
-                    statsTitle="Marketplace GMV"
+                    statsTitle="Tổng GMV Sàn"
                     avatarIcon='tabler-currency-dollar'
                     avatarColor='primary'
                     avatarVariant='rounded'
@@ -60,7 +60,7 @@ const AdminDashboard = () => {
                 <Grid2 size={{ xs: 12, sm: 6, md: 3 }}>
                   <CardStatsSquare
                     stats={stats.activeAgents}
-                    statsTitle="Distributor Agents"
+                    statsTitle="Đại lý Phân phối"
                     avatarIcon='tabler-users'
                     avatarColor='success'
                     avatarVariant='rounded'
@@ -71,7 +71,7 @@ const AdminDashboard = () => {
                 <Grid2 size={{ xs: 12, sm: 6, md: 3 }}>
                   <CardStatsSquare
                     stats={stats.orderSuccessRate}
-                    statsTitle="API Fulfillment"
+                    statsTitle="Tỷ lệ Hoàn tất API"
                     avatarIcon='tabler-activity'
                     avatarColor='info'
                     avatarVariant='rounded'
@@ -82,7 +82,7 @@ const AdminDashboard = () => {
                 <Grid2 size={{ xs: 12, sm: 6, md: 3 }}>
                   <CardStatsSquare
                     stats={stats.pendingTickets}
-                    statsTitle="Support Tickets"
+                    statsTitle="Phiếu Hỗ trợ"
                     avatarIcon='tabler-help-circle'
                     avatarColor='warning'
                     avatarVariant='rounded'
@@ -99,17 +99,17 @@ const AdminDashboard = () => {
         <Grid2 size={{ xs: 12, md: 7 }}>
           <Card className='h-full'>
             <CardHeader 
-              title='Upstream Gateway Health' 
-              subheader='Real-time latency and inventory status from global providers'
-              action={<Button variant='text' size='small'>Details</Button>}
+              title='Sức khỏe Cổng Nguồn cung' 
+              subheader='Độ trễ thời gian thực và trạng thái tồn kho từ các đối tác toàn cầu'
+              action={<Button variant='text' size='small'>Chi tiết</Button>}
             />
             <CardContent>
               <Stack spacing={4}>
                 {[
-                  { name: 'Airalo Global', latency: '124ms', status: 'Online', color: 'success' },
-                  { name: 'Nomad API', latency: '450ms', status: 'High Latency', color: 'warning' },
-                  { name: 'Truphone', latency: '110ms', status: 'Online', color: 'success' },
-                  { name: 'MobiMatter', latency: '0ms', status: 'Offline', color: 'error' }
+                  { name: 'Airalo Global', latency: '124ms', status: 'Trực tuyến', color: 'success' },
+                  { name: 'Nomad API', latency: '450ms', status: 'Độ trễ cao', color: 'warning' },
+                  { name: 'Truphone', latency: '110ms', status: 'Trực tuyến', color: 'success' },
+                  { name: 'MobiMatter', latency: '0ms', status: 'Ngoại tuyến', color: 'error' }
                 ].map((s, i) => (
                   <Box key={i} className='flex items-center justify-between p-3 bg-slate-50 rounded-lg'>
                     <Box className='flex items-center gap-3'>
@@ -130,7 +130,7 @@ const AdminDashboard = () => {
         {/* Top Agents By Volume */}
         <Grid2 size={{ xs: 12, md: 5 }}>
           <Card className='h-full'>
-            <CardHeader title='Top Tier Distributors' subheader='Volume based performance' />
+            <CardHeader title='Đại lý Xuất sắc' subheader='Hiệu suất dựa trên sản lượng' />
             <CardContent>
               <Stack spacing={5}>
                 {[
@@ -147,7 +147,7 @@ const AdminDashboard = () => {
                   </Box>
                 ))}
                 <Divider />
-                <Button fullWidth variant='outlined' color='secondary' component={Link} href='/downstream/agents'>View All Agents</Button>
+                <Button fullWidth variant='outlined' color='secondary' component={Link} href='/downstream/agents'>Xem tất cả đại lý</Button>
               </Stack>
             </CardContent>
           </Card>
@@ -156,8 +156,8 @@ const AdminDashboard = () => {
         {/* System Logs */}
         <Grid2 size={{ xs: 12 }}>
           <CardStatHorizontal
-            stats="Digital Order Synchronization"
-            title="Webhook events and API callbacks are processing with 0ms backlog"
+            stats="Đồng bộ Đơn hàng Kỹ thuật số"
+            title="Sự kiện Webhook và API callback đang được xử lý với độ trễ 0ms"
             avatarIcon='tabler-cloud-check'
             avatarColor='info'
             avatarSkin='light'

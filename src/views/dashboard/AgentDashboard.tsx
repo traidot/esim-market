@@ -25,13 +25,13 @@ const AgentDashboard = () => {
   return (
     <>
       <PageHeader
-        title="Agent Console: TravelConnect SG"
-        description="Monitor your wallet, manage customer eSIMs, and browse latest global connectivity packages"
-        breadcrumbs={[{ label: 'Home', href: '/' }, { label: 'Agent' }, { label: 'Console' }]}
+        title="Bảng điều khiển Đại lý: TravelConnect SG"
+        description="Theo dõi ví tiền, quản lý eSIM khách hàng và duyệt các gói cước kết nối toàn cầu mới nhất"
+        breadcrumbs={[{ label: 'Trang chủ', href: '/' }, { label: 'Đại lý', href: '/dashboard' }, { label: 'Điều khiển' }]}
         actions={
           <Box className='flex gap-2'>
-            <Button variant='tonal' color='success' startIcon={<i className='tabler-plus' />}>Top-up Balance</Button>
-            <Button variant='contained' color='primary' component={Link} href='/marketplace/products'>Browse Store</Button>
+            <Button variant='tonal' color='success' startIcon={<i className='tabler-plus' />}>Nạp tiền vào Ví</Button>
+            <Button variant='contained' color='primary' component={Link} href='/marketplace/products'>Duyệt Cửa hàng</Button>
           </Box>
         }
         className='mbe-6'
@@ -46,7 +46,7 @@ const AgentDashboard = () => {
                 <Grid2 size={{ xs: 12, sm: 6, md: 3 }}>
                   <CardStatsSquare
                     stats={stats.balance}
-                    statsTitle="My Balance"
+                    statsTitle="Số dư của tôi"
                     avatarIcon='tabler-wallet'
                     avatarColor='primary'
                     avatarVariant='rounded'
@@ -57,7 +57,7 @@ const AgentDashboard = () => {
                 <Grid2 size={{ xs: 12, sm: 6, md: 3 }}>
                   <CardStatsSquare
                     stats={stats.activeESims}
-                    statsTitle="Active eSIMs"
+                    statsTitle="eSIM đang Hoạt động"
                     avatarIcon='tabler-device-mobile-check'
                     avatarColor='success'
                     avatarVariant='rounded'
@@ -68,7 +68,7 @@ const AgentDashboard = () => {
                 <Grid2 size={{ xs: 12, sm: 6, md: 3 }}>
                   <CardStatsSquare
                     stats={stats.totalOrders}
-                    statsTitle="Total Purchases"
+                    statsTitle="Tổng Đơn hàng"
                     avatarIcon='tabler-shopping-bag'
                     avatarColor='info'
                     avatarVariant='rounded'
@@ -79,7 +79,7 @@ const AgentDashboard = () => {
                 <Grid2 size={{ xs: 12, sm: 6, md: 3 }}>
                   <CardStatsSquare
                     stats={stats.pendingActivations}
-                    statsTitle="Pending QR"
+                    statsTitle="QR chờ Kích hoạt"
                     avatarIcon='tabler-qrcode'
                     avatarColor='warning'
                     avatarVariant='rounded'
@@ -96,26 +96,26 @@ const AgentDashboard = () => {
         <Grid2 size={{ xs: 12, md: 8 }}>
           <Card className='h-full'>
             <CardHeader 
-              title='Recent Digital Orders' 
-              subheader='Track your latest eSIM activations and customer distributions'
-              action={<Button variant='text' size='small' component={Link} href='/orders/list'>View All</Button>}
+              title='Đơn hàng Kỹ thuật số Gần đây' 
+              subheader='Theo dõi các lượt kích hoạt eSIM và phân phối cho khách hàng'
+              action={<Button variant='text' size='small' component={Link} href='/orders/list'>Xem tất cả</Button>}
             />
             <CardContent className='p-0'>
               <table className='w-full text-left border-collapse'>
                 <thead>
                   <tr className='bg-slate-50 border-be'>
-                    <th className='p-4 text-xs font-black text-slate-500 uppercase'>Product</th>
-                    <th className='p-4 text-xs font-black text-slate-500 uppercase'>Amount</th>
-                    <th className='p-4 text-xs font-black text-slate-500 uppercase'>Status</th>
-                    <th className='p-4 text-xs font-black text-slate-500 uppercase'>Date</th>
+                    <th className='p-4 text-xs font-black text-slate-500 uppercase'>Sản phẩm</th>
+                    <th className='p-4 text-xs font-black text-slate-500 uppercase'>Số tiền</th>
+                    <th className='p-4 text-xs font-black text-slate-500 uppercase'>Trạng thái</th>
+                    <th className='p-4 text-xs font-black text-slate-500 uppercase'>Ngày</th>
                   </tr>
                 </thead>
                 <tbody>
                   {[
-                    { product: 'Japan 10GB (30D)', amount: '$15.00', status: 'COMPLETED', color: 'success' },
-                    { product: 'Europe 5GB (15D)', amount: '$12.50', status: 'PROCESSING', color: 'warning' },
-                    { product: 'Global 1GB (7D)', amount: '$5.00', status: 'COMPLETED', color: 'success' },
-                    { product: 'USA 20GB (30D)', amount: '$25.00', status: 'COMPLETED', color: 'success' }
+                    { product: 'Japan 10GB (30D)', amount: '$15.00', status: 'HOÀN TẤT', color: 'success' },
+                    { product: 'Europe 5GB (15D)', amount: '$12.50', status: 'ĐANG XỬ LÝ', color: 'warning' },
+                    { product: 'Global 1GB (7D)', amount: '$5.00', status: 'HOÀN TẤT', color: 'success' },
+                    { product: 'USA 20GB (30D)', amount: '$25.00', status: 'HOÀN TẤT', color: 'success' }
                   ].map((o, i) => (
                     <tr key={i} className='border-be last:border-0 hover:bg-slate-50/50 transition-colors'>
                       <td className='p-4'>
@@ -125,7 +125,7 @@ const AgentDashboard = () => {
                       <td className='p-4'>
                         <Chip label={o.status} size='small' color={o.color as any} variant='tonal' className='font-black text-[10px]' />
                       </td>
-                      <td className='p-4 text-xs text-slate-400'>Today</td>
+                      <td className='p-4 text-xs text-slate-400'>Hôm nay</td>
                     </tr>
                   ))}
                 </tbody>
@@ -137,12 +137,12 @@ const AgentDashboard = () => {
         {/* Featured Packages */}
         <Grid2 size={{ xs: 12, md: 4 }}>
           <Card className='h-full bg-slate-900 text-white'>
-            <CardHeader title='Hot Marketplace Deals' titleTypographyProps={{ color: 'white', className: 'font-black' }} />
+            <CardHeader title='Ưu đãi Thị trường' titleTypographyProps={{ color: 'white', className: 'font-black' }} />
             <CardContent>
               <Stack spacing={4}>
                 {[
-                  { region: 'South East Asia', data: '50GB', price: '$18', discount: '20% OFF' },
-                  { region: 'North America', data: '100GB', price: '$45', discount: 'NEW' }
+                  { region: 'Đông Nam Á', data: '50GB', price: '$18', discount: 'GIẢM 20%' },
+                  { region: 'Bắc Mỹ', data: '100GB', price: '$45', discount: 'MỚI' }
                 ].map((p, i) => (
                   <Box key={i} className='p-4 bg-white/10 rounded-xl border border-white/10'>
                     <Box className='flex justify-between items-start mbe-2'>
@@ -155,7 +155,7 @@ const AgentDashboard = () => {
                     </Box>
                   </Box>
                 ))}
-                <Button fullWidth variant='contained' color='primary' className='mt-4'>View More Offers</Button>
+                <Button fullWidth variant='contained' color='primary' className='mt-4'>Xem thêm ưu đãi</Button>
               </Stack>
             </CardContent>
           </Card>

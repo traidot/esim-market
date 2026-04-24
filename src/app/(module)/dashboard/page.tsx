@@ -7,14 +7,16 @@ import { useState, useEffect } from 'react'
 import AdminDashboard from '@/views/dashboard/AdminDashboard'
 import AgentDashboard from '@/views/dashboard/AgentDashboard'
 
+// Role Hook Import
+import { useRole } from '@/contexts/RoleContext'
+
 /**
  * Dashboard Page Component
  * - Main dashboard screen of the eSIM Market
  * - Supports switching between 3M (Admin) and Agent roles for demonstration
  */
 const DashboardPage = () => {
-  // In a real application, this would come from the auth context/session
-  const [role, setRole] = useState<'admin' | 'agent'>('admin')
+  const { role, setRole } = useRole()
   const [isLoading, setIsLoading] = useState(true)
 
   useEffect(() => {
@@ -29,16 +31,16 @@ const DashboardPage = () => {
 
   return (
     <Box>
-      {/* Role Switcher for Demo Purposes */}
+      {/* Bộ chuyển đổi vai trò (Demo) */}
       <Box className='flex justify-end mbe-4 gap-2'>
-        <Typography variant='caption' className='flex items-center text-slate-400'>Switch Role (Demo):</Typography>
+        <Typography variant='caption' className='flex items-center text-slate-400'>Chế độ xem (Demo):</Typography>
         <Button 
           variant={role === 'admin' ? 'contained' : 'tonal'} 
           size='small' 
           onClick={() => setRole('admin')}
           color='primary'
         >
-          3M Admin
+          Quản trị 3M
         </Button>
         <Button 
           variant={role === 'agent' ? 'contained' : 'tonal'} 
@@ -46,7 +48,7 @@ const DashboardPage = () => {
           onClick={() => setRole('agent')}
           color='secondary'
         >
-          Agent
+          Đại lý
         </Button>
       </Box>
 
