@@ -11,6 +11,7 @@ interface BaseMenuItemProps {
   suffix?: ReactNode | ChipProps
   exactMatch?: boolean
   activeUrl?: string
+  roles?: string[]
 }
 
 // Vertical Menu Types

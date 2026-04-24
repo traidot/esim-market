@@ -9,6 +9,7 @@ const verticalMenuData = (dictionary: Awaited<ReturnType<typeof getDictionary>>)
     {
       label: 'Main',
       isSection: true,
+      roles: ['admin', 'agent'],
       children: [
         { label: 'Dashboard', icon: 'tabler-smart-home', href: getUrl('/dashboard') }
       ]
@@ -16,6 +17,7 @@ const verticalMenuData = (dictionary: Awaited<ReturnType<typeof getDictionary>>)
     {
       label: 'Marketplace (3M Admin)',
       icon: 'tabler-building-store',
+      roles: ['admin'],
       children: [
         { label: 'Catalog Management', icon: 'tabler-packages', href: getUrl('/marketplace/products') },
         { label: 'Pricing Engine', icon: 'tabler-adjustments-horizontal', href: getUrl('/marketplace/pricing') },
@@ -25,6 +27,7 @@ const verticalMenuData = (dictionary: Awaited<ReturnType<typeof getDictionary>>)
     {
       label: 'Upstream Hub',
       icon: 'tabler-cloud-download',
+      roles: ['admin'],
       children: [
         { label: 'Global Suppliers', icon: 'tabler-world', href: getUrl('/upstream/suppliers') },
         { label: 'Provider Mapping', icon: 'tabler-link', href: getUrl('/upstream/supplier-products') },
@@ -34,6 +37,7 @@ const verticalMenuData = (dictionary: Awaited<ReturnType<typeof getDictionary>>)
     {
       label: 'Downstream Hub',
       icon: 'tabler-users-group',
+      roles: ['admin'],
       children: [
         { label: 'Agents & Partners', icon: 'tabler-users', href: getUrl('/downstream/agents') },
         { label: 'Tier Groups', icon: 'tabler-hierarchy-2', href: getUrl('/downstream/tiers') },
@@ -43,6 +47,7 @@ const verticalMenuData = (dictionary: Awaited<ReturnType<typeof getDictionary>>)
     {
       label: 'Finance & Wallets',
       icon: 'tabler-wallet',
+      roles: ['admin'],
       children: [
         { label: 'Agent Wallets', icon: 'tabler-cash', href: getUrl('/finance/wallets') },
         { label: 'Transaction Logs', icon: 'tabler-receipt-2', href: getUrl('/finance/transactions') },
@@ -52,6 +57,7 @@ const verticalMenuData = (dictionary: Awaited<ReturnType<typeof getDictionary>>)
     {
       label: 'Digital Orders',
       icon: 'tabler-shopping-cart',
+      roles: ['admin'],
       children: [
         { label: 'All Orders', icon: 'tabler-list-details', href: getUrl('/orders/list') },
         { label: 'Activation Logs', icon: 'tabler-qrcode', href: getUrl('/orders/activation-logs') }
@@ -60,6 +66,7 @@ const verticalMenuData = (dictionary: Awaited<ReturnType<typeof getDictionary>>)
     {
       label: 'System Engine',
       icon: 'tabler-settings-cog',
+      roles: ['admin'],
       children: [
         { label: 'Internal Users', icon: 'tabler-user-shield', href: getUrl('/system/users') },
         { label: 'System Config', icon: 'tabler-settings', href: getUrl('/system/settings') }
@@ -68,6 +75,7 @@ const verticalMenuData = (dictionary: Awaited<ReturnType<typeof getDictionary>>)
     {
       label: 'Agent Console',
       isSection: true,
+      roles: ['agent'],
       children: [
         { label: 'Agent Dashboard', icon: 'tabler-layout-dashboard', href: getUrl('/dashboard') },
         { label: 'eSIM Store', icon: 'tabler-shopping-bag', href: getUrl('/marketplace/products') },
