@@ -14,6 +14,7 @@ import type { Locale } from '@configs/i18n'
 // Component Imports
 import { I18nProvider } from '@/i18n/I18nProvider'
 import { loadDictionary } from '@/i18n/dictionaries/lang'
+import { RoleProvider } from '@/contexts/RoleContext'
 
 // HOC Imports
 import TranslationWrapper from '@/hocs/TranslationWrapper'
@@ -54,7 +55,9 @@ const RootLayout = async (props: ChildrenType) => {
         <body className='flex is-full min-bs-full flex-auto flex-col'>
           <InitColorSchemeScript attribute='data' defaultMode={systemMode} />
           <I18nProvider dict={loadDictionary(locale)} locale={locale}>
-            {children}
+            <RoleProvider>
+              {children}
+            </RoleProvider>
           </I18nProvider>
         </body>
       </html>
