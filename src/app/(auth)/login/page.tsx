@@ -116,8 +116,8 @@ const LoginPage = () => {
       setQuickUsersLoading(true)
       // Mock dev users for UI demo
       const mockUsers = [
-        { id: '1', email: 'admin@example.com', name: 'Admin User' },
-        { id: '2', email: 'user@example.com', name: 'Regular User' },
+        { id: '1', email: 'admin@esim-market.local', name: '3M Admin', role: 'Full Access' },
+        { id: '2', email: 'agent@esim-market.local', name: 'Agent: TravelConnect', role: 'Downstream' },
       ]
       const data = { users: mockUsers }
       if (Array.isArray(data.users)) {

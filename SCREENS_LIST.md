@@ -1,106 +1,51 @@
-# Danh sách toàn bộ các màn hình trong ứng dụng
+# Danh sách toàn bộ các màn hình trong ứng dụng - eSIM Market
 
 ## 📊 Dashboard
-- `/dashboard` - Trang chủ/Dashboard
+- `/dashboard` - Tổng quan kinh doanh (Doanh thu, Đơn hàng, Số dư đại lý)
 
-## 📦 Master Data (Dữ liệu chính)
+## 🛒 Marketplace (Chợ eSIM)
+- `/marketplace/products` - Quản lý danh mục gói cước tập trung
+- `/marketplace/pricing` - Cấu hình công cụ định giá (Pricing Engine)
+- `/marketplace/inventory` - Theo dõi tồn kho mã kích hoạt/API
 
-### Suppliers (Nhà cung cấp)
-- `/master-data/suppliers` - Danh sách nhà cung cấp
-- `/master-data/suppliers/[id]` - Chi tiết nhà cung cấp
+## 🏢 Upstream (Quản lý Nguồn cung)
+- `/upstream/suppliers` - Danh sách nhà cung cấp eSIM toàn cầu
+- `/upstream/supplier-products` - Mapping sản phẩm từ nhà cung cấp vào Chợ
+- `/upstream/sync-logs` - Nhật ký đồng bộ API thượng nguồn
 
-### Products (Sản phẩm)
-- `/master-data/products` - Danh sách sản phẩm
-- `/master-data/products/[id]` - Chi tiết sản phẩm
+## 👥 Downstream (Quản lý Đại lý)
+- `/downstream/agents` - Danh sách đại lý & đối tác API
+- `/downstream/tiers` - Cấu hình cấp bậc đại lý (Platinum, Gold, Silver)
+- `/downstream/api-keys` - Quản lý khóa truy cập API Gateway
 
-### Product Categories (Danh mục sản phẩm)
-- `/master-data/product-categories` - Danh sách danh mục sản phẩm
-- `/master-data/product-categories/[id]` - Chi tiết danh mục sản phẩm
+## 💳 Finance (Tài chính & Ví)
+- `/finance/wallets` - Quản lý ví tiền của các đại lý
+- `/finance/transactions` - Lịch sử giao dịch, nạp tiền, mua hàng
+- `/finance/reconciliation` - Báo cáo đối soát nhà cung cấp & đại lý
 
-### Supplier Pricing (Giá nhà cung cấp)
-- `/master-data/supplier-pricing` - Danh sách giá nhà cung cấp
-
-## 💰 Sales (Bán hàng)
-
-### Quotations (Báo giá)
-- `/sales/quotations` - Danh sách báo giá
-- `/sales/quotations/create` - Tạo báo giá mới
-- `/sales/quotations/[id]` - Chi tiết báo giá
-- `/sales/quotations/[id]/edit` - Chỉnh sửa báo giá
-
-### Purchase Orders (Đơn hàng mua)
-- `/sales/purchase-orders` - Danh sách đơn hàng mua
-- `/sales/purchase-orders/[id]` - Chi tiết đơn hàng mua
-- `/sales/purchase-orders/[id]/edit` - Chỉnh sửa đơn hàng mua
-
-## 📦 Warehouse (Kho)
-
-### Inbound (Nhập kho)
-- `/warehouse/inbound` - Danh sách phiếu nhập kho
-- `/warehouse/inbound/[id]` - Chi tiết phiếu nhập kho
-
-### Inventory (Tồn kho)
-- `/warehouse/inventory` - Danh sách tồn kho
-- `/warehouse/inventory/[id]` - Chi tiết tồn kho
-
-### Outbound (Xuất kho)
-- `/warehouse/outbound` - Danh sách phiếu xuất kho
-- `/warehouse/outbound/[id]` - Chi tiết phiếu xuất kho
-- `/warehouse/outbound/inventory` - Danh sách tồn kho xuất
-- `/warehouse/outbound/inventory/[id]` - Chi tiết tồn kho xuất
-
-## 🚚 Logistics (Hậu cần)
-
-### Container Planning (Lập kế hoạch container)
-- `/logistics/container-planning` - Danh sách kế hoạch container
-- `/logistics/container-planning/[id]` - Chi tiết kế hoạch container
-
-### Container Loading (Xếp container)
-- `/logistics/container-loading` - Danh sách xếp container
-- `/logistics/container-loading/[id]` - Chi tiết xếp container
-
-### Logistics Overview
-- `/logistics` - Tổng quan logistics
-
-## 📄 Documents (Tài liệu)
-
-### Invoices (Hóa đơn)
-- `/documents/invoices` - Danh sách hóa đơn
-- `/documents/invoices/[id]` - Chi tiết hóa đơn
-
-### Packing Lists (Phiếu đóng gói)
-- `/documents/packing-lists` - Danh sách phiếu đóng gói
-- `/documents/packing-lists/[id]` - Chi tiết phiếu đóng gói
+## 📋 Digital Orders (Quản lý Đơn hàng)
+- `/orders/list` - Danh sách đơn hàng eSIM toàn hệ thống
+- `/orders/[id]` - Chi tiết đơn hàng & trạng thái kích hoạt
+- `/orders/activation-logs` - Nhật ký gọi API kích hoạt gói cước
 
 ## ⚙️ System (Hệ thống)
-
-### Users (Người dùng)
-- `/system/users` - Danh sách người dùng
-- `/system/users/import` - Import người dùng
-
-### Settings (Cài đặt)
-- `/system/settings` - Cài đặt hệ thống
+- `/system/users` - Danh sách người dùng nội bộ
+- `/system/settings` - Cài đặt hệ thống (Tỷ giá, Phí vận hành, Webhook)
 
 ## 🔔 Notifications (Thông báo)
-- `/notifications` - Danh sách thông báo
+- `/notifications` - Thông báo hệ thống & Cảnh báo số dư/API
 
 ---
 
-## Tổng kết
+## Tổng kết kiến trúc 3M (Marketplace - Manager - Money)
 
-**Tổng số màn hình: 36 màn hình**
+### Phân loại theo module mới:
+- **Marketplace Core**: 3 màn hình
+- **Upstream Layer**: 3 màn hình
+- **Downstream Layer**: 3 màn hình
+- **Finance & Wallet**: 3 màn hình
+- **Order Management**: 3 màn hình
+- **System & Dashboard**: 3 màn hình
 
-### Phân loại theo chức năng:
-- **List pages (Danh sách)**: 18 màn hình
-- **Detail pages (Chi tiết)**: 14 màn hình
-- **Create/Edit pages (Tạo/Chỉnh sửa)**: 4 màn hình
+**Tổng số màn hình cốt lõi: 18 màn hình (Tối ưu hóa từ 36 màn hình cũ)**
 
-### Phân loại theo module:
-- **Master Data**: 7 màn hình
-- **Sales**: 6 màn hình
-- **Warehouse**: 7 màn hình
-- **Logistics**: 4 màn hình
-- **Documents**: 4 màn hình
-- **System**: 3 màn hình
-- **Dashboard**: 1 màn hình
-- **Notifications**: 1 màn hình

@@ -39,6 +39,7 @@ model User {
   auditLogs      AuditLog[]
   notifications  Notification[]
   prApprovals    PRApproval[]
+  agent          Agent?
 
   @@index([status])
   @@index([deletedAt])
@@ -176,6 +177,7 @@ model Supplier {
   deletedAt      DateTime?
 
   pricing SupplierPricing[]
+  supplierProducts SupplierProduct[]
 
   // Procurement relations
   purchaseOrders  PurchaseOrder[]
@@ -820,4 +822,147 @@ model Notification {
   @@index([userId, readAt])
   @@index([userId, createdAt])
   @@index([type])
+}
+
+// -----------------------------------------------------------------------------
+// eSIM Marketplace (3M Core) — New Models
+// -----------------------------------------------------------------------------
+
+enum AgentTier {
+  PLATINUM
+  GOLD
+  SILVER
+  RETAIL
+}
+
+model Agent {
+  id            String    @id @default(uuid()) @db.Uuid
+  userId        String?   @unique @db.Uuid
+  name          String
+  tier          AgentTier @default(RETAIL)
+  creditLimit   Decimal   @default(0) @db.Decimal(18, 4)
+  balance       Decimal   @default(0) @db.Decimal(18, 4)
+  webhookUrl    String?
+  apiKey        String?   @unique
+  status        CommonStatus @default(active)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  user          User?     @relation(fields: [userId], references: [id], onDelete: SetNull)
+  wallets       Wallet[]
+  orders        DigitalOrder[]
+  pricingRules  PricingRule[]
+
+  @@index([tier])
+  @@index([status])
+}
+
+model MarketplaceProduct {
+  id            String    @id @default(uuid()) @db.Uuid
+  code          String    @unique // Unified code for 3M
+  name          String
+  description   String?
+  region        String?   // e.g. "Global", "Asia", "Japan"
+  dataAmount    Int       // in MB
+  validityDays  Int
+  status        CommonStatus @default(active)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  supplierProducts SupplierProduct[]
+  pricingRules     PricingRule[]
+  orders           DigitalOrder[]
+
+  @@index([region])
+  @@index([status])
+}
+
+model SupplierProduct {
+  id                  String    @id @default(uuid()) @db.Uuid
+  supplierId          String    @db.Uuid
+  marketplaceProductId String    @db.Uuid
+  externalCode        String    // Code from supplier API
+  costPrice           Decimal   @db.Decimal(18, 4)
+  currency            Currency  @default(USD)
+  isAvailable         Boolean   @default(true)
+  lastSyncAt          DateTime?
+  createdAt           DateTime  @default(now())
+  updatedAt           DateTime  @updatedAt
+
+  supplier           Supplier           @relation(fields: [supplierId], references: [id], onDelete: Cascade)
+  marketplaceProduct MarketplaceProduct @relation(fields: [marketplaceProductId], references: [id], onDelete: Cascade)
+
+  @@unique([supplierId, externalCode])
+  @@index([marketplaceProductId])
+}
+
+model PricingRule {
+  id                  String    @id @default(uuid()) @db.Uuid
+  marketplaceProductId String?   @db.Uuid // If null, applies to all products
+  agentId             String?   @db.Uuid // If null, applies to tier
+  tier                AgentTier?
+  markupType          String    @default("PERCENT") // PERCENT or FIXED
+  markupValue         Decimal   @db.Decimal(18, 4)
+  priority            Int       @default(0)
+  createdAt           DateTime  @default(now())
+  updatedAt           DateTime  @updatedAt
+
+  marketplaceProduct  MarketplaceProduct? @relation(fields: [marketplaceProductId], references: [id], onDelete: Cascade)
+  agent               Agent?              @relation(fields: [agentId], references: [id], onDelete: Cascade)
+
+  @@index([agentId])
+  @@index([tier])
+}
+
+model Wallet {
+  id          String    @id @default(uuid()) @db.Uuid
+  agentId     String    @db.Uuid
+  currency    Currency  @default(USD)
+  balance     Decimal   @default(0) @db.Decimal(18, 4)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  agent       Agent     @relation(fields: [agentId], references: [id], onDelete: Cascade)
+  transactions WalletTransaction[]
+
+  @@unique([agentId, currency])
+}
+
+model WalletTransaction {
+  id            String    @id @default(uuid()) @db.Uuid
+  walletId      String    @db.Uuid
+  amount        Decimal   @db.Decimal(18, 4) // Positive for top-up, negative for purchase
+  type          String    // PURCHASE, TOPUP, REFUND, ADJUSTMENT
+  referenceId   String?   // Order ID or Payment ID
+  description   String?
+  createdAt     DateTime  @default(now())
+
+  wallet        Wallet    @relation(fields: [walletId], references: [id], onDelete: Cascade)
+
+  @@index([walletId])
+  @@index([createdAt])
+}
+
+model DigitalOrder {
+  id                  String    @id @default(uuid()) @db.Uuid
+  agentId             String    @db.Uuid
+  marketplaceProductId String    @db.Uuid
+  supplierProductId   String?   @db.Uuid // Which supplier was used
+  status              String    @default("PENDING") // PENDING, PROCESSING, COMPLETED, FAILED, CANCELLED
+  qty                 Int       @default(1)
+  unitPrice           Decimal   @db.Decimal(18, 4)
+  totalAmount         Decimal   @db.Decimal(18, 4)
+  currency            Currency  @default(USD)
+  externalOrderId     String?   // Supplier's order ID
+  activationCode      String?   // QR code URL or LPA string
+  customerEmail       String?
+  notes               String?
+  createdAt           DateTime  @default(now())
+  updatedAt           DateTime  @updatedAt
+
+  agent               Agent              @relation(fields: [agentId], references: [id], onDelete: Restrict)
+  marketplaceProduct  MarketplaceProduct @relation(fields: [marketplaceProductId], references: [id], onDelete: Restrict)
+
+  @@index([agentId])
+  @@index([status])
 }
