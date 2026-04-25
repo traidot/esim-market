@@ -31,6 +31,7 @@ const verticalMenuData = (dictionary: Awaited<ReturnType<typeof getDictionary>>)
       children: [
         { label: 'Nhà cung cấp Toàn cầu', icon: 'tabler-world', href: getUrl('/upstream/suppliers') },
         { label: 'Mapping Sản phẩm', icon: 'tabler-link', href: getUrl('/upstream/supplier-products') },
+        { label: 'Báo giá Supplier', icon: 'tabler-file-dollar', href: getUrl('/upstream/quotes') },
         { label: 'Nhật ký Đồng bộ', icon: 'tabler-activity', href: getUrl('/upstream/sync-logs') }
       ]
     },
@@ -41,6 +42,7 @@ const verticalMenuData = (dictionary: Awaited<ReturnType<typeof getDictionary>>)
       children: [
         { label: 'Đại lý & Đối tác', icon: 'tabler-users', href: getUrl('/downstream/agents') },
         { label: 'Nhóm Cấp bậc (Tiers)', icon: 'tabler-hierarchy-2', href: getUrl('/downstream/tiers') },
+        { label: 'Quản lý Bảng giá', icon: 'tabler-file-spreadsheet', href: getUrl('/downstream/price-lists') },
         { label: 'Cổng API (Gateway)', icon: 'tabler-key', href: getUrl('/downstream/api-keys') }
       ]
     },
