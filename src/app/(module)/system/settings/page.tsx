@@ -1,5 +1,9 @@
-import SettingsView from '@/views/system/settings/SettingsView'
+'use client'
 
-export default function SettingsPage() {
-  return <SettingsView />
+import SystemSettings from '@/views/system/settings/SystemSettings'
+
+const SettingsPage = () => {
+  return <SystemSettings />
 }
+
+export default SettingsPage

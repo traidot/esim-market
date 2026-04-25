@@ -1,5 +1,9 @@
-import UserListView from '@/views/system/users/UserListView'
+'use client'
 
-export default function UsersPage() {
-  return <UserListView />
+import StaffManagement from '@/views/system/users/StaffManagement'
+
+const UsersPage = () => {
+  return <StaffManagement />
 }
+
+export default UsersPage

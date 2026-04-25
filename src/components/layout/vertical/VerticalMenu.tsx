@@ -28,6 +28,9 @@ import menuSectionStyles from '@core/styles/vertical/menuSectionStyles'
 // Menu Data Imports
 import menuData from '@/data/navigation/verticalMenuData'
 
+// Role Hook Import
+import { useRole } from '@/contexts/RoleContext'
+
 type RenderExpandIconProps = {
   open?: boolean
   transitionDuration?: VerticalMenuContextProps['transitionDuration']
@@ -49,11 +52,18 @@ const VerticalMenu = ({ dictionary, scrollMenu, menuData: customMenuData }: Prop
   // Hooks
   const theme = useTheme()
   const verticalNavOptions = useVerticalNav()
+  const { role } = useRole()
 
   // Vars
   const { isBreakpointReached, transitionDuration } = verticalNavOptions
 
   const ScrollWrapper = isBreakpointReached ? 'div' : PerfectScrollbar
+
+  // Filter menu data based on role
+  const filteredMenuData = (customMenuData || menuData(dictionary)).filter((item: any) => {
+    if (!item.roles) return true
+    return item.roles.includes(role)
+  })
 
   return (
     // eslint-disable-next-line lines-around-comment
@@ -78,7 +88,7 @@ const VerticalMenu = ({ dictionary, scrollMenu, menuData: customMenuData }: Prop
         renderExpandedMenuItemIcon={{ icon: <i className='tabler-circle text-xs' /> }}
         menuSectionStyles={menuSectionStyles(verticalNavOptions, theme)}
       >
-        <GenerateVerticalMenu menuData={customMenuData || menuData(dictionary)} />
+        <GenerateVerticalMenu menuData={filteredMenuData} />
       </Menu>
     </ScrollWrapper>
   )
