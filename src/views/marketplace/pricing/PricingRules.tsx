@@ -12,6 +12,9 @@ import MenuItem from '@mui/material/MenuItem'
 import Stack from '@mui/material/Stack'
 import Divider from '@mui/material/Divider'
 import Switch from '@mui/material/Switch'
+import Chip from '@mui/material/Chip'
+import Select from '@mui/material/Select'
+import IconButton from '@mui/material/IconButton'
 import FormControlLabel from '@mui/material/FormControlLabel'
 
 import PageHeader from '@/components/layout/shared/PageHeader'
@@ -164,8 +167,5 @@ const PricingRules = () => {
     </>
   )
 }
-
-import Select from '@mui/material/Select'
-import IconButton from '@mui/material/IconButton'
 
 export default PricingRules
