@@ -79,7 +79,6 @@ const verticalMenuData = (dictionary: Awaited<ReturnType<typeof getDictionary>>)
       isSection: true,
       roles: ['agent'],
       children: [
-        { label: 'Dashboard Đại lý', icon: 'tabler-layout-dashboard', href: getUrl('/dashboard') },
         { label: 'Cửa hàng eSIM', icon: 'tabler-shopping-bag', href: getUrl('/marketplace/products') },
         { label: 'Ví của tôi', icon: 'tabler-wallet', href: getUrl('/finance/my-wallet') },
         { label: 'Đơn hàng của tôi', icon: 'tabler-list-details', href: getUrl('/orders/my-orders') },
