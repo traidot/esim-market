@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import Link from 'next/link'
 import Grid2 from '@mui/material/Grid2'
 import Card from '@mui/material/Card'
 import CardContent from '@mui/material/CardContent'
@@ -45,6 +46,9 @@ const SupplierDetail = ({ id }: { id: string }) => {
         ]}
         actions={
           <Stack direction='row' spacing={2}>
+            <Button variant='tonal' color='secondary' component={Link} href={`/upstream/suppliers/${id}/mapping`}>
+              Cấu hình Mapping
+            </Button>
             <Button variant='tonal' color='error'>Gỡ kết nối</Button>
             <Button variant='contained' startIcon={<i className='tabler-device-floppy' />}>Lưu thay đổi</Button>
           </Stack>

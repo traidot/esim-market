@@ -178,6 +178,7 @@ model Supplier {
 
   pricing SupplierPricing[]
   supplierProducts SupplierProduct[]
+  fieldMapping    SupplierFieldMapping?
 
   // Procurement relations
   purchaseOrders  PurchaseOrder[]
@@ -965,4 +966,14 @@ model DigitalOrder {
 
   @@index([agentId])
   @@index([status])
+}
+
+model SupplierFieldMapping {
+  id          String   @id @default(uuid()) @db.Uuid
+  supplierId  String   @db.Uuid @unique
+  mapping     Json     // Quy tắc ánh xạ: { "system_field": "supplier_excel_column" }
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  supplier    Supplier @relation(fields: [supplierId], references: [id], onDelete: Cascade)
 }
