@@ -18,6 +18,8 @@ import FormGroup from '@mui/material/FormGroup'
 import Divider from '@mui/material/Divider'
 import Tooltip from '@mui/material/Tooltip'
 import IconButton from '@mui/material/IconButton'
+import Stack from '@mui/material/Stack'
+import Avatar from '@mui/material/Avatar'
 
 import PageHeader from '@/components/layout/shared/PageHeader'
 
@@ -44,27 +46,72 @@ const MappingTable = () => {
         description="Quản lý việc kết nối hàng ngàn gói cước từ Supplier vào hệ thống Marketplace"
         breadcrumbs={[{ label: 'Trang chủ', href: '/' }, { label: 'Nguồn cung' }, { label: 'Ánh xạ sản phẩm' }]}
         actions={
-          <Button variant='contained' startIcon={<i className='tabler-wand' />} color='primary'>Auto-Mapping (AI)</Button>
+          <Stack direction='row' spacing={2}>
+            <Button variant='tonal' startIcon={<i className='tabler-wand' />} color='primary'>Smart Match (AI)</Button>
+            <Button variant='contained' startIcon={<i className='tabler-refresh' />} color='primary'>Run Auto-Sync</Button>
+          </Stack>
         }
         className='mbe-6'
       />
 
+      <Grid2 container spacing={6} className='mbe-6'>
+        <Grid2 size={{ xs: 12, sm: 4, md: 3 }}>
+          <Card className='border-none shadow-sm bg-primary/5 border-primary/20'>
+            <CardContent className='flex items-center gap-4'>
+              <Avatar variant='rounded' color='primary' className='bg-primary/10 text-primary'>
+                <i className='tabler-package' />
+              </Avatar>
+              <Box>
+                <Typography variant='h6' className='font-black'>102,450</Typography>
+                <Typography variant='caption' className='text-slate-500'>Tổng gói cước</Typography>
+              </Box>
+            </CardContent>
+          </Card>
+        </Grid2>
+        <Grid2 size={{ xs: 12, sm: 4, md: 3 }}>
+          <Card className='border-none shadow-sm bg-success/5 border-success/20'>
+            <CardContent className='flex items-center gap-4'>
+              <Avatar variant='rounded' color='success' className='bg-success/10 text-success'>
+                <i className='tabler-check' />
+              </Avatar>
+              <Box>
+                <Typography variant='h6' className='font-black'>98,120</Typography>
+                <Typography variant='caption' className='text-slate-500'>Đã khớp hoàn toàn</Typography>
+              </Box>
+            </CardContent>
+          </Card>
+        </Grid2>
+        <Grid2 size={{ xs: 12, sm: 4, md: 3 }}>
+          <Card className='border-none shadow-sm bg-warning/5 border-warning/20'>
+            <CardContent className='flex items-center gap-4'>
+              <Avatar variant='rounded' color='warning' className='bg-warning/10 text-warning'>
+                <i className='tabler-alert-triangle' />
+              </Avatar>
+              <Box>
+                <Typography variant='h6' className='font-black'>4,330</Typography>
+                <Typography variant='caption' className='text-slate-500'>Cần kiểm tra (New/Change)</Typography>
+              </Box>
+            </CardContent>
+          </Card>
+        </Grid2>
+      </Grid2>
+
       <Grid2 container spacing={6}>
         {/* Sidebar Filter */}
         <Grid2 size={{ xs: 12, md: 3 }}>
-          <Card className='border-none shadow-sm'>
+          <Card className='border-none shadow-sm sticky top-24'>
             <CardContent>
-              <Typography variant='h6' className='font-black mbe-4 flex items-center gap-2'>
-                <i className='tabler-filter text-primary' /> Bộ lọc tìm kiếm
+              <Typography variant='h6' className='font-black mbe-4 flex items-center gap-2 text-primary'>
+                <i className='tabler-filter' /> Phân lọc dữ liệu lớn
               </Typography>
               
-              <TextField 
-                fullWidth 
-                size='small' 
-                placeholder='Tìm theo mã hoặc tên...' 
-                className='mbe-6'
-                slotProps={{ input: { startAdornment: <InputAdornment position='start'><i className='tabler-search' /></InputAdornment> } }}
-              />
+              <Box className='mbe-6'>
+                <Typography variant='subtitle2' className='font-black mbe-2 uppercase text-slate-500 text-[11px]'>Thao tác hàng loạt</Typography>
+                <Stack spacing={2}>
+                  <Button fullWidth variant='tonal' size='small' startIcon={<i className='tabler-check-all' />}>Khớp toàn bộ Japan</Button>
+                  <Button fullWidth variant='tonal' size='small' color='secondary' startIcon={<i className='tabler-adjustments-horizontal' />}>Gán Category theo Tên</Button>
+                </Stack>
+              </Box>
 
               <Divider className='mbe-6' />
 
