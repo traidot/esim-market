@@ -147,6 +147,41 @@ const SupplierDetail = ({ id }: { id: string }) => {
 
               <Divider className='my-8' />
 
+              <Typography variant='h6' className='font-black mbe-6 flex items-center gap-2'>
+                <i className='tabler-shield-lock text-success' /> Bảo mật & Kết nối nâng cao
+              </Typography>
+              
+              <Grid2 container spacing={6}>
+                <Grid2 size={{ xs: 12 }}>
+                  <TextField 
+                    fullWidth 
+                    label="Whitelist IP (Dành cho Outbound)" 
+                    placeholder="1.2.3.4, 5.6.7.8"
+                    helperText="Danh sách IP của sàn được phép gọi đến Supplier (ngăn chặn rò rỉ Key)."
+                  />
+                </Grid2>
+                <Grid2 size={{ xs: 12, md: 6 }}>
+                  <TextField 
+                    fullWidth 
+                    multiline
+                    rows={3}
+                    label="Custom Headers (JSON format)" 
+                    placeholder='{ "X-Custom-Auth": "value" }'
+                  />
+                </Grid2>
+                <Grid2 size={{ xs: 12, md: 6 }}>
+                  <Box className='p-4 bg-slate-50 rounded-lg border border-dashed border-slate-200 h-full'>
+                    <Typography variant='caption' className='font-black uppercase mbe-2 block'>Proxy Configuration</Typography>
+                    <Stack spacing={2}>
+                      <TextField size='small' fullWidth label="Proxy Host/Port" placeholder="proxy.example.com:8080" />
+                      <TextField size='small' fullWidth label="Proxy Auth (Username:Pass)" type="password" />
+                    </Stack>
+                  </Box>
+                </Grid2>
+              </Grid2>
+
+              <Divider className='my-8' />
+
               <Typography variant='h6' className='font-black mbe-6'>Tham số Đồng bộ (Sync Settings)</Typography>
               <Grid2 container spacing={6}>
                 <Grid2 size={{ xs: 12, md: 6 }}>
