@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import Link from 'next/link'
 import Grid2 from '@mui/material/Grid2'
 import Card from '@mui/material/Card'
 import CardContent from '@mui/material/CardContent'
@@ -83,7 +84,9 @@ const SupplierList = () => {
                   </Avatar>
                   <Box className='flex gap-1'>
                     <Tooltip title="Cài đặt">
-                      <IconButton size='small'><i className='tabler-settings' /></IconButton>
+                      <IconButton size='small' component={Link} href={`/upstream/suppliers/${supplier.code.toLowerCase()}`}>
+                        <i className='tabler-settings' />
+                      </IconButton>
                     </Tooltip>
                     <Tooltip title="Đồng bộ ngay">
                       <IconButton size='small' color='primary'><i className='tabler-refresh' /></IconButton>
