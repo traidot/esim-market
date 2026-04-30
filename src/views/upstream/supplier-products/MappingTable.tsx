@@ -12,211 +12,208 @@ import Select from '@mui/material/Select'
 import MenuItem from '@mui/material/MenuItem'
 import TextField from '@mui/material/TextField'
 import InputAdornment from '@mui/material/InputAdornment'
-import Checkbox from '@mui/material/Checkbox'
-import FormControlLabel from '@mui/material/FormControlLabel'
-import FormGroup from '@mui/material/FormGroup'
-import Divider from '@mui/material/Divider'
-import Tooltip from '@mui/material/Tooltip'
-import IconButton from '@mui/material/IconButton'
+import Tab from '@mui/material/Tab'
+import TabContext from '@mui/lab/TabContext'
+import TabList from '@mui/lab/TabList'
+import TabPanel from '@mui/lab/TabPanel'
 import Stack from '@mui/material/Stack'
 import Avatar from '@mui/material/Avatar'
 
 import PageHeader from '@/components/layout/shared/PageHeader'
 
 const MappingTable = () => {
-  const [searchTerm, setSearchTerm] = useState('')
+  const [activeRegion, setActiveRegion] = useState('popular')
+  const [selectedSupplier, setSelectedSupplier] = useState('all')
 
-  const mockData = [
-    { id: 'sp1', supplier: 'Airalo', region: 'Asia', country: 'Japan', externalName: 'Japan - 10GB - 30 Days', externalCode: 'airalo-jp-10gb', costPrice: '$12.50', mappedProductId: 'mp1', status: 'mapped' },
-    { id: 'sp2', supplier: 'Airalo', region: 'North America', country: 'USA', externalName: 'USA - 20GB - 30 Days', externalCode: 'airalo-us-20gb', costPrice: '$22.00', mappedProductId: '', status: 'unmapped' },
-    { id: 'sp3', supplier: 'Nomad', region: 'Europe', country: 'Germany', externalName: 'Europe 5GB (15D)', externalCode: 'nomad-eu-5gb', costPrice: '$10.00', mappedProductId: 'mp3', status: 'mapped' },
-    { id: 'sp4', supplier: 'GoMoWorld', region: 'Asia', country: 'Vietnam', externalName: 'Vietnam Special 15GB', externalCode: 'gomo-vn-15gb', costPrice: '$6.50', mappedProductId: '', status: 'unmapped' }
+  const regions = [
+    { value: 'popular', label: 'Phổ biến' },
+    { value: 'asia', label: 'Châu Á' },
+    { value: 'europe', label: 'Châu Âu' },
+    { value: 'america', label: 'Châu Mỹ' },
+    { value: 'global', label: 'Toàn cầu' }
   ]
 
-  const marketplaceProducts = [
-    { id: 'mp1', name: 'Gói Nhật Bản Siêu Tốc 10GB' },
-    { id: 'mp2', name: 'Gói Mỹ Unlimit 20GB' },
-    { id: 'mp3', name: 'Gói Châu Âu Wanderlust 5GB' }
+  const suppliers = [
+    { value: 'all', label: 'Tất cả Nhà cung cấp', icon: 'tabler-layers-intersect' },
+    { value: 'airalo', label: 'Airalo Global', icon: 'tabler-square-rounded-letter-a' },
+    { value: 'nomad', label: 'Nomad Global', icon: 'tabler-square-rounded-letter-n' },
+    { value: 'keepgo', label: 'KeepGo', icon: 'tabler-square-rounded-letter-k' }
+  ]
+
+  const countries = [
+    { code: 'jp', name: 'Nhật Bản', flag: '🇯🇵', count: 120 },
+    { code: 'kr', name: 'Hàn Quốc', flag: '🇰🇷', count: 85 },
+    { code: 'th', name: 'Thái Lan', flag: '🇹🇭', count: 64 },
+    { code: 'us', name: 'Hoa Kỳ', flag: '🇺🇸', count: 210 },
+    { code: 'vn', name: 'Việt Nam', flag: '🇻🇳', count: 45 },
+    { code: 'uk', name: 'Vương Quốc Anh', flag: '🇬🇧', count: 112 },
+    { code: 'fr', name: 'Pháp', flag: '🇫🇷', count: 78 },
+    { code: 'de', name: 'Đức', flag: '🇩🇪', count: 92 }
+  ]
+
+  const packages = [
+    { id: 'PKG-001', supplier: 'Airalo', name: 'Japan 10GB Premium', country: 'Nhật Bản', data: '10GB', duration: '30 Days', cost: 8.50, status: 'Active' },
+    { id: 'PKG-002', supplier: 'Nomad', name: 'USA Fast Connection', country: 'Hoa Kỳ', data: '5GB', duration: '7 Days', cost: 12.00, status: 'Active' },
+    { id: 'PKG-003', supplier: 'Airalo', name: 'China Great Wall', country: 'Trung Quốc', data: '20GB', duration: '30 Days', cost: 15.00, status: 'Active' },
+    { id: 'PKG-004', supplier: 'KeepGo', name: 'Europe Discovery', country: 'Châu Âu', data: 'Unlimited', duration: '1 Day', cost: 1.50, status: 'Inactive' },
+    { id: 'PKG-005', supplier: 'Nomad', name: 'UK Business Pro', country: 'Vương Quốc Anh', data: '50GB', duration: '90 Days', cost: 45.00, status: 'Active' },
   ]
 
   return (
     <>
       <PageHeader
-        title="Ma trận Ánh xạ (Mapping Matrix)"
-        description="Quản lý việc kết nối hàng ngàn gói cước từ Supplier vào hệ thống Marketplace"
-        breadcrumbs={[{ label: 'Trang chủ', href: '/' }, { label: 'Nguồn cung' }, { label: 'Ánh xạ sản phẩm' }]}
+        title="Kho Sản phẩm Upstream"
+        description="Quản lý toàn bộ gói cước từ tất cả nhà cung cấp, lọc theo khu vực và quốc gia"
+        breadcrumbs={[{ label: 'Trang chủ', href: '/' }, { label: 'Nguồn cung' }, { label: 'Tất cả sản phẩm' }]}
         actions={
           <Stack direction='row' spacing={2}>
-            <Button variant='tonal' startIcon={<i className='tabler-wand' />} color='primary'>Smart Match (AI)</Button>
-            <Button variant='contained' startIcon={<i className='tabler-refresh' />} color='primary'>Run Auto-Sync</Button>
+            <Select 
+              size='small' 
+              value={selectedSupplier} 
+              onChange={(e) => setSelectedSupplier(e.target.value)}
+              className='bg-white min-is-[220px]'
+              startAdornment={
+                <InputAdornment position='start'>
+                  <i className='tabler-filter text-primary' />
+                </InputAdornment>
+              }
+            >
+              {suppliers.map(s => (
+                <MenuItem key={s.value} value={s.value}>
+                  <Box className='flex items-center gap-2'>
+                    <i className={s.icon} />
+                    {s.label}
+                  </Box>
+                </MenuItem>
+              ))}
+            </Select>
+            <Button variant='contained' startIcon={<i className='tabler-refresh' />}>Đồng bộ Toàn sàn</Button>
           </Stack>
         }
         className='mbe-6'
       />
 
-      <Grid2 container spacing={6} className='mbe-6'>
-        <Grid2 size={{ xs: 12, sm: 4, md: 3 }}>
-          <Card className='border-none shadow-sm bg-primary/5 border-primary/20'>
-            <CardContent className='flex items-center gap-4'>
-              <Avatar variant='rounded' color='primary' className='bg-primary/10 text-primary'>
-                <i className='tabler-package' />
-              </Avatar>
-              <Box>
-                <Typography variant='h6' className='font-black'>102,450</Typography>
-                <Typography variant='caption' className='text-slate-500'>Tổng gói cước</Typography>
-              </Box>
-            </CardContent>
-          </Card>
-        </Grid2>
-        <Grid2 size={{ xs: 12, sm: 4, md: 3 }}>
-          <Card className='border-none shadow-sm bg-success/5 border-success/20'>
-            <CardContent className='flex items-center gap-4'>
-              <Avatar variant='rounded' color='success' className='bg-success/10 text-success'>
-                <i className='tabler-check' />
-              </Avatar>
-              <Box>
-                <Typography variant='h6' className='font-black'>98,120</Typography>
-                <Typography variant='caption' className='text-slate-500'>Đã khớp hoàn toàn</Typography>
-              </Box>
-            </CardContent>
-          </Card>
-        </Grid2>
-        <Grid2 size={{ xs: 12, sm: 4, md: 3 }}>
-          <Card className='border-none shadow-sm bg-warning/5 border-warning/20'>
-            <CardContent className='flex items-center gap-4'>
-              <Avatar variant='rounded' color='warning' className='bg-warning/10 text-warning'>
-                <i className='tabler-alert-triangle' />
-              </Avatar>
-              <Box>
-                <Typography variant='h6' className='font-black'>4,330</Typography>
-                <Typography variant='caption' className='text-slate-500'>Cần kiểm tra (New/Change)</Typography>
-              </Box>
-            </CardContent>
-          </Card>
-        </Grid2>
-      </Grid2>
+      {/* FILTER TABS & COUNTRY GRID */}
+      <Card className='border-none shadow-sm mbe-6 overflow-hidden'>
+        <TabContext value={activeRegion}>
+          <Box className='border-be bg-slate-50/50'>
+            <TabList 
+              onChange={(e, v) => setActiveRegion(v)}
+              className='min-bs-[60px]'
+            >
+              {regions.map(r => (
+                <Tab key={r.value} label={r.label} value={r.value} className='font-black' />
+              ))}
+            </TabList>
+          </Box>
+          <TabPanel value={activeRegion} className='p-6'>
+            <Grid2 container spacing={4}>
+              <Grid2 size={{ xs: 12, sm: 6, md: 3, lg: 1.5 }}>
+                <Card className='border-2 border-primary bg-primary/5 cursor-pointer hover:shadow-md transition-all h-full'>
+                  <CardContent className='p-4 text-center'>
+                    <Typography variant='h3' className='mbe-1'>🌍</Typography>
+                    <Typography variant='body2' className='font-black'>Tất cả nước</Typography>
+                  </CardContent>
+                </Card>
+              </Grid2>
+              {countries.map(c => (
+                <Grid2 key={c.code} size={{ xs: 12, sm: 6, md: 3, lg: 1.5 }}>
+                  <Card className='border border-slate-100 cursor-pointer hover:border-primary hover:bg-primary/5 transition-all h-full group'>
+                    <CardContent className='p-4 text-center'>
+                      <Typography variant='h3' className='mbe-1 grayscale group-hover:grayscale-0 transition-all'>{c.flag}</Typography>
+                      <Typography variant='body2' className='font-bold'>{c.name}</Typography>
+                      <Typography variant='caption' className='text-slate-400'>{c.count} gói</Typography>
+                    </CardContent>
+                  </Card>
+                </Grid2>
+              ))}
+            </Grid2>
+          </TabPanel>
+        </TabContext>
+      </Card>
 
-      <Grid2 container spacing={6}>
-        {/* Sidebar Filter */}
-        <Grid2 size={{ xs: 12, md: 3 }}>
-          <Card className='border-none shadow-sm sticky top-24'>
-            <CardContent>
-              <Typography variant='h6' className='font-black mbe-4 flex items-center gap-2 text-primary'>
-                <i className='tabler-filter' /> Phân lọc dữ liệu lớn
-              </Typography>
-              
-              <Box className='mbe-6'>
-                <Typography variant='subtitle2' className='font-black mbe-2 uppercase text-slate-500 text-[11px]'>Thao tác hàng loạt</Typography>
-                <Stack spacing={2}>
-                  <Button fullWidth variant='tonal' size='small' startIcon={<i className='tabler-check-all' />}>Khớp toàn bộ Japan</Button>
-                  <Button fullWidth variant='tonal' size='small' color='secondary' startIcon={<i className='tabler-adjustments-horizontal' />}>Gán Category theo Tên</Button>
-                </Stack>
-              </Box>
-
-              <Divider className='mbe-6' />
-
-              <Typography variant='subtitle2' className='font-black mbe-2 uppercase text-slate-500 text-[11px]'>Nhà cung cấp</Typography>
-              <FormGroup className='mbe-6'>
-                <FormControlLabel control={<Checkbox defaultChecked size='small' />} label={<Typography variant="body2">Airalo</Typography>} />
-                <FormControlLabel control={<Checkbox defaultChecked size='small' />} label={<Typography variant="body2">Nomad</Typography>} />
-                <FormControlLabel control={<Checkbox size='small' />} label={<Typography variant="body2">GoMoWorld</Typography>} />
-                <FormControlLabel control={<Checkbox size='small' />} label={<Typography variant="body2">KeepGo</Typography>} />
-              </FormGroup>
-
-              <Typography variant='subtitle2' className='font-black mbe-2 uppercase text-slate-500 text-[11px]'>Vùng / Lãnh thổ</Typography>
-              <FormGroup className='mbe-6'>
-                <FormControlLabel control={<Checkbox defaultChecked size='small' />} label={<Typography variant="body2">Châu Á</Typography>} />
-                <FormControlLabel control={<Checkbox size='small' />} label={<Typography variant="body2">Châu Âu</Typography>} />
-                <FormControlLabel control={<Checkbox size='small' />} label={<Typography variant="body2">Bắc Mỹ</Typography>} />
-                <FormControlLabel control={<Checkbox size='small' />} label={<Typography variant="body2">Toàn cầu</Typography>} />
-              </FormGroup>
-
-              <Typography variant='subtitle2' className='font-black mbe-2 uppercase text-slate-500 text-[11px]'>Trạng thái Mapping</Typography>
-              <FormGroup>
-                <FormControlLabel control={<Checkbox defaultChecked size='small' />} label={<Typography variant="body2">Đã ánh xạ</Typography>} />
-                <FormControlLabel control={<Checkbox defaultChecked size='small' />} label={<Typography variant="body2">Chưa ánh xạ</Typography>} />
-              </FormGroup>
-            </CardContent>
-          </Card>
-        </Grid2>
-
-        {/* Main Mapping Table */}
-        <Grid2 size={{ xs: 12, md: 9 }}>
-          <Card className='border-none shadow-sm'>
-            <CardContent className='p-0'>
-              <Box className='overflow-x-auto'>
-                <table className='w-full text-left border-collapse min-w-[900px]'>
-                  <thead>
-                    <tr className='bg-slate-50 border-be'>
-                      <th className='p-4 text-xs font-black text-slate-500 uppercase'>Sản phẩm Nguồn (Supplier)</th>
-                      <th className='p-4 text-xs font-black text-slate-500 uppercase text-center'>Khu vực</th>
-                      <th className='p-4 text-xs font-black text-slate-500 uppercase'>Giá vốn</th>
-                      <th className='p-4 text-xs font-black text-slate-500 uppercase'>Ánh xạ vào Chợ</th>
-                      <th className='p-4 text-xs font-black text-slate-500 uppercase text-right'>Thao tác</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {mockData.map((row) => (
-                      <tr key={row.id} className='border-be last:border-0 hover:bg-slate-50/50 transition-colors'>
-                        <td className='p-4'>
-                          <Box className='flex items-start gap-3'>
-                            <Box className='p-2 bg-slate-100 rounded text-slate-600 font-black text-[10px] uppercase'>
-                              {row.supplier[0]}
-                            </Box>
-                            <Box>
-                              <Typography variant='body2' className='font-black'>{row.externalName}</Typography>
-                              <Typography variant='caption' className='text-slate-400 font-mono'>{row.externalCode}</Typography>
-                            </Box>
-                          </Box>
-                        </td>
-                        <td className='p-4 text-center'>
-                          <Chip label={row.region} size='small' variant='tonal' color='info' className='font-bold text-[10px]' />
-                        </td>
-                        <td className='p-4'>
-                          <Typography variant='body2' className='font-black text-success'>{row.costPrice}</Typography>
-                        </td>
-                        <td className='p-4'>
-                          <Select 
-                            fullWidth 
-                            size='small' 
-                            value={row.mappedProductId}
-                            displayEmpty
-                            sx={{ minWidth: 250 }}
-                          >
-                            <MenuItem value="">
-                              <em className='text-slate-400'>-- Chọn sản phẩm Marketplace --</em>
-                            </MenuItem>
-                            {marketplaceProducts.map(p => (
-                              <MenuItem key={p.id} value={p.id}>{p.name}</MenuItem>
-                            ))}
-                          </Select>
-                          {row.status === 'unmapped' && (
-                            <Typography variant='caption' color='warning.main' className='flex items-center gap-1 mt-1'>
-                              <i className='tabler-alert-triangle text-[12px]' /> Cần ánh xạ ngay
-                            </Typography>
-                          )}
-                        </td>
-                        <td className='p-4 text-right'>
-                          <Box className='flex justify-end gap-2'>
-                            <Tooltip title="Xác nhận Ánh xạ">
-                              <IconButton size='small' color='primary' className='bg-primary/10'><i className='tabler-check' /></IconButton>
-                            </Tooltip>
-                            <Tooltip title="Bỏ qua / Xóa">
-                              <IconButton size='small' color='error' className='bg-error/10'><i className='tabler-x' /></IconButton>
-                            </Tooltip>
-                          </Box>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </Box>
-            </CardContent>
-          </Card>
-        </Grid2>
-      </Grid2>
+      {/* PACKAGE LIST TABLE */}
+      <Card className='border-none shadow-sm overflow-hidden'>
+        <Box className='p-5 border-be flex justify-between items-center gap-4 flex-wrap'>
+          <Typography variant='h6' className='font-black'>Danh sách Gói cước Upstream</Typography>
+          <TextField 
+            size='small' 
+            placeholder='Tìm kiếm mã gói, tên nước...' 
+            className='min-is-[300px]'
+            InputProps={{
+              startAdornment: <InputAdornment position='start'><i className='tabler-search' /></InputAdornment>
+            }}
+          />
+        </Box>
+        <TableContainer>
+          <Table>
+            <TableHead className='bg-slate-50'>
+              <TableRow>
+                <TableCell className='font-black uppercase text-[11px]'>Nhà cung cấp</TableCell>
+                <TableCell className='font-black uppercase text-[11px]'>Mã Gói (ID)</TableCell>
+                <TableCell className='font-black uppercase text-[11px]'>Tên Hiển thị & Quốc gia</TableCell>
+                <TableCell className='font-black uppercase text-[11px]'>Cấu hình (Data/Day)</TableCell>
+                <TableCell className='font-black uppercase text-[11px] text-right'>Giá Vốn (Cost)</TableCell>
+                <TableCell className='font-black uppercase text-[11px] text-center'>Trạng thái</TableCell>
+                <TableCell className='font-black uppercase text-[11px] text-right'>Thao tác</TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {packages.map((pkg) => (
+                <TableRow key={pkg.id} hover>
+                  <TableCell>
+                    <Box className='flex items-center gap-2'>
+                      <Avatar variant='rounded' className='w-8 h-8 bg-primary/10 text-primary text-xs font-black'>
+                        {pkg.supplier[0]}
+                      </Avatar>
+                      <Typography variant='body2' className='font-bold'>{pkg.supplier}</Typography>
+                    </Box>
+                  </TableCell>
+                  <TableCell className='font-mono text-xs text-primary font-bold'>{pkg.id}</TableCell>
+                  <TableCell>
+                    <Typography variant='body2' className='font-black'>{pkg.name}</Typography>
+                    <Typography variant='caption' className='text-slate-400 italic'>{pkg.country}</Typography>
+                  </TableCell>
+                  <TableCell>
+                    <Stack direction='row' spacing={1}>
+                      <Chip label={pkg.data} size='small' variant='tonal' color='info' className='font-bold text-[10px]' />
+                      <Chip label={pkg.duration} size='small' variant='tonal' color='secondary' className='font-bold text-[10px]' />
+                    </Stack>
+                  </TableCell>
+                  <TableCell className='text-right font-black text-primary'>
+                    ${pkg.cost.toFixed(2)}
+                    <Typography variant='caption' className='block text-slate-400 font-normal'>USD</Typography>
+                  </TableCell>
+                  <TableCell className='text-center'>
+                    <Chip 
+                      label={pkg.status === 'Active' ? 'Đang bán' : 'Tạm dừng'} 
+                      size='small' 
+                      color={pkg.status === 'Active' ? 'success' : 'default'} 
+                      variant='tonal'
+                      className='font-black'
+                    />
+                  </TableCell>
+                  <TableCell className='text-right'>
+                    <IconButton size='small'><i className='tabler-eye text-[18px]' /></IconButton>
+                    <IconButton size='small'><i className='tabler-settings text-[18px]' /></IconButton>
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </TableContainer>
+      </Card>
     </>
   )
 }
+
+// Bổ sung các import còn thiếu
+import Table from '@mui/material/Table'
+import TableBody from '@mui/material/TableBody'
+import TableCell from '@mui/material/TableCell'
+import TableContainer from '@mui/material/TableContainer'
+import TableHead from '@mui/material/TableHead'
+import TableRow from '@mui/material/TableRow'
+import IconButton from '@mui/material/IconButton'
 
 export default MappingTable

@@ -1,9 +1,9 @@
 'use client'
 
-import AgentPriceLists from '@/views/downstream/price-lists/AgentPriceLists'
+import PriceListManager from '@/views/downstream/price-lists/PriceListManager'
 
 const PriceListsPage = () => {
-  return <AgentPriceLists />
+  return <PriceListManager />
 }
 
 export default PriceListsPage

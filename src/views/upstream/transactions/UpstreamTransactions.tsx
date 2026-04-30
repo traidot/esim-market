@@ -1,0 +1,171 @@
+'use client'
+
+import { useState } from 'react'
+import Card from '@mui/material/Card'
+import CardContent from '@mui/material/CardContent'
+import Typography from '@mui/material/Typography'
+import Box from '@mui/material/Box'
+import Button from '@mui/material/Button'
+import Chip from '@mui/material/Chip'
+import Table from '@mui/material/Table'
+import TableBody from '@mui/material/TableBody'
+import TableCell from '@mui/material/TableCell'
+import TableContainer from '@mui/material/TableContainer'
+import TableHead from '@mui/material/TableHead'
+import TableRow from '@mui/material/TableRow'
+import IconButton from '@mui/material/IconButton'
+import Stack from '@mui/material/Stack'
+import TextField from '@mui/material/TextField'
+import InputAdornment from '@mui/material/InputAdornment'
+import Avatar from '@mui/material/Avatar'
+import Grid2 from '@mui/material/Grid2'
+import Select from '@mui/material/Select'
+import MenuItem from '@mui/material/MenuItem'
+
+import PageHeader from '@/components/layout/shared/PageHeader'
+
+const UpstreamTransactions = () => {
+  const transactions = [
+    { id: 'TX-9821', supplier: 'Airalo', action: 'Mua eSIM', package: 'Japan 10GB', amount: '$8.50', status: 'Success', date: '28/04/2026 01:15' },
+    { id: 'TX-9820', supplier: 'Nomad', action: 'Gia hạn gói', package: 'USA 20GB', amount: '$22.00', status: 'Success', date: '28/04/2026 00:45' },
+    { id: 'TX-9819', supplier: 'Airalo', action: 'Mua eSIM', package: 'USA 5GB', amount: '$12.00', status: 'Failed', date: '27/04/2026 23:30' },
+    { id: 'TX-9818', supplier: 'KeepGo', action: 'Check Status', package: 'Global 1GB', amount: '$0.00', status: 'Success', date: '27/04/2026 22:10' },
+    { id: 'TX-9817', supplier: 'Nomad', action: 'Mua eSIM', package: 'UK Pro', amount: '$45.00', status: 'Success', date: '27/04/2026 21:55' },
+  ]
+
+  return (
+    <>
+      <PageHeader
+        title="Lịch sử giao dịch Upstream"
+        description="Nhật ký chi tiết các lệnh gọi API, mua hàng và biến động số dư với Nhà cung cấp"
+        breadcrumbs={[{ label: 'Trang chủ', href: '/' }, { label: 'Nguồn cung' }, { label: 'Lịch sử giao dịch' }]}
+        className='mbe-6'
+      />
+
+      <Card className='border-none shadow-sm mbe-6'>
+        <CardContent>
+          <Grid2 container spacing={4} className='items-end'>
+            <Grid2 size={{ xs: 12, md: 3 }}>
+              <Typography variant='subtitle2' className='font-black mbe-2 uppercase text-[11px] text-slate-500'>Nhà cung cấp</Typography>
+              <Select fullWidth size='small' defaultValue='all'>
+                <MenuItem value='all'>Tất cả NCC</MenuItem>
+                <MenuItem value='airalo'>Airalo Global</MenuItem>
+                <MenuItem value='nomad'>Nomad Global</MenuItem>
+                <MenuItem value='keepgo'>KeepGo</MenuItem>
+              </Select>
+            </Grid2>
+            <Grid2 size={{ xs: 12, md: 4 }}>
+              <Typography variant='subtitle2' className='font-black mbe-2 uppercase text-[11px] text-slate-500'>Khoảng thời gian (From - To)</Typography>
+              <Stack direction='row' spacing={2}>
+                <TextField fullWidth size='small' type='date' defaultValue='2026-04-01' />
+                <TextField fullWidth size='small' type='date' defaultValue='2026-04-28' />
+              </Stack>
+            </Grid2>
+            <Grid2 size={{ xs: 12, md: 2 }}>
+              <Typography variant='subtitle2' className='font-black mbe-2 uppercase text-[11px] text-slate-500'>Vùng / Quốc gia</Typography>
+              <Select fullWidth size='small' defaultValue='all'>
+                <MenuItem value='all'>Toàn cầu</MenuItem>
+                <MenuItem value='asia'>Châu Á</MenuItem>
+                <MenuItem value='europe'>Châu Âu</MenuItem>
+                <MenuItem value='america'>Châu Mỹ</MenuItem>
+              </Select>
+            </Grid2>
+            <Grid2 size={{ xs: 12, md: 2 }}>
+              <Typography variant='subtitle2' className='font-black mbe-2 uppercase text-[11px] text-slate-500'>Trạng thái</Typography>
+              <Select fullWidth size='small' defaultValue='all'>
+                <MenuItem value='all'>Tất cả trạng thái</MenuItem>
+                <MenuItem value='success'>Thành công (Success)</MenuItem>
+                <MenuItem value='failed'>Thất bại (Failed)</MenuItem>
+              </Select>
+            </Grid2>
+            <Grid2 size={{ xs: 12, md: 1 }}>
+              <Button variant='tonal' color='primary' fullWidth className='min-bs-[38px]'>
+                <i className='tabler-search' />
+              </Button>
+            </Grid2>
+          </Grid2>
+        </CardContent>
+      </Card>
+
+      <Card className='border-none shadow-sm overflow-hidden'>
+        <Box className='p-5 border-be bg-slate-50/50 flex justify-between items-center gap-4 flex-wrap'>
+          <Stack direction='row' spacing={4}>
+            <Box>
+              <Typography variant='caption' className='font-black uppercase text-slate-400'>Tổng chi (Tháng này)</Typography>
+              <Typography variant='h5' className='font-black text-primary'>$2,450.80</Typography>
+            </Box>
+            <Box className='border-is ps-4'>
+              <Typography variant='caption' className='font-black uppercase text-slate-400'>Số lệnh thất bại</Typography>
+              <Typography variant='h5' className='font-black text-error'>12</Typography>
+            </Box>
+          </Stack>
+          <TextField 
+            size='small' 
+            placeholder='Tìm theo mã giao dịch...' 
+            className='min-is-[300px] bg-white'
+            InputProps={{
+              startAdornment: <InputAdornment position='start'><i className='tabler-search' /></InputAdornment>
+            }}
+          />
+        </Box>
+        <TableContainer>
+          <Table>
+            <TableHead className='bg-slate-50'>
+              <TableRow>
+                <TableCell className='font-black uppercase text-[11px]'>Mã GD</TableCell>
+                <TableCell className='font-black uppercase text-[11px]'>Nhà cung cấp</TableCell>
+                <TableCell className='font-black uppercase text-[11px]'>Hành động</TableCell>
+                <TableCell className='font-black uppercase text-[11px]'>Sản phẩm / Chi tiết</TableCell>
+                <TableCell className='font-black uppercase text-[11px] text-right'>Số tiền</TableCell>
+                <TableCell className='font-black uppercase text-[11px] text-center'>Trạng thái</TableCell>
+                <TableCell className='font-black uppercase text-[11px] text-right'>Thời gian</TableCell>
+                <TableCell className='font-black uppercase text-[11px] text-center'>Log</TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {transactions.map((tx) => (
+                <TableRow key={tx.id} hover>
+                  <TableCell className='font-mono text-xs font-bold text-slate-600'>{tx.id}</TableCell>
+                  <TableCell>
+                    <Box className='flex items-center gap-2'>
+                      <Avatar variant='rounded' className='w-7 h-7 bg-primary/10 text-primary text-[10px] font-black'>
+                        {tx.supplier[0]}
+                      </Avatar>
+                      <Typography variant='body2' className='font-bold'>{tx.supplier}</Typography>
+                    </Box>
+                  </TableCell>
+                  <TableCell>
+                    <Typography variant='body2' className='font-black'>{tx.action}</Typography>
+                  </TableCell>
+                  <TableCell>
+                    <Typography variant='body2' className='text-slate-500'>{tx.package}</Typography>
+                  </TableCell>
+                  <TableCell className='text-right font-black text-primary'>
+                    {tx.amount}
+                  </TableCell>
+                  <TableCell className='text-center'>
+                    <Chip 
+                      label={tx.status} 
+                      size='small' 
+                      color={tx.status === 'Success' ? 'success' : 'error'} 
+                      variant='tonal'
+                      className='font-black'
+                    />
+                  </TableCell>
+                  <TableCell className='text-right'>
+                    <Typography variant='caption' className='font-bold text-slate-500'>{tx.date}</Typography>
+                  </TableCell>
+                  <TableCell className='text-center'>
+                    <IconButton size='small'><i className='tabler-code text-[18px]' /></IconButton>
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </TableContainer>
+      </Card>
+    </>
+  )
+}
+
+export default UpstreamTransactions

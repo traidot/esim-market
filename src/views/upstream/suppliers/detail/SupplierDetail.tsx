@@ -8,18 +8,18 @@ import CardContent from '@mui/material/CardContent'
 import Typography from '@mui/material/Typography'
 import Box from '@mui/material/Box'
 import Button from '@mui/material/Button'
-import TextField from '@mui/material/TextField'
-import Switch from '@mui/material/Switch'
-import FormControlLabel from '@mui/material/FormControlLabel'
 import Chip from '@mui/material/Chip'
 import Stack from '@mui/material/Stack'
 import Divider from '@mui/material/Divider'
 import Avatar from '@mui/material/Avatar'
+import LinearProgress from '@mui/material/LinearProgress'
+import Alert from '@mui/material/Alert'
+import AlertTitle from '@mui/material/AlertTitle'
 
 import PageHeader from '@/components/layout/shared/PageHeader'
 
 const SupplierDetail = ({ id }: { id: string }) => {
-  const [active, setActive] = useState(true)
+  const [isPaymentOpen, setIsPaymentOpen] = useState(false)
 
   // Giả lập dữ liệu cho demo
   const supplier = {
@@ -28,185 +28,136 @@ const SupplierDetail = ({ id }: { id: string }) => {
     logo: id.toUpperCase() === 'AIRALO' ? 'A' : 'N',
     color: id.toUpperCase() === 'AIRALO' ? 'primary.main' : 'info.main',
     status: 'Connected',
-    endpoint: 'https://partners.airalo.com/api/v2',
-    apiKey: 'sk_live_51Mxxxxxxxxxxxxxxxxxx',
-    secret: '••••••••••••••••••••••••',
-    webhook: 'https://api.esim.market/hooks/airalo'
+    accruedCost: 3150.20,
+    creditLimit: 10000,
+    ordersThisMonth: 850,
+    successRate: 99.2
   }
+
+  const quotaPercent = (supplier.accruedCost / supplier.creditLimit) * 100
+
+  const alerts = [
+    { type: 'warning', title: 'Giá vốn thay đổi', msg: 'Gói Japan 10GB vừa tăng giá từ $8.00 lên $8.50. Vui lòng cập nhật giá bán Marketplace.' },
+    { type: 'error', title: 'Sản phẩm ngừng cung cấp', msg: 'Gói Europe Discover đã bị NCC gỡ bỏ. Hệ thống đã tự động ẩn gói này trên Chợ.' }
+  ]
+
+  const quickLinks = [
+    { title: 'Danh sách gói', desc: 'Quản lý kho hàng eSIM', icon: 'tabler-packages', href: `/upstream/suppliers/${id}/packages`, color: 'primary' },
+    { title: 'Cấu hình API', desc: 'Thông số kỹ thuật & Keys', icon: 'tabler-settings-automation', href: `/upstream/suppliers/${id}/config`, color: 'info' },
+    { title: 'Đối soát Giao dịch', desc: 'Nhật ký mua hàng & nợ', icon: 'tabler-receipt-2', href: `/upstream/transactions?supplier=${id}`, color: 'success' }
+  ]
 
   return (
     <>
       <PageHeader
-        title={`Cấu hình: ${supplier.name}`}
-        description="Quản lý kết nối API, bảo mật và thông số đồng bộ dữ liệu"
-        breadcrumbs={[
-          { label: 'Trang chủ', href: '/' },
-          { label: 'Nguồn cung', href: '/upstream/suppliers' },
-          { label: 'Chi tiết' }
-        ]}
+        title={`Dashboard: ${supplier.name}`}
+        description="Quản lý hiệu năng, công nợ và cảnh báo hệ thống Upstream"
+        breadcrumbs={[{ label: 'Trang chủ', href: '/' }, { label: 'Nguồn cung', href: '/upstream/suppliers' }, { label: supplier.name }]}
         actions={
           <Stack direction='row' spacing={2}>
-            <Button variant='tonal' color='secondary' component={Link} href={`/upstream/suppliers/${id}/mapping`}>
-              Cấu hình Mapping
-            </Button>
-            <Button variant='tonal' color='error'>Gỡ kết nối</Button>
-            <Button variant='contained' startIcon={<i className='tabler-device-floppy' />}>Lưu thay đổi</Button>
+            <Button variant='tonal' color='success' startIcon={<i className='tabler-credit-card' />}>Thanh toán Nợ</Button>
+            <Button variant='contained' startIcon={<i className='tabler-refresh' />}>Đồng bộ API</Button>
           </Stack>
         }
         className='mbe-6'
       />
 
       <Grid2 container spacing={6}>
-        {/* Thông tin chung & Trạng thái */}
+        {/* STATS & QUOTA */}
         <Grid2 size={{ xs: 12, md: 4 }}>
-          <Stack spacing={6}>
-            <Card className='border-none shadow-sm'>
-              <CardContent className='flex flex-col items-center p-8'>
-                <Avatar 
-                  sx={{ width: 80, height: 80, bgcolor: supplier.color, fontSize: '2rem', fontWeight: 'bold' }}
-                  className='mbe-4'
-                >
-                  {supplier.logo}
-                </Avatar>
-                <Typography variant='h5' className='font-black'>{supplier.name}</Typography>
-                <Typography variant='body2' className='text-slate-500 mbe-4'>ID: {supplier.id}</Typography>
-                <Chip 
-                  label={supplier.status} 
-                  color='success' 
-                  variant='tonal' 
-                  size='small' 
-                  className='font-bold'
-                  icon={<i className='tabler-circle-check-filled' />}
-                />
-              </CardContent>
-              <Divider />
-              <CardContent>
-                <Stack spacing={4}>
-                  <FormControlLabel
-                    control={<Switch checked={active} onChange={(e) => setActive(e.target.checked)} />}
-                    label="Kích hoạt Nhà cung cấp"
-                  />
-                  <Box className='flex justify-between items-center'>
-                    <Typography variant='body2'>Đồng bộ tự động</Typography>
-                    <Switch defaultChecked />
-                  </Box>
-                </Stack>
-              </CardContent>
-            </Card>
+          <Card className='border-none shadow-sm bg-primary/5 border-primary/20 h-full'>
+            <CardContent className='p-8'>
+              <Typography variant='subtitle2' className='font-black uppercase mbe-2 text-primary'>Công nợ hiện tại</Typography>
+              <Typography variant='h2' className='font-black mbe-4 text-slate-900'>${supplier.accruedCost.toLocaleString()}</Typography>
+              
+              <Box className='mbe-2 flex justify-between'>
+                <Typography variant='caption' className='font-bold text-slate-500'>Sử dụng hạn mức</Typography>
+                <Typography variant='caption' className='font-black'>{quotaPercent.toFixed(1)}%</Typography>
+              </Box>
+              <LinearProgress 
+                variant='determinate' 
+                value={quotaPercent} 
+                color={quotaPercent > 80 ? 'error' : 'primary'} 
+                className='bs-2 rounded-full mbe-2' 
+              />
+              <Typography variant='caption' className='text-slate-400'>Hạn mức tối đa: ${supplier.creditLimit.toLocaleString()}</Typography>
+            </CardContent>
+          </Card>
+        </Grid2>
 
-            <Card className='border-none shadow-sm bg-primary/5 border-primary/20'>
-              <CardContent>
-                <Typography variant='h6' className='font-black mbe-2'>Sức khỏe kết nối</Typography>
-                <Typography variant='body2' className='mbe-4'>Kết nối ổn định. Lần cuối kiểm tra: 5 phút trước.</Typography>
-                <Button fullWidth variant='contained' size='small' startIcon={<i className='tabler-bolt' />}>
-                  Test Connection Now
-                </Button>
-              </CardContent>
-            </Card>
+        <Grid2 size={{ xs: 12, md: 4 }}>
+          <Card className='border-none shadow-sm h-full'>
+            <CardContent className='p-8'>
+              <Box className='flex justify-between items-center mbe-4'>
+                <Box>
+                  <Typography variant='subtitle2' className='font-black uppercase text-slate-500'>Sản phẩm đang bán</Typography>
+                  <Typography variant='h3' className='font-black'>450</Typography>
+                </Box>
+                <Avatar variant='rounded' className='bg-info/10 text-info w-12 h-12'>
+                  <i className='tabler-packages text-2xl' />
+                </Avatar>
+              </Box>
+              <Button fullWidth variant='outlined' size='small' component={Link} href={`/upstream/suppliers/${id}/packages`}>Quản lý sản phẩm</Button>
+            </CardContent>
+          </Card>
+        </Grid2>
+
+        <Grid2 size={{ xs: 12, md: 4 }}>
+          <Card className='border-none shadow-sm h-full'>
+            <CardContent className='p-8'>
+              <Typography variant='subtitle2' className='font-black uppercase mbe-4 text-slate-500'>API Health</Typography>
+              <Box className='flex items-center gap-4 mbe-2'>
+                <Typography variant='h3' className='font-black text-success'>{supplier.successRate}%</Typography>
+                <Box className='flex-grow'>
+                  <LinearProgress variant='determinate' value={supplier.successRate} color='success' className='bs-2 rounded-full' />
+                </Box>
+              </Box>
+              <Typography variant='caption' className='text-slate-400 font-bold italic'>Ổn định (Latency: 120ms)</Typography>
+            </CardContent>
+          </Card>
+        </Grid2>
+
+        {/* SMART ALERTS */}
+        <Grid2 size={{ xs: 12, md: 8 }}>
+          <Typography variant='h5' className='font-black mbe-4 flex items-center gap-2'>
+            <i className='tabler-bell-ringing text-warning' /> Cảnh báo Thông minh
+          </Typography>
+          <Stack spacing={4}>
+            {alerts.map((alert, i) => (
+              <Alert key={i} severity={alert.type as any} variant='tonal' className='border-none shadow-sm'>
+                <AlertTitle className='font-black'>{alert.title}</AlertTitle>
+                {alert.msg}
+                <Box className='mt-2'>
+                  <Button size='small' color='inherit' className='font-black'>Xử lý ngay</Button>
+                </Box>
+              </Alert>
+            ))}
           </Stack>
         </Grid2>
 
-        {/* Cấu hình API */}
-        <Grid2 size={{ xs: 12, md: 8 }}>
-          <Card className='border-none shadow-sm'>
-            <CardContent>
-              <Typography variant='h6' className='font-black mbe-6 flex items-center gap-2'>
-                <i className='tabler-api text-primary' /> Thông số API (Production)
-              </Typography>
-              
-              <Grid2 container spacing={6}>
-                <Grid2 size={{ xs: 12 }}>
-                  <TextField 
-                    fullWidth 
-                    label="API Endpoint URL" 
-                    defaultValue={supplier.endpoint}
-                    placeholder="https://api.provider.com/v1"
-                  />
-                </Grid2>
-                <Grid2 size={{ xs: 12, md: 6 }}>
-                  <TextField 
-                    fullWidth 
-                    label="API Key / Client ID" 
-                    defaultValue={supplier.apiKey}
-                    type="password"
-                  />
-                </Grid2>
-                <Grid2 size={{ xs: 12, md: 6 }}>
-                  <TextField 
-                    fullWidth 
-                    label="API Secret" 
-                    defaultValue={supplier.secret}
-                    type="password"
-                  />
-                </Grid2>
-                <Grid2 size={{ xs: 12 }}>
-                  <TextField 
-                    fullWidth 
-                    label="Webhook URL (Dành cho thông báo eSIM)" 
-                    defaultValue={supplier.webhook}
-                    helperText="URL này sẽ nhận thông báo khi trạng thái eSIM thay đổi từ phía nhà cung cấp."
-                  />
-                </Grid2>
-              </Grid2>
-
-              <Divider className='my-8' />
-
-              <Typography variant='h6' className='font-black mbe-6 flex items-center gap-2'>
-                <i className='tabler-shield-lock text-success' /> Bảo mật & Kết nối nâng cao
-              </Typography>
-              
-              <Grid2 container spacing={6}>
-                <Grid2 size={{ xs: 12 }}>
-                  <TextField 
-                    fullWidth 
-                    label="Whitelist IP (Dành cho Outbound)" 
-                    placeholder="1.2.3.4, 5.6.7.8"
-                    helperText="Danh sách IP của sàn được phép gọi đến Supplier (ngăn chặn rò rỉ Key)."
-                  />
-                </Grid2>
-                <Grid2 size={{ xs: 12, md: 6 }}>
-                  <TextField 
-                    fullWidth 
-                    multiline
-                    rows={3}
-                    label="Custom Headers (JSON format)" 
-                    placeholder='{ "X-Custom-Auth": "value" }'
-                  />
-                </Grid2>
-                <Grid2 size={{ xs: 12, md: 6 }}>
-                  <Box className='p-4 bg-slate-50 rounded-lg border border-dashed border-slate-200 h-full'>
-                    <Typography variant='caption' className='font-black uppercase mbe-2 block'>Proxy Configuration</Typography>
-                    <Stack spacing={2}>
-                      <TextField size='small' fullWidth label="Proxy Host/Port" placeholder="proxy.example.com:8080" />
-                      <TextField size='small' fullWidth label="Proxy Auth (Username:Pass)" type="password" />
-                    </Stack>
+        {/* QUICK NAVIGATION */}
+        <Grid2 size={{ xs: 12, md: 4 }}>
+          <Typography variant='h5' className='font-black mbe-4'>Điều hướng nhanh</Typography>
+          <Stack spacing={4}>
+            {quickLinks.map((link) => (
+              <Card 
+                key={link.title} 
+                component={Link} 
+                href={link.href}
+                className='border-none shadow-sm hover:shadow-md transition-all border-2 border-transparent hover:border-primary/20'
+              >
+                <CardContent className='flex items-center gap-4 p-4'>
+                  <Avatar variant='rounded' sx={{ bgcolor: `${link.color}.main`, width: 44, height: 44 }}>
+                    <i className={`${link.icon} text-xl`} />
+                  </Avatar>
+                  <Box>
+                    <Typography variant='body1' className='font-black'>{link.title}</Typography>
+                    <Typography variant='caption' className='text-slate-500'>{link.desc}</Typography>
                   </Box>
-                </Grid2>
-              </Grid2>
-
-              <Divider className='my-8' />
-
-              <Typography variant='h6' className='font-black mbe-6'>Tham số Đồng bộ (Sync Settings)</Typography>
-              <Grid2 container spacing={6}>
-                <Grid2 size={{ xs: 12, md: 6 }}>
-                  <TextField 
-                    fullWidth 
-                    label="Tần suất đồng bộ giá (phút)" 
-                    defaultValue="60"
-                    type="number"
-                  />
-                </Grid2>
-                <Grid2 size={{ xs: 12, md: 6 }}>
-                  <TextField 
-                    fullWidth 
-                    label="Tần suất kiểm tra kho (phút)" 
-                    defaultValue="15"
-                    type="number"
-                  />
-                </Grid2>
-              </Grid2>
-            </CardContent>
-          </Card>
+                </CardContent>
+              </Card>
+            ))}
+          </Stack>
         </Grid2>
       </Grid2>
     </>

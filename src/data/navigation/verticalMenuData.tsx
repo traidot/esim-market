@@ -29,10 +29,9 @@ const verticalMenuData = (dictionary: Awaited<ReturnType<typeof getDictionary>>)
       icon: 'tabler-cloud-download',
       roles: ['admin'],
       children: [
-        { label: 'Nhà cung cấp Toàn cầu', icon: 'tabler-world', href: getUrl('/upstream/suppliers') },
-        { label: 'Mapping Sản phẩm', icon: 'tabler-link', href: getUrl('/upstream/supplier-products') },
-        { label: 'Báo giá Supplier', icon: 'tabler-file-dollar', href: getUrl('/upstream/quotes') },
-        { label: 'Nhật ký Đồng bộ', icon: 'tabler-activity', href: getUrl('/upstream/sync-logs') }
+        { label: 'Nhà cung cấp', icon: 'tabler-world', href: getUrl('/upstream/suppliers'), exactMatch: false },
+        { label: 'Danh sách gói', icon: 'tabler-link', href: getUrl('/upstream/supplier-products') },
+        { label: 'Lịch sử giao dịch', icon: 'tabler-receipt-2', href: getUrl('/upstream/transactions') }
       ]
     },
     {
@@ -40,9 +39,10 @@ const verticalMenuData = (dictionary: Awaited<ReturnType<typeof getDictionary>>)
       icon: 'tabler-users-group',
       roles: ['admin'],
       children: [
-        { label: 'Đại lý & Đối tác', icon: 'tabler-users', href: getUrl('/downstream/agents') },
-        { label: 'Nhóm Cấp bậc (Tiers)', icon: 'tabler-hierarchy-2', href: getUrl('/downstream/tiers') },
+        { label: 'Đại lý & Đối tác', icon: 'tabler-users', href: getUrl('/downstream/agents'), exactMatch: false },
+        { label: 'Nhóm Cấp bậc (Tiers)', icon: 'tabler-hierarchy-2', href: getUrl('/downstream/tiers'), exactMatch: false },
         { label: 'Quản lý Bảng giá', icon: 'tabler-file-spreadsheet', href: getUrl('/downstream/price-lists') },
+        { label: 'Giao dịch (API Logs)', icon: 'tabler-api', href: getUrl('/downstream/transactions') },
         { label: 'Cổng API (Gateway)', icon: 'tabler-key', href: getUrl('/downstream/api-keys') }
       ]
     },
@@ -51,7 +51,8 @@ const verticalMenuData = (dictionary: Awaited<ReturnType<typeof getDictionary>>)
       icon: 'tabler-wallet',
       roles: ['admin'],
       children: [
-        { label: 'Ví Đại lý', icon: 'tabler-cash', href: getUrl('/finance/wallets') },
+        { label: 'Phải thu (Đại lý)', icon: 'tabler-file-invoice', href: getUrl('/finance/agent-debts') },
+        { label: 'Phải trả (NCC)', icon: 'tabler-file-analytics', href: getUrl('/finance/supplier-debts') },
         { label: 'Lịch sử Giao dịch', icon: 'tabler-receipt-2', href: getUrl('/finance/transactions') },
         { label: 'Đối soát (Reconciliation)', icon: 'tabler-file-analytics', href: getUrl('/finance/reconciliation') }
       ]
@@ -80,7 +81,7 @@ const verticalMenuData = (dictionary: Awaited<ReturnType<typeof getDictionary>>)
       roles: ['agent'],
       children: [
         { label: 'Cửa hàng eSIM', icon: 'tabler-shopping-bag', href: getUrl('/marketplace/products') },
-        { label: 'Ví của tôi', icon: 'tabler-wallet', href: getUrl('/finance/my-wallet') },
+        { label: 'Công nợ của tôi', icon: 'tabler-file-invoice', href: getUrl('/finance/my-debt') },
         { label: 'Đơn hàng của tôi', icon: 'tabler-list-details', href: getUrl('/orders/my-orders') },
         { label: 'API & Webhooks', icon: 'tabler-api', href: getUrl('/system/api') }
       ]

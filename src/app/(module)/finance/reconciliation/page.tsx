@@ -1,9 +1,9 @@
 'use client'
 
-import ReconciliationDashboard from '@/views/finance/reconciliation/ReconciliationDashboard'
+import ReconciliationList from '@/views/finance/reconciliation/ReconciliationList'
 
 const ReconciliationPage = () => {
-  return <ReconciliationDashboard />
+  return <ReconciliationList />
 }
 
 export default ReconciliationPage

@@ -1,5 +1,6 @@
 'use client'
 
+import Link from 'next/link'
 import Grid2 from '@mui/material/Grid2'
 import Card from '@mui/material/Card'
 import CardContent from '@mui/material/CardContent'
@@ -73,8 +74,7 @@ const TierManager = () => {
                       <Typography variant='body2' className='font-black'>{t.minBalance}</Typography>
                     </Box>
                   </Stack>
-                  
-                  <Button fullWidth variant='tonal' color={t.color as any} className='mt-8'>Chỉnh sửa quyền lợi</Button>
+                  <Button fullWidth variant='tonal' color={t.color as any} className='mt-8' component={Link} href={`/downstream/tiers/${t.name.toLowerCase()}`}>Chỉnh sửa quyền lợi</Button>
                 </Box>
               </CardContent>
             </Card>
