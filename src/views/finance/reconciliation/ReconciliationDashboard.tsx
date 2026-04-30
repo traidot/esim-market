@@ -27,7 +27,7 @@ const ReconciliationDashboard = () => {
 
       <Grid2 container spacing={6}>
         <Grid2 size={{ xs: 12 }}>
-          <Alert severity="warning" variant="tonal" className='mbe-6'>
+          <Alert severity="warning" variant="standard" className='mbe-6'>
             <AlertTitle className='font-black'>Phát hiện sai lệch!</AlertTitle>
             Có 2 giao dịch từ **Airalo** không khớp với đơn hàng trên hệ thống. Vui lòng kiểm tra lại.
           </Alert>

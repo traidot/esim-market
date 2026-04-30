@@ -32,8 +32,8 @@ const MyWalletView = () => {
               </Box>
               <Typography variant='h3' className='font-black text-white'>$1,240.50</Typography>
               <Box className='flex gap-2 mt-8'>
-                <Button fullWidth variant='contained' color='white' className='text-primary font-black' startIcon={<i className='tabler-plus' />}>Nạp tiền</Button>
-                <Button fullWidth variant='outlined' color='white' className='font-black' startIcon={<i className='tabler-file-download' />}>Sao kê</Button>
+                <Button fullWidth variant='contained' color='inherit' className='bg-white text-primary font-black' startIcon={<i className='tabler-plus' />}>Nạp tiền</Button>
+                <Button fullWidth variant='outlined' color='inherit' className='border-white text-white font-black' startIcon={<i className='tabler-file-download' />}>Sao kê</Button>
               </Box>
             </CardContent>
           </Card>

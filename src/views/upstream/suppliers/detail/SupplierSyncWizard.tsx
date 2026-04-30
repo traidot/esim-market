@@ -153,7 +153,7 @@ const SupplierSyncWizard = () => {
         {activeStep === 2 && (
           <Grid2 size={{ xs: 12 }}>
             <Stack spacing={6}>
-              <Alert severity="warning" variant='tonal'>
+              <Alert severity="warning" variant='standard'>
                 <AlertTitle className='font-black text-lg'>Phát hiện gói cước cần xử lý!</AlertTitle>
                 Dữ liệu từ API và File đã được gộp lại. Vui lòng kiểm tra các dòng màu đỏ/vàng trước khi duyệt.
               </Alert>
@@ -268,7 +268,7 @@ const SupplierSyncWizard = () => {
                       </TableCell>
                       <TableCell>
                         <Box className='flex items-center gap-2'>
-                          <Avatar size={24} className='text-[10px] bg-slate-200'>DA</Avatar>
+                          <Avatar sx={{ width: 24, height: 24 }} className='text-[10px] bg-slate-200'>DA</Avatar>
                           <Typography variant='caption' className='font-bold'>{row.user}</Typography>
                         </Box>
                       </TableCell>

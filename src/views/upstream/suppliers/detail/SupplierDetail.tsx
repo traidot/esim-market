@@ -124,7 +124,7 @@ const SupplierDetail = ({ id }: { id: string }) => {
           </Typography>
           <Stack spacing={4}>
             {alerts.map((alert, i) => (
-              <Alert key={i} severity={alert.type as any} variant='tonal' className='border-none shadow-sm'>
+              <Alert key={i} severity={alert.type as any} variant='standard' className='border-none shadow-sm'>
                 <AlertTitle className='font-black'>{alert.title}</AlertTitle>
                 {alert.msg}
                 <Box className='mt-2'>

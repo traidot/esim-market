@@ -1,4 +1,4 @@
-import { PrismaClient } from '@prisma/client'
+import { PrismaClient, Currency } from '@prisma/client'
 
 const prisma = new PrismaClient()
 
@@ -6,7 +6,7 @@ export class AgentService {
   /**
    * Check if agent has enough balance for a purchase
    */
-  static async hasSufficientBalance(agentId: string, amount: number, currency: string = 'USD'): Promise<boolean> {
+  static async hasSufficientBalance(agentId: string, amount: number, currency: Currency = 'USD'): Promise<boolean> {
     const wallet = await prisma.wallet.findUnique({
       where: {
         agentId_currency: { agentId, currency }
@@ -25,7 +25,7 @@ export class AgentService {
   /**
    * Deduct balance from agent wallet
    */
-  static async processPurchase(agentId: string, amount: number, orderId: string, currency: string = 'USD') {
+  static async processPurchase(agentId: string, amount: number, orderId: string, currency: Currency = 'USD') {
     return prisma.$transaction(async (tx) => {
       const wallet = await tx.wallet.update({
         where: {
@@ -53,7 +53,7 @@ export class AgentService {
   /**
    * Top up agent wallet
    */
-  static async topUp(agentId: string, amount: number, referenceId: string, currency: string = 'USD') {
+  static async topUp(agentId: string, amount: number, referenceId: string, currency: Currency = 'USD') {
     return prisma.$transaction(async (tx) => {
       const wallet = await tx.wallet.upsert({
         where: {

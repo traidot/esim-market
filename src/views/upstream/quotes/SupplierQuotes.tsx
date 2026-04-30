@@ -140,7 +140,7 @@ const SupplierQuotes = () => {
                     <Box className='flex justify-between items-center mbe-6'>
                       <Box>
                         <Typography variant='h6' className='font-black'>Bảng giá hiện hành của {currentSupplierInfo?.name}</Typography>
-                        <Typography variant='caption text-slate-500'>Hiển thị tất cả eSIM được báo giá từ nhà cung cấp này.</Typography>
+                        <Typography variant='caption' className='text-slate-500'>Hiển thị tất cả eSIM được báo giá từ nhà cung cấp này.</Typography>
                       </Box>
                       <Stack direction='row' spacing={2}>
                         <TextField 
