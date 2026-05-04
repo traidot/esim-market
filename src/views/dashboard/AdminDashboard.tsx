@@ -12,104 +12,34 @@ import Stack from '@mui/material/Stack'
 import Link from 'next/link'
 
 import PageHeader from '@/components/layout/shared/PageHeader'
-import CardStatsSquare from '@/components/card-statistics/CardStatsSquare'
 import CardStatHorizontal from '@/components/card-statistics/Horizontal'
 
 const AdminDashboard = () => {
-  const stats = {
-    totalSales: '$128,450',
-    activeAgents: '124',
-    activeSuppliers: '12',
-    orderSuccessRate: '99.8%',
-    pendingTickets: '3'
-  }
-
   return (
     <>
       <PageHeader
-        title="Trung tâm Điều hành 3M"
-        description="Kiểm soát toàn diện thanh khoản thị trường, sức khỏe nhà cung cấp và các tầng phân phối đại lý"
-        breadcrumbs={[{ label: 'Trang chủ', href: '/' }, { label: 'Quản trị' }, { label: 'Trung tâm điều hành' }]}
+        title="Hệ thống Quản trị & Điều hành eSIM (3M Admin)"
+        description="Nền tảng tập trung giám sát hạ tầng kết nối, tối ưu hóa chuỗi cung ứng kỹ thuật số và kiểm soát vận hành đại lý."
+        breadcrumbs={[{ label: 'Trang chủ', href: '/' }, { label: 'Hệ thống 3M' }, { label: 'Dashboard Điều hành' }]}
         className='mbe-6'
       />
 
       <Grid2 container spacing={6}>
-        {/* Marketplace Pulse */}
-        <Grid2 size={{ xs: 12 }}>
-          <Card className='border-none shadow-sm'>
-            <CardContent>
-              <Box className='flex items-center justify-between mbe-6'>
-                <Typography variant='h5' className='font-black'>Nhịp đập Thị trường</Typography>
-                <Box className='flex gap-2'>
-                  <Button variant='tonal' size='small' color='primary' startIcon={<i className='tabler-refresh' />}>Đồng bộ Nguồn</Button>
-                  <Button variant='contained' size='small' color='primary' startIcon={<i className='tabler-adjustments-horizontal' />}>Công cụ Định giá</Button>
-                </Box>
-              </Box>
-              <Grid2 container spacing={6}>
-                <Grid2 size={{ xs: 12, sm: 6, md: 3 }}>
-                  <CardStatsSquare
-                    stats={stats.totalSales}
-                    statsTitle="Tổng GMV Sàn"
-                    avatarIcon='tabler-currency-dollar'
-                    avatarColor='primary'
-                    avatarVariant='rounded'
-                    avatarSize={56}
-                    avatarSkin='light'
-                  />
-                </Grid2>
-                <Grid2 size={{ xs: 12, sm: 6, md: 3 }}>
-                  <CardStatsSquare
-                    stats={stats.activeAgents}
-                    statsTitle="Đại lý Phân phối"
-                    avatarIcon='tabler-users'
-                    avatarColor='success'
-                    avatarVariant='rounded'
-                    avatarSize={56}
-                    avatarSkin='light'
-                  />
-                </Grid2>
-                <Grid2 size={{ xs: 12, sm: 6, md: 3 }}>
-                  <CardStatsSquare
-                    stats={stats.orderSuccessRate}
-                    statsTitle="Tỷ lệ Hoàn tất API"
-                    avatarIcon='tabler-activity'
-                    avatarColor='info'
-                    avatarVariant='rounded'
-                    avatarSize={56}
-                    avatarSkin='light'
-                  />
-                </Grid2>
-                <Grid2 size={{ xs: 12, sm: 6, md: 3 }}>
-                  <CardStatsSquare
-                    stats={stats.pendingTickets}
-                    statsTitle="Phiếu Hỗ trợ"
-                    avatarIcon='tabler-help-circle'
-                    avatarColor='warning'
-                    avatarVariant='rounded'
-                    avatarSize={56}
-                    avatarSkin='light'
-                  />
-                </Grid2>
-              </Grid2>
-            </CardContent>
-          </Card>
-        </Grid2>
-
         {/* Upstream Connectivity */}
         <Grid2 size={{ xs: 12, md: 7 }}>
           <Card className='h-full'>
             <CardHeader 
-              title='Sức khỏe Cổng Nguồn cung' 
-              subheader='Độ trễ thời gian thực và trạng thái tồn kho từ các đối tác toàn cầu'
-              action={<Button variant='text' size='small'>Chi tiết</Button>}
+              title='Giám sát Hạ tầng Kết nối (Upstream)' 
+              subheader='Chỉ số độ trễ và trạng thái đáp ứng dịch vụ từ các đối tác viễn thông toàn cầu.'
+              action={<Button variant='text' size='small'>Xem chi tiết</Button>}
             />
             <CardContent>
               <Stack spacing={4}>
                 {[
-                  { name: 'Airalo Global', latency: '124ms', status: 'Trực tuyến', color: 'success' },
-                  { name: 'Nomad API', latency: '450ms', status: 'Độ trễ cao', color: 'warning' },
-                  { name: 'Truphone', latency: '110ms', status: 'Trực tuyến', color: 'success' },
-                  { name: 'MobiMatter', latency: '0ms', status: 'Ngoại tuyến', color: 'error' }
+                  { name: 'Airalo Global', latency: '124ms', status: 'Hoạt động ổn định', color: 'success' },
+                  { name: 'Nomad API', latency: '450ms', status: 'Phản hồi chậm', color: 'warning' },
+                  { name: 'Truphone', latency: '110ms', status: 'Hoạt động ổn định', color: 'success' },
+                  { name: 'MobiMatter', latency: '0ms', status: 'Mất kết nối', color: 'error' }
                 ].map((s, i) => (
                   <Box key={i} className='flex items-center justify-between p-3 bg-slate-50 rounded-lg'>
                     <Box className='flex items-center gap-3'>
@@ -130,7 +60,7 @@ const AdminDashboard = () => {
         {/* Top Agents By Volume */}
         <Grid2 size={{ xs: 12, md: 5 }}>
           <Card className='h-full'>
-            <CardHeader title='Đại lý Xuất sắc' subheader='Hiệu suất dựa trên sản lượng' />
+            <CardHeader title='Phân tích Kênh Phân phối' subheader='Xếp hạng đối tác Downstream dựa trên sản lượng giao dịch.' />
             <CardContent>
               <Stack spacing={5}>
                 {[
@@ -156,8 +86,8 @@ const AdminDashboard = () => {
         {/* System Logs */}
         <Grid2 size={{ xs: 12 }}>
           <CardStatHorizontal
-            stats="Đồng bộ Đơn hàng Kỹ thuật số"
-            title="Sự kiện Webhook và API callback đang được xử lý với độ trễ 0ms"
+            stats="Cổng Xử lý Giao dịch & Webhook"
+            title="Tình trạng: Đồng bộ hóa thời gian thực (Real-time). Độ trễ xử lý trung bình: < 50ms."
             avatarIcon='tabler-cloud-check'
             avatarColor='info'
             avatarSkin='light'

@@ -1,6 +1,7 @@
 'use client'
 
 import React, { useState } from 'react'
+
 import Card from '@mui/material/Card'
 import CardContent from '@mui/material/CardContent'
 import Typography from '@mui/material/Typography'
@@ -21,56 +22,73 @@ import TableRow from '@mui/material/TableRow'
 import Avatar from '@mui/material/Avatar'
 import IconButton from '@mui/material/IconButton'
 import Tooltip from '@mui/material/Tooltip'
-import LinearProgress from '@mui/material/LinearProgress'
+import Dialog from '@mui/material/Dialog'
+import DialogTitle from '@mui/material/DialogTitle'
+import DialogContent from '@mui/material/DialogContent'
+import DialogActions from '@mui/material/DialogActions'
+import Divider from '@mui/material/Divider'
 
 import PageHeader from '@/components/layout/shared/PageHeader'
 
 const OrdersDashboard = () => {
+  const [openDetails, setOpenDetails] = useState(false)
+  const [selectedOrder, setSelectedOrder] = useState<any>(null)
+
+  const handleOpenDetails = (order: any) => {
+    setSelectedOrder(order)
+    setOpenDetails(true)
+  }
+
+  const handleCloseDetails = () => {
+    setOpenDetails(false)
+    setTimeout(() => setSelectedOrder(null), 300)
+  }
+
   // Mock Data focused on the "Digital Item" / eSIM Operations aspect
   const orders = [
-    { 
-      id: 'ORD-8241', 
+    {
+      id: 'ORD-8241',
       iccid: '898412345678901234',
-      agent: 'TravelConnect', 
-      product: 'Japan 10GB / 7 Days', 
+      agent: 'TravelConnect',
+      product: 'Japan 10GB / 7 Days',
       supplier: 'Airalo (KDDI)',
-      status: 'Active', 
+      status: 'Active',
       date: '28/04/2026',
       dataUsed: 4.5,
       dataTotal: 10,
       expiry: '05/05/2026'
     },
-    { 
-      id: 'ORD-8240', 
+    {
+      id: 'ORD-8240',
       iccid: '893200987654321098',
-      agent: 'Global eSIM Hub', 
-      product: 'Thailand 5GB / 5 Days', 
+      agent: 'Global eSIM Hub',
+      product: 'Thailand 5GB / 5 Days',
       supplier: 'Nomad (AIS)',
-      status: 'Not Installed', 
+      status: 'Not Installed',
       date: '28/04/2026',
       dataUsed: 0,
       dataTotal: 5,
       expiry: 'Bắt đầu từ lúc quét mã'
     },
-    { 
-      id: 'ORD-8239', 
+    {
+      id: 'ORD-8239',
       iccid: '898400001111222233',
-      agent: 'TravelConnect', 
-      product: 'Global 1GB / 30 Days', 
+      agent: 'TravelConnect',
+      product: 'Global 1GB / 30 Days',
       supplier: 'KeepGo',
-      status: 'Expired', 
+      status: 'Expired',
       date: '25/03/2026',
       dataUsed: 1,
       dataTotal: 1,
       expiry: '24/04/2026'
     },
-    { 
-      id: 'ORD-8238', 
+    {
+      id: 'ORD-8238',
       iccid: '898433334444555566',
-      agent: 'Nomad Partner', 
-      product: 'Vietnam 20GB / 15 Days', 
+      agent: 'Nomad Partner',
+      product: 'Vietnam 20GB / 15 Days',
       supplier: 'Airalo (Viettel)',
-      status: 'Revoked', 
+      status: 'Revoked',
       date: '27/04/2026',
       dataUsed: 0,
       dataTotal: 20,
@@ -101,8 +119,8 @@ const OrdersDashboard = () => {
   return (
     <>
       <PageHeader
-        title="Quản lý Vận hành eSIM (Digital Orders)"
-        description="Quản lý vòng đời eSIM: Mã ICCID, kiểm tra dung lượng data, trạng thái kết nối mạng và gia hạn."
+        title="Quản lý Vận hành eSIM (Đơn mua của nhà cung câp)"
+        description="Quản lý vòng đời eSIM: Mã ICCID, trạng thái kết nối mạng và gia hạn đơn hàng."
         breadcrumbs={[{ label: 'Trang chủ', href: '/' }, { label: 'Đơn hàng' }, { label: 'Quản lý eSIM' }]}
         className='mbe-6'
       />
@@ -167,9 +185,9 @@ const OrdersDashboard = () => {
         <Box className='p-6 border-be flex flex-wrap justify-between items-center gap-4'>
           <Grid2 container spacing={4} className='w-full lg:w-3/4'>
             <Grid2 size={{ xs: 12, sm: 6, md: 4 }}>
-              <TextField 
-                fullWidth 
-                placeholder='Tìm Mã Đơn hoặc ICCID...' 
+              <TextField
+                fullWidth
+                placeholder='Tìm Mã Đơn hoặc ICCID...'
                 size='small'
                 InputProps={{
                   startAdornment: <InputAdornment position='start'><i className='tabler-search' /></InputAdornment>
@@ -203,7 +221,7 @@ const OrdersDashboard = () => {
                 <TableCell className='font-black uppercase text-[11px] whitespace-nowrap'>Mã Đơn / ICCID</TableCell>
                 <TableCell className='font-black uppercase text-[11px]'>Sản Phẩm & Nguồn Cung</TableCell>
                 <TableCell className='font-black uppercase text-[11px]'>Đại lý</TableCell>
-                <TableCell className='font-black uppercase text-[11px] w-48'>Trạng thái & Dung lượng</TableCell>
+                <TableCell className='font-black uppercase text-[11px] w-48'>Trạng thái Network</TableCell>
                 <TableCell className='font-black uppercase text-[11px]'>Hạn sử dụng</TableCell>
                 <TableCell className='font-black uppercase text-[11px] text-right'>Hỗ trợ (CSKH)</TableCell>
               </TableRow>
@@ -225,7 +243,7 @@ const OrdersDashboard = () => {
                         </Stack>
                       </Box>
                     </TableCell>
-                    
+
                     <TableCell>
                       <Box className='flex flex-col'>
                         <Typography variant='body2' className='font-bold'>{o.product}</Typography>
@@ -243,34 +261,16 @@ const OrdersDashboard = () => {
                     </TableCell>
 
                     <TableCell>
-                      <Box className='mbe-2'>
-                        <Chip 
+                      <Box>
+                        <Chip
                           icon={<i className={getStatusIcon(o.status)} />}
-                          label={o.status} 
-                          size='small' 
-                          color={getStatusColor(o.status) as any} 
-                          variant='tonal' 
+                          label={o.status}
+                          size='small'
+                          color={getStatusColor(o.status) as any}
+                          variant='tonal'
                           className='font-bold h-6 text-[11px]'
                         />
                       </Box>
-                      {o.status !== 'Not Installed' && o.status !== 'Revoked' && (
-                        <Box>
-                          <Box className='flex justify-between items-center mbe-1'>
-                            <Typography variant='caption' className='font-bold text-slate-600'>
-                              {o.dataUsed} GB <span className='text-slate-400 font-normal'>/ {o.dataTotal} GB</span>
-                            </Typography>
-                            <Typography variant='caption' className='text-slate-400 font-mono'>
-                              {usagePercent.toFixed(0)}%
-                            </Typography>
-                          </Box>
-                          <LinearProgress 
-                            variant='determinate' 
-                            value={usagePercent} 
-                            color={progressColor} 
-                            className='bs-1.5 rounded-full' 
-                          />
-                        </Box>
-                      )}
                     </TableCell>
 
                     <TableCell>
@@ -282,19 +282,9 @@ const OrdersDashboard = () => {
 
                     <TableCell className='text-right'>
                       <Stack direction='row' spacing={1} justifyContent='flex-end'>
-                        <Tooltip title="Refresh Data Usage">
-                          <IconButton size='small' color='primary' className='bg-primary/10'>
-                            <i className='tabler-refresh' />
-                          </IconButton>
-                        </Tooltip>
-                        <Tooltip title="Xem mã QR">
-                          <IconButton size='small' color='secondary' className='bg-secondary/10'>
-                            <i className='tabler-qrcode' />
-                          </IconButton>
-                        </Tooltip>
-                        <Tooltip title="Thao tác nâng cao (Reset Network, Revoke, Extend)">
-                          <IconButton size='small' color='secondary' className='bg-slate-100'>
-                            <i className='tabler-dots-vertical' />
+                        <Tooltip title="Chi tiết giao dịch & Flow">
+                          <IconButton size='small' color='info' className='bg-info/10' onClick={() => handleOpenDetails(o)}>
+                            <i className='tabler-eye' />
                           </IconButton>
                         </Tooltip>
                       </Stack>
@@ -306,6 +296,83 @@ const OrdersDashboard = () => {
           </Table>
         </TableContainer>
       </Card>
+
+      <Dialog open={openDetails} onClose={handleCloseDetails} fullWidth maxWidth='sm'>
+        <DialogTitle className='flex justify-between items-center pb-2'>
+          <Typography variant='h5' component='span' className='font-black'>Chi tiết Giao dịch</Typography>
+          <IconButton onClick={handleCloseDetails} size='small'><i className='tabler-x' /></IconButton>
+        </DialogTitle>
+        <DialogContent dividers className='p-6'>
+          {selectedOrder && (
+            <Box>
+              <Box className='flex justify-between items-start mb-6'>
+                <Box>
+                  <Typography variant='caption' className='text-slate-500 uppercase font-bold'>Mã đơn hàng</Typography>
+                  <Typography variant='h6' className='font-black font-mono'>{selectedOrder.id}</Typography>
+                </Box>
+                <Chip
+                  icon={<i className={getStatusIcon(selectedOrder.status)} />}
+                  label={selectedOrder.status}
+                  color={getStatusColor(selectedOrder.status) as any}
+                  size='small'
+                  variant='tonal'
+                  className='font-bold'
+                />
+              </Box>
+
+              <Grid2 container spacing={4} className='mb-6'>
+                <Grid2 size={{ xs: 6 }}>
+                  <Typography variant='caption' className='text-slate-500'>Sản phẩm</Typography>
+                  <Typography variant='body2' className='font-bold'>{selectedOrder.product}</Typography>
+                </Grid2>
+                <Grid2 size={{ xs: 6 }}>
+                  <Typography variant='caption' className='text-slate-500'>ICCID</Typography>
+                  <Typography variant='body2' className='font-mono'>{selectedOrder.iccid}</Typography>
+                </Grid2>
+                <Grid2 size={{ xs: 6 }}>
+                  <Typography variant='caption' className='text-slate-500'>Đại lý</Typography>
+                  <Typography variant='body2' className='font-medium'>{selectedOrder.agent}</Typography>
+                </Grid2>
+                <Grid2 size={{ xs: 6 }}>
+                  <Typography variant='caption' className='text-slate-500'>Nguồn cung</Typography>
+                  <Typography variant='body2' className='font-medium'>{selectedOrder.supplier}</Typography>
+                </Grid2>
+              </Grid2>
+
+              <Divider className='mb-6' />
+
+              <Typography variant='h6' className='font-bold mb-4'>Tiến trình hệ thống (Flow)</Typography>
+              <Box className='ml-2 border-l-2 border-slate-200 pl-4 py-1 flex flex-col gap-6 relative'>
+                <Box className='relative'>
+                  <Box className='absolute -left-[23px] top-1 w-3 h-3 rounded-full bg-success/20 border-2 border-success z-10' />
+                  <Typography variant='body2' className='font-bold'>Tạo đơn hàng thành công</Typography>
+                  <Typography variant='caption' className='text-slate-500'>{selectedOrder.date} - 08:00:00</Typography>
+                  <Typography variant='caption' className='block mt-1 bg-slate-50 p-2 rounded'>Request từ Đại lý: {selectedOrder.agent}</Typography>
+                </Box>
+                <Box className='relative'>
+                  <Box className='absolute -left-[23px] top-1 w-3 h-3 rounded-full bg-success/20 border-2 border-success z-10' />
+                  <Typography variant='body2' className='font-bold'>Cấp phát ICCID (Provisioning)</Typography>
+                  <Typography variant='caption' className='text-slate-500'>{selectedOrder.date} - 08:00:15</Typography>
+                  <Typography variant='caption' className='block mt-1 bg-slate-50 p-2 rounded'>API call tới: {selectedOrder.supplier}</Typography>
+                </Box>
+                <Box className='relative'>
+                  <Box className={`absolute -left-[23px] top-1 w-3 h-3 rounded-full border-2 z-10 ${selectedOrder.status === 'Active' ? 'bg-success/20 border-success' : 'bg-slate-100 border-slate-300'}`} />
+                  <Typography variant='body2' className={`font-bold ${selectedOrder.status !== 'Active' && 'text-slate-500'}`}>Kích hoạt mạng (Network Active)</Typography>
+                  {selectedOrder.status === 'Active' ? (
+                    <Typography variant='caption' className='text-slate-500'>{selectedOrder.date} - 08:05:22</Typography>
+                  ) : (
+                    <Typography variant='caption' className='text-slate-400'>Chưa ghi nhận từ mạng lưới</Typography>
+                  )}
+                </Box>
+              </Box>
+            </Box>
+          )}
+        </DialogContent>
+        <DialogActions className='p-4'>
+          <Button variant='tonal' color='secondary' onClick={handleCloseDetails}>Đóng</Button>
+          <Button variant='contained' color='primary' startIcon={<i className='tabler-download' />}>Tải PDF</Button>
+        </DialogActions>
+      </Dialog>
     </>
   )
 }

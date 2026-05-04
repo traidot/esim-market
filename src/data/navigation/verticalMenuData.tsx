@@ -58,7 +58,7 @@ const verticalMenuData = (dictionary: Awaited<ReturnType<typeof getDictionary>>)
       ]
     },
     {
-      label: 'Đơn hàng kỹ thuật số',
+      label: 'Quản lý đơn hàng',
       icon: 'tabler-shopping-cart',
       roles: ['admin'],
       children: [
@@ -81,17 +81,17 @@ const verticalMenuData = (dictionary: Awaited<ReturnType<typeof getDictionary>>)
       roles: ['agent'],
       children: [
         { label: 'Cửa hàng eSIM', icon: 'tabler-shopping-bag', href: getUrl('/marketplace/products') },
-        { 
-          label: 'Đơn hàng của tôi', 
-          icon: 'tabler-list-details', 
+        {
+          label: 'Đơn hàng của tôi',
+          icon: 'tabler-list-details',
           children: [
             { label: 'Tạo đơn mới', href: getUrl('/orders/create') },
             { label: 'Danh sách', href: getUrl('/orders/my-orders') }
           ]
         },
-        { 
-          label: 'Công nợ của tôi', 
-          icon: 'tabler-file-invoice', 
+        {
+          label: 'Công nợ của tôi',
+          icon: 'tabler-file-invoice',
           children: [
             { label: 'Thống kê', href: getUrl('/finance/my-debt') },
             { label: 'Lịch sử Giao dịch', href: getUrl('/finance/transactions') }
