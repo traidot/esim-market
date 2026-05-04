@@ -13,13 +13,44 @@ import Grid2 from '@mui/material/Grid2'
 import Tabs from '@mui/material/Tabs'
 import Tab from '@mui/material/Tab'
 import Avatar from '@mui/material/Avatar'
+import Dialog from '@mui/material/Dialog'
+import DialogTitle from '@mui/material/DialogTitle'
+import DialogContent from '@mui/material/DialogContent'
+import DialogActions from '@mui/material/DialogActions'
+import IconButton from '@mui/material/IconButton'
+import Divider from '@mui/material/Divider'
+import Collapse from '@mui/material/Collapse'
+import MenuItem from '@mui/material/MenuItem'
 
+import { toast } from 'react-toastify'
 import PageHeader from '@/components/layout/shared/PageHeader'
 
 const ProductCatalog = () => {
   const [searchTerm, setSearchTerm] = useState('')
   const [activeTab, setActiveTab] = useState(0)
   const [selectedCountry, setSelectedCountry] = useState<string | null>(null)
+  const [selectedProduct, setSelectedProduct] = useState<any>(null)
+  const [openDialog, setOpenDialog] = useState(false)
+  
+  // New Filter States
+  const [filterData, setFilterData] = useState('all')
+  const [filterValidity, setFilterValidity] = useState('all')
+  const [filterStatus, setFilterStatus] = useState('all')
+
+  const handleOpenDialog = (product: any) => {
+    setSelectedProduct(product)
+    setOpenDialog(true)
+  }
+
+  const handleCloseDialog = () => {
+    setOpenDialog(false)
+    setTimeout(() => setSelectedProduct(null), 300)
+  }
+
+  const handleConfirmPurchase = () => {
+    toast.success(`Đã đặt mua gói ${selectedProduct?.name} thành công!`)
+    handleCloseDialog()
+  }
 
   const countries = [
     { name: 'Nhật Bản', code: 'JP', flag: '🇯🇵', region: 'Châu Á' },
@@ -32,18 +63,50 @@ const ProductCatalog = () => {
     { name: 'Trung Quốc', code: 'CN', flag: '🇨🇳', region: 'Châu Á' }
   ]
 
-  const products = [
-    { id: '1', code: 'JP-30D-10GB', name: 'Nhật Bản Siêu Tốc', country: 'Nhật Bản', data: '10GB', validity: '30 Ngày', price: '$12.50', status: 'Đang hoạt động' },
-    { id: '2', code: 'EU-15D-5GB', name: 'Roaming Châu Âu', country: 'Châu Âu', data: '5GB', validity: '15 Ngày', price: '$9.00', status: 'Đang hoạt động' },
-    { id: '3', code: 'US-30D-20GB', name: 'Mỹ Không giới hạn', country: 'Hoa Kỳ', data: '20GB', validity: '30 Ngày', price: '$22.00', status: 'Tạm dừng' },
-    { id: '4', code: 'VN-30D-20GB', name: 'Viettel 4G Local', country: 'Việt Nam', data: '20GB', validity: '30 Ngày', price: '$5.50', status: 'Đang hoạt động' },
-    { id: '5', code: 'TH-07D-Unlimited', name: 'Thái Lan Travel', country: 'Thái Lan', data: 'Unlimited', validity: '7 Ngày', price: '$6.20', status: 'Đang hoạt động' }
+  const baseProducts = [
+    { code: 'JP-30D-10GB', name: 'Nhật Bản Siêu Tốc', country: 'Nhật Bản', data: '10GB', validity: '30 Ngày', price: '$12.50', status: 'Đang hoạt động' },
+    { code: 'EU-15D-5GB', name: 'Roaming Châu Âu', country: 'Châu Âu', data: '5GB', validity: '15 Ngày', price: '$9.00', status: 'Đang hoạt động' },
+    { code: 'US-30D-20GB', name: 'Mỹ Không giới hạn', country: 'Hoa Kỳ', data: '20GB', validity: '30 Ngày', price: '$22.00', status: 'Tạm dừng' },
+    { code: 'VN-30D-20GB', name: 'Viettel 4G Local', country: 'Việt Nam', data: '20GB', validity: '30 Ngày', price: '$5.50', status: 'Đang hoạt động' },
+    { code: 'TH-07D-Unlimited', name: 'Thái Lan Travel', country: 'Thái Lan', data: 'Unlimited', validity: '7 Ngày', price: '$6.20', status: 'Đang hoạt động' },
+    { code: 'TH-15D-15GB', name: 'Thái Lan Business', country: 'Thái Lan', data: '15GB', validity: '15 Ngày', price: '$12.00', status: 'Đang hoạt động' },
+    { code: 'TH-30D-50GB', name: 'Thái Lan Dài Hạn', country: 'Thái Lan', data: '50GB', validity: '30 Ngày', price: '$25.00', status: 'Đang hoạt động' },
+    { code: 'KR-14D-10GB', name: 'Hàn Quốc Tốc Độ Cao', country: 'Hàn Quốc', data: '10GB', validity: '14 Ngày', price: '$15.00', status: 'Đang hoạt động' },
+    { code: 'TW-05D-3GB', name: 'Đài Loan Ngắn Ngày', country: 'Đài Loan', data: '3GB', validity: '5 Ngày', price: '$4.50', status: 'Đang hoạt động' },
+    { code: 'CN-30D-50GB', name: 'Trung Quốc Vượt Tường Lửa', country: 'Trung Quốc', data: '50GB', validity: '30 Ngày', price: '$28.00', status: 'Đang hoạt động' }
   ]
 
-  const filteredProducts = products.filter(p => 
-    (!selectedCountry || p.country === selectedCountry) &&
-    (p.name.toLowerCase().includes(searchTerm.toLowerCase()) || p.country.toLowerCase().includes(searchTerm.toLowerCase()))
-  )
+  const products = Array.from({ length: 50 }).map((_, index) => {
+    const base = baseProducts[index % baseProducts.length];
+    return {
+      id: `${index + 1}`,
+      code: `${base.code}-${index + 1}`,
+      name: `${base.name} (Gói ${index + 1})`,
+      country: base.country,
+      data: base.data,
+      validity: base.validity,
+      price: base.price,
+      status: index % 7 === 0 ? 'Tạm dừng' : 'Đang hoạt động'
+    }
+  })
+
+  const filteredProducts = products.filter(p => {
+    const matchSearch = p.name.toLowerCase().includes(searchTerm.toLowerCase()) || p.country.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchCountry = !selectedCountry || p.country === selectedCountry;
+    const matchData = filterData === 'all' || p.data === filterData;
+    const matchValidity = filterValidity === 'all' || p.validity === filterValidity;
+    const matchStatus = filterStatus === 'all' || (filterStatus === 'active' ? p.status === 'Đang hoạt động' : p.status === 'Tạm dừng');
+
+    return matchSearch && matchCountry && matchData && matchValidity && matchStatus;
+  })
+
+  const resetFilters = () => {
+    setFilterData('all')
+    setFilterValidity('all')
+    setFilterStatus('all')
+    setSelectedCountry(null)
+    setSearchTerm('')
+  }
 
   return (
     <>
@@ -123,15 +186,67 @@ const ProductCatalog = () => {
       {/* Product List */}
       <Card className='border-none shadow-sm'>
         <CardContent>
-          <Box className='flex justify-between items-center mbe-6'>
+          <Box className='flex justify-between items-center mbe-4'>
             <Typography variant='h6' className='font-black'>
               {selectedCountry ? `Gói cước tại ${selectedCountry}` : 'Tất cả gói cước'} 
               <Chip label={filteredProducts.length} size='small' className='mis-2' variant='tonal' color='primary' />
             </Typography>
-            {selectedCountry && (
-              <Button size='small' variant='text' onClick={() => setSelectedCountry(null)}>Xóa lọc</Button>
+            {(selectedCountry || filterData !== 'all' || filterValidity !== 'all' || filterStatus !== 'all' || searchTerm !== '') && (
+              <Button size='small' variant='text' onClick={resetFilters}>Xóa tất cả lọc</Button>
             )}
           </Box>
+
+          <Grid2 container spacing={4} className='mbe-6'>
+            <Grid2 size={{ xs: 12, sm: 6, md: 4 }}>
+              <TextField 
+                select 
+                fullWidth 
+                size='small' 
+                label='Dung lượng' 
+                value={filterData}
+                onChange={(e) => setFilterData(e.target.value)}
+              >
+                <MenuItem value='all'>Tất cả dung lượng</MenuItem>
+                <MenuItem value='5GB'>5GB</MenuItem>
+                <MenuItem value='10GB'>10GB</MenuItem>
+                <MenuItem value='15GB'>15GB</MenuItem>
+                <MenuItem value='20GB'>20GB</MenuItem>
+                <MenuItem value='50GB'>50GB</MenuItem>
+                <MenuItem value='Unlimited'>Không giới hạn</MenuItem>
+              </TextField>
+            </Grid2>
+            <Grid2 size={{ xs: 12, sm: 6, md: 4 }}>
+              <TextField 
+                select 
+                fullWidth 
+                size='small' 
+                label='Thời hạn' 
+                value={filterValidity}
+                onChange={(e) => setFilterValidity(e.target.value)}
+              >
+                <MenuItem value='all'>Tất cả thời hạn</MenuItem>
+                <MenuItem value='5 Ngày'>5 Ngày</MenuItem>
+                <MenuItem value='7 Ngày'>7 Ngày</MenuItem>
+                <MenuItem value='14 Ngày'>14 Ngày</MenuItem>
+                <MenuItem value='15 Ngày'>15 Ngày</MenuItem>
+                <MenuItem value='30 Ngày'>30 Ngày</MenuItem>
+              </TextField>
+            </Grid2>
+            <Grid2 size={{ xs: 12, sm: 6, md: 4 }}>
+              <TextField 
+                select 
+                fullWidth 
+                size='small' 
+                label='Trạng thái' 
+                value={filterStatus}
+                onChange={(e) => setFilterStatus(e.target.value)}
+              >
+                <MenuItem value='all'>Tất cả trạng thái</MenuItem>
+                <MenuItem value='active'>Đang hoạt động</MenuItem>
+                <MenuItem value='paused'>Tạm dừng</MenuItem>
+              </TextField>
+            </Grid2>
+          </Grid2>
 
           <Box className='overflow-x-auto'>
             <table className='w-full text-left border-collapse'>
@@ -168,7 +283,13 @@ const ProductCatalog = () => {
                       <Chip label={p.status} size='small' color={p.status === 'Đang hoạt động' ? 'success' : 'secondary'} variant='tonal' />
                     </td>
                     <td className='p-4 text-right'>
-                      <Button size='small' variant='contained'>Mua ngay</Button>
+                      <Button 
+                        size='small' 
+                        variant='contained'
+                        onClick={() => handleOpenDialog(p)}
+                      >
+                        Mua ngay
+                      </Button>
                     </td>
                   </tr>
                 ))}
@@ -177,6 +298,53 @@ const ProductCatalog = () => {
           </Box>
         </CardContent>
       </Card>
+
+      <Dialog open={openDialog} onClose={handleCloseDialog} fullWidth maxWidth='sm'>
+        <DialogTitle className='flex items-center justify-between'>
+          <Typography variant='h5' component='span' className='font-black'>Xác nhận mua eSIM</Typography>
+          <IconButton onClick={handleCloseDialog} size='small'>
+            <i className='tabler-x' />
+          </IconButton>
+        </DialogTitle>
+        <DialogContent>
+          {selectedProduct && (
+            <Box className='flex flex-col gap-4 m-bs-2'>
+              <Box className='p-4 bg-slate-50 rounded-lg'>
+                <Box className='flex justify-between items-center mbe-4'>
+                  <Typography variant='h6' className='font-bold'>{selectedProduct.name}</Typography>
+                  <Typography variant='h6' color='primary' className='font-black'>{selectedProduct.price}</Typography>
+                </Box>
+                <Divider className='mbe-4' />
+                <Grid2 container spacing={2}>
+                  <Grid2 size={{ xs: 6 }}>
+                    <Typography variant='caption' className='text-slate-500'>Quốc gia</Typography>
+                    <Typography variant='body1' className='font-medium'>{selectedProduct.country}</Typography>
+                  </Grid2>
+                  <Grid2 size={{ xs: 6 }}>
+                    <Typography variant='caption' className='text-slate-500'>Dung lượng</Typography>
+                    <Typography variant='body1' className='font-medium'>{selectedProduct.data}</Typography>
+                  </Grid2>
+                  <Grid2 size={{ xs: 6 }}>
+                    <Typography variant='caption' className='text-slate-500'>Thời hạn</Typography>
+                    <Typography variant='body1' className='font-medium'>{selectedProduct.validity}</Typography>
+                  </Grid2>
+                  <Grid2 size={{ xs: 6 }}>
+                    <Typography variant='caption' className='text-slate-500'>Mã gói</Typography>
+                    <Typography variant='body1' className='font-mono'>{selectedProduct.code}</Typography>
+                  </Grid2>
+                </Grid2>
+              </Box>
+              <Typography variant='body2' className='text-slate-500 text-center m-t-2'>
+                Vui lòng kiểm tra kỹ thông tin gói cước trước khi thanh toán.
+              </Typography>
+            </Box>
+          )}
+        </DialogContent>
+        <DialogActions className='p-6 pt-0'>
+          <Button variant='tonal' color='secondary' onClick={handleCloseDialog}>Hủy</Button>
+          <Button variant='contained' color='primary' onClick={handleConfirmPurchase}>Xác nhận thanh toán</Button>
+        </DialogActions>
+      </Dialog>
     </>
   )
 }

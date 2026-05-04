@@ -22,10 +22,24 @@ import TableRow from '@mui/material/TableRow'
 import Avatar from '@mui/material/Avatar'
 import IconButton from '@mui/material/IconButton'
 import Tooltip from '@mui/material/Tooltip'
+import Dialog from '@mui/material/Dialog'
+import DialogTitle from '@mui/material/DialogTitle'
+import DialogContent from '@mui/material/DialogContent'
+import DialogActions from '@mui/material/DialogActions'
+import Divider from '@mui/material/Divider'
 
 import PageHeader from '@/components/layout/shared/PageHeader'
 
 const TransactionsList = () => {
+  const isAdmin = false // Mock role for UI testing
+  const [openDialog, setOpenDialog] = useState(false)
+  const [selectedTx, setSelectedTx] = useState<any>(null)
+
+  const handleOpenDetail = (tx: any) => {
+    setSelectedTx(tx)
+    setOpenDialog(true)
+  }
+
   const transactions = [
     { id: 'TRX-10293', agent: 'TravelConnect', agentCode: 'TC', type: 'Charge', typeLabel: 'Phát sinh (Mua eSIM)', amount: -12.50, status: 'Completed', date: '2026-04-25T14:20:00Z' },
     { id: 'TRX-10294', agent: 'Global eSIM Hub', agentCode: 'GE', type: 'Payment', typeLabel: 'Thanh toán', amount: 500.00, status: 'Completed', date: '2026-04-25T14:15:00Z' },
@@ -92,7 +106,7 @@ const TransactionsList = () => {
         actions={
           <Stack direction='row' spacing={2}>
             <Button variant='tonal' color='primary' startIcon={<i className='tabler-download' />}>Xuất Báo cáo</Button>
-            <Button variant='contained' startIcon={<i className='tabler-plus' />}>Tạo Giao dịch Thủ công</Button>
+            {isAdmin && <Button variant='contained' startIcon={<i className='tabler-plus' />}>Tạo Giao dịch Thủ công</Button>}
           </Stack>
         }
         className='mbe-6'
@@ -200,7 +214,7 @@ const TransactionsList = () => {
             <TableHead>
               <TableRow className='bg-slate-50'>
                 <TableCell className='font-black uppercase text-[11px] whitespace-nowrap'>Mã GD & Thời gian</TableCell>
-                <TableCell className='font-black uppercase text-[11px]'>Đại lý</TableCell>
+                {isAdmin && <TableCell className='font-black uppercase text-[11px]'>Đại lý</TableCell>}
                 <TableCell className='font-black uppercase text-[11px]'>Loại Giao Dịch</TableCell>
                 <TableCell className='font-black uppercase text-[11px] text-right'>Số tiền</TableCell>
                 <TableCell className='font-black uppercase text-[11px] text-center'>Trạng thái</TableCell>
@@ -220,14 +234,16 @@ const TransactionsList = () => {
                         <Typography variant='caption' className='text-slate-500'>{formatDate(t.date)}</Typography>
                       </Box>
                     </TableCell>
-                    <TableCell>
-                      <Box className='flex items-center gap-3'>
-                        <Avatar variant='rounded' className='bg-slate-100 text-slate-700 font-black is-8 bs-8 text-xs'>
-                          {t.agentCode}
-                        </Avatar>
-                        <Typography variant='body2' className='font-bold'>{t.agent}</Typography>
-                      </Box>
-                    </TableCell>
+                    {isAdmin && (
+                      <TableCell>
+                        <Box className='flex items-center gap-3'>
+                          <Avatar variant='rounded' className='bg-slate-100 text-slate-700 font-black is-8 bs-8 text-xs'>
+                            {t.agentCode}
+                          </Avatar>
+                          <Typography variant='body2' className='font-bold'>{t.agent}</Typography>
+                        </Box>
+                      </TableCell>
+                    )}
                     <TableCell>
                       <Box className='flex items-center gap-2'>
                         <Avatar variant='rounded' className={`bg-${typeColor}/10 text-${typeColor} is-8 bs-8`}>
@@ -252,13 +268,8 @@ const TransactionsList = () => {
                     </TableCell>
                     <TableCell className='text-right'>
                       <Tooltip title="Xem chi tiết">
-                        <IconButton size='small' color='primary'>
+                        <IconButton size='small' color='primary' onClick={() => handleOpenDetail(t)}>
                           <i className='tabler-eye' />
-                        </IconButton>
-                      </Tooltip>
-                      <Tooltip title="Tải biên lai">
-                        <IconButton size='small' color='secondary'>
-                          <i className='tabler-download' />
                         </IconButton>
                       </Tooltip>
                     </TableCell>
@@ -269,6 +280,52 @@ const TransactionsList = () => {
           </Table>
         </TableContainer>
       </Card>
+
+      <Dialog open={openDialog} onClose={() => setOpenDialog(false)} maxWidth='sm' fullWidth>
+        <DialogTitle className='font-black'>Chi tiết Giao dịch</DialogTitle>
+        <DialogContent className='p-6 pt-2'>
+          {selectedTx && (
+            <Box className='flex flex-col gap-4'>
+              <Box className='flex justify-between items-center bg-slate-50 p-4 rounded-lg'>
+                <Box>
+                  <Typography variant='caption' className='text-slate-500 uppercase font-bold'>Mã Giao Dịch</Typography>
+                  <Typography variant='h6' className='font-mono font-black text-primary'>{selectedTx.id}</Typography>
+                </Box>
+                <Chip 
+                  label={selectedTx.status} 
+                  color={getStatusColor(selectedTx.status) as any} 
+                  size='small' 
+                  variant='tonal' 
+                  className='font-bold'
+                />
+              </Box>
+              
+              <Divider />
+              
+              <Grid2 container spacing={4}>
+                <Grid2 size={{ xs: 12, sm: 6 }}>
+                  <Typography variant='caption' className='text-slate-500 font-bold'>Thời gian</Typography>
+                  <Typography variant='body1' className='font-medium'>{formatDate(selectedTx.date)}</Typography>
+                </Grid2>
+                <Grid2 size={{ xs: 12, sm: 6 }}>
+                  <Typography variant='caption' className='text-slate-500 font-bold'>Loại giao dịch</Typography>
+                  <Typography variant='body1' className='font-bold'>{selectedTx.typeLabel}</Typography>
+                </Grid2>
+                <Grid2 size={{ xs: 12 }}>
+                  <Typography variant='caption' className='text-slate-500 font-bold'>Số tiền</Typography>
+                  <Typography variant='h5' className={`font-black ${selectedTx.amount > 0 ? 'text-success' : 'text-error'}`}>
+                    {selectedTx.amount > 0 ? '+' : ''}{formatCurrency(selectedTx.amount)}
+                  </Typography>
+                </Grid2>
+              </Grid2>
+            </Box>
+          )}
+        </DialogContent>
+        <DialogActions className='p-6 pt-0'>
+          <Button variant='tonal' color='secondary' onClick={() => setOpenDialog(false)}>Đóng</Button>
+          <Button variant='contained' color='primary' startIcon={<i className='tabler-download' />}>Tải biên lai</Button>
+        </DialogActions>
+      </Dialog>
     </>
   )
 }

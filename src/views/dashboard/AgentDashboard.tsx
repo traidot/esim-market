@@ -16,7 +16,6 @@ import CardStatsSquare from '@/components/card-statistics/CardStatsSquare'
 
 const AgentDashboard = () => {
   const stats = {
-    balance: '$5,240.00',
     activeESims: '42',
     totalOrders: '156',
     pendingActivations: '2'
@@ -26,12 +25,11 @@ const AgentDashboard = () => {
     <>
       <PageHeader
         title="Bảng điều khiển Đại lý: TravelConnect SG"
-        description="Theo dõi ví tiền, quản lý eSIM khách hàng và duyệt các gói cước kết nối toàn cầu mới nhất"
+        description="Quản lý eSIM khách hàng và duyệt các gói cước kết nối toàn cầu mới nhất"
         breadcrumbs={[{ label: 'Trang chủ', href: '/' }, { label: 'Đại lý', href: '/dashboard' }, { label: 'Điều khiển' }]}
         actions={
           <Box className='flex gap-2'>
-            <Button variant='tonal' color='success' startIcon={<i className='tabler-plus' />}>Nạp tiền vào Ví</Button>
-            <Button variant='contained' color='primary' component={Link} href='/marketplace/products'>Duyệt Cửa hàng</Button>
+            <Button variant='contained' color='primary' component={Link} href='/marketplace/products'>Vào cửa hàng</Button>
           </Box>
         }
         className='mbe-6'
@@ -43,18 +41,7 @@ const AgentDashboard = () => {
           <Card className='border-none shadow-sm bg-primary/5'>
             <CardContent>
               <Grid2 container spacing={6}>
-                <Grid2 size={{ xs: 12, sm: 6, md: 3 }}>
-                  <CardStatsSquare
-                    stats={stats.balance}
-                    statsTitle="Số dư của tôi"
-                    avatarIcon='tabler-wallet'
-                    avatarColor='primary'
-                    avatarVariant='rounded'
-                    avatarSize={56}
-                    avatarSkin='light'
-                  />
-                </Grid2>
-                <Grid2 size={{ xs: 12, sm: 6, md: 3 }}>
+                <Grid2 size={{ xs: 12, sm: 4, md: 4 }}>
                   <CardStatsSquare
                     stats={stats.activeESims}
                     statsTitle="eSIM đang Hoạt động"
@@ -65,7 +52,7 @@ const AgentDashboard = () => {
                     avatarSkin='light'
                   />
                 </Grid2>
-                <Grid2 size={{ xs: 12, sm: 6, md: 3 }}>
+                <Grid2 size={{ xs: 12, sm: 4, md: 4 }}>
                   <CardStatsSquare
                     stats={stats.totalOrders}
                     statsTitle="Tổng Đơn hàng"
@@ -76,7 +63,7 @@ const AgentDashboard = () => {
                     avatarSkin='light'
                   />
                 </Grid2>
-                <Grid2 size={{ xs: 12, sm: 6, md: 3 }}>
+                <Grid2 size={{ xs: 12, sm: 4, md: 4 }}>
                   <CardStatsSquare
                     stats={stats.pendingActivations}
                     statsTitle="QR chờ Kích hoạt"
@@ -93,10 +80,10 @@ const AgentDashboard = () => {
         </Grid2>
 
         {/* Recent Orders */}
-        <Grid2 size={{ xs: 12, md: 8 }}>
+        <Grid2 size={{ xs: 12 }}>
           <Card className='h-full'>
             <CardHeader 
-              title='Đơn hàng Kỹ thuật số Gần đây' 
+              title='Danh sách đơn hàng gần đây' 
               subheader='Theo dõi các lượt kích hoạt eSIM và phân phối cho khách hàng'
               action={<Button variant='text' size='small' component={Link} href='/orders/list'>Xem tất cả</Button>}
             />
@@ -134,32 +121,7 @@ const AgentDashboard = () => {
           </Card>
         </Grid2>
 
-        {/* Featured Packages */}
-        <Grid2 size={{ xs: 12, md: 4 }}>
-          <Card className='h-full bg-slate-900 text-white'>
-            <CardHeader title='Ưu đãi Thị trường' titleTypographyProps={{ color: 'white', className: 'font-black' }} />
-            <CardContent>
-              <Stack spacing={4}>
-                {[
-                  { region: 'Đông Nam Á', data: '50GB', price: '$18', discount: 'GIẢM 20%' },
-                  { region: 'Bắc Mỹ', data: '100GB', price: '$45', discount: 'MỚI' }
-                ].map((p, i) => (
-                  <Box key={i} className='p-4 bg-white/10 rounded-xl border border-white/10'>
-                    <Box className='flex justify-between items-start mbe-2'>
-                      <Typography variant='body2' className='text-white font-bold'>{p.region}</Typography>
-                      <Chip label={p.discount} size='small' color='secondary' className='font-black text-[9px] h-5' />
-                    </Box>
-                    <Box className='flex justify-between items-end'>
-                      <Typography variant='h5' className='text-white font-black'>{p.data}</Typography>
-                      <Typography variant='h6' color='primary' className='font-black'>{p.price}</Typography>
-                    </Box>
-                  </Box>
-                ))}
-                <Button fullWidth variant='contained' color='primary' className='mt-4'>Xem thêm ưu đãi</Button>
-              </Stack>
-            </CardContent>
-          </Card>
-        </Grid2>
+
       </Grid2>
     </>
   )

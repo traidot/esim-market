@@ -1,5 +1,7 @@
 'use client'
 
+import Link from 'next/link'
+
 import Grid2 from '@mui/material/Grid2'
 import Card from '@mui/material/Card'
 import CardContent from '@mui/material/CardContent'
@@ -17,11 +19,20 @@ import TableHead from '@mui/material/TableHead'
 import TableRow from '@mui/material/TableRow'
 import Chip from '@mui/material/Chip'
 import LinearProgress from '@mui/material/LinearProgress'
+import Dialog from '@mui/material/Dialog'
+import DialogTitle from '@mui/material/DialogTitle'
+import DialogContent from '@mui/material/DialogContent'
+import DialogActions from '@mui/material/DialogActions'
+import MenuItem from '@mui/material/MenuItem'
+import { useState } from 'react'
+import { toast } from 'react-toastify'
 
 import PageHeader from '@/components/layout/shared/PageHeader'
 
 const MyDebtList = () => {
+  const [openPaymentDialog, setOpenPaymentDialog] = useState(false)
   const currentDebt = 5240.00
+  const [paymentAmount, setPaymentAmount] = useState(currentDebt)
   const creditLimit = 50000.00
   const usageRatio = (currentDebt / creditLimit) * 100
 
@@ -41,6 +52,16 @@ const MyDebtList = () => {
     }
   }
 
+  const handlePaymentSubmit = () => {
+    toast.success('Yêu cầu thanh toán đã được gửi thành công. Vui lòng chờ kế toán duyệt!')
+    setOpenPaymentDialog(false)
+  }
+
+  const handleOpenPayment = (amount: number) => {
+    setPaymentAmount(amount)
+    setOpenPaymentDialog(true)
+  }
+
   return (
     <>
       <PageHeader
@@ -53,7 +74,7 @@ const MyDebtList = () => {
         ]}
         actions={
           <Stack direction='row' spacing={2}>
-            <Button variant='contained' color='primary' startIcon={<i className='tabler-cash-banknote' />}>Thanh toán ngay</Button>
+            <Button variant='contained' color='primary' startIcon={<i className='tabler-cash-banknote' />} onClick={() => handleOpenPayment(currentDebt)}>Thanh toán ngay</Button>
           </Stack>
         }
         className='mbe-6'
@@ -162,7 +183,8 @@ const MyDebtList = () => {
                   <TableCell className='text-right'>
                     <Stack direction='row' spacing={1} justifyContent='flex-end'>
                       <Button size='small' variant='outlined' color='secondary' startIcon={<i className='tabler-file-download' />}>Tải Invoice</Button>
-                      <Button size='small' variant='tonal' color='primary'>Lịch sử Giao dịch</Button>
+                      <Button component={Link} href='/finance/transactions' size='small' variant='tonal' color='primary'>Lịch sử Giao dịch</Button>
+                      <Button size='small' variant='contained' color='success' startIcon={<i className='tabler-cash-banknote' />} onClick={() => handleOpenPayment(stmt.closing)} disabled={stmt.closing <= 0}>Thanh toán</Button>
                     </Stack>
                   </TableCell>
                 </TableRow>
@@ -171,6 +193,61 @@ const MyDebtList = () => {
           </Table>
         </TableContainer>
       </Card>
+
+      <Dialog open={openPaymentDialog} onClose={() => setOpenPaymentDialog(false)} maxWidth='sm' fullWidth>
+        <DialogTitle className='font-black'>Thanh toán công nợ</DialogTitle>
+        <DialogContent className='flex flex-col gap-4 p-6 pt-2'>
+          <Typography variant='body2' className='text-slate-500 mbe-2'>
+            Vui lòng nhập thông tin thanh toán. Bộ phận kế toán sẽ đối soát và cập nhật công nợ cho bạn.
+          </Typography>
+          
+          <TextField 
+            label='Số tiền thanh toán (USD)' 
+            type='number' 
+            fullWidth 
+            value={paymentAmount}
+            onChange={(e) => setPaymentAmount(Number(e.target.value))}
+            slotProps={{
+              input: {
+                startAdornment: <InputAdornment position='start'>$</InputAdornment>
+              }
+            }}
+          />
+          
+          <TextField 
+            select 
+            label='Phương thức thanh toán' 
+            fullWidth 
+            defaultValue='bank_transfer'
+          >
+            <MenuItem value='bank_transfer'>Chuyển khoản ngân hàng</MenuItem>
+            <MenuItem value='cash'>Tiền mặt</MenuItem>
+          </TextField>
+
+          <TextField 
+            label='Mã tham chiếu / Ghi chú' 
+            placeholder='Nhập mã giao dịch hoặc nội dung CK' 
+            fullWidth 
+            multiline
+            rows={2}
+          />
+
+          <Box className='p-4 bg-primary/5 rounded-lg border border-primary/20 mt-2'>
+            <Typography variant='subtitle2' className='font-bold text-primary mbe-1'>Thông tin chuyển khoản:</Typography>
+            <Typography variant='body2' className='text-slate-700'>Ngân hàng: <strong>Vietcombank</strong></Typography>
+            <Typography variant='body2' className='text-slate-700'>Số TK: <strong>0123456789</strong></Typography>
+            <Typography variant='body2' className='text-slate-700'>Chủ TK: <strong>CONG TY TNHH ESIM MARKET</strong></Typography>
+            <Typography variant='body2' className='text-slate-700 mt-1 text-xs text-slate-500'>Nội dung CK: THANH TOAN CONG NO [TÊN ĐẠI LÝ]</Typography>
+          </Box>
+
+        </DialogContent>
+        <DialogActions className='p-6 pt-0'>
+          <Button variant='tonal' color='secondary' onClick={() => setOpenPaymentDialog(false)}>Hủy bỏ</Button>
+          <Button variant='contained' color='primary' startIcon={<i className='tabler-send' />} onClick={handlePaymentSubmit}>
+            Xác nhận thanh toán
+          </Button>
+        </DialogActions>
+      </Dialog>
     </>
   )
 }
