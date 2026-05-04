@@ -21,6 +21,10 @@ import IconButton from '@mui/material/IconButton'
 import Divider from '@mui/material/Divider'
 import Collapse from '@mui/material/Collapse'
 import MenuItem from '@mui/material/MenuItem'
+import Radio from '@mui/material/Radio'
+import RadioGroup from '@mui/material/RadioGroup'
+import FormControlLabel from '@mui/material/FormControlLabel'
+import FormControl from '@mui/material/FormControl'
 
 import { toast } from 'react-toastify'
 import PageHeader from '@/components/layout/shared/PageHeader'
@@ -36,6 +40,7 @@ const ProductCatalog = () => {
   const [filterData, setFilterData] = useState('all')
   const [filterValidity, setFilterValidity] = useState('all')
   const [filterStatus, setFilterStatus] = useState('all')
+  const [paymentMethod, setPaymentMethod] = useState<'debt' | 'wallet'>('debt')
 
   const handleOpenDialog = (product: any) => {
     setSelectedProduct(product)
@@ -334,6 +339,27 @@ const ProductCatalog = () => {
                   </Grid2>
                 </Grid2>
               </Box>
+
+              <Box className='mbe-2'>
+                <Typography variant='subtitle2' className='font-bold mbe-2'>Phương thức thanh toán</Typography>
+                <FormControl component="fieldset" fullWidth>
+                  <RadioGroup
+                    value={paymentMethod}
+                    onChange={(e) => setPaymentMethod(e.target.value as 'debt' | 'wallet')}
+                  >
+                    <Box className={`flex items-center justify-between p-3 border rounded-lg mbe-3 cursor-pointer ${paymentMethod === 'debt' ? 'border-primary bg-primary/5' : 'border-slate-200'}`} onClick={() => setPaymentMethod('debt')}>
+                      <FormControlLabel value="debt" control={<Radio />} label={<Typography className='font-bold'>Ghi nhận công nợ</Typography>} className='m-0' />
+                      <Typography variant='caption' className='text-slate-500'>Đối soát & thanh toán vào cuối kỳ</Typography>
+                    </Box>
+                    
+                    <Box className={`flex items-center justify-between p-3 border rounded-lg cursor-pointer ${paymentMethod === 'wallet' ? 'border-primary bg-primary/5' : 'border-slate-200'}`} onClick={() => setPaymentMethod('wallet')}>
+                      <FormControlLabel value="wallet" control={<Radio />} label={<Typography className='font-bold'>Trừ tiền ví (Prepaid)</Typography>} className='m-0' />
+                      <Typography variant='caption' className='text-slate-500'>Số dư ví: <strong className='text-success'>$1,500.00</strong></Typography>
+                    </Box>
+                  </RadioGroup>
+                </FormControl>
+              </Box>
+
               <Typography variant='body2' className='text-slate-500 text-center m-t-2'>
                 Vui lòng kiểm tra kỹ thông tin gói cước trước khi thanh toán.
               </Typography>

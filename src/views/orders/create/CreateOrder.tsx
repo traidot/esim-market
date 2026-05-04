@@ -8,6 +8,10 @@ import Button from '@mui/material/Button'
 import TextField from '@mui/material/TextField'
 import MenuItem from '@mui/material/MenuItem'
 import Grid2 from '@mui/material/Grid2'
+import Radio from '@mui/material/Radio'
+import RadioGroup from '@mui/material/RadioGroup'
+import FormControlLabel from '@mui/material/FormControlLabel'
+import FormControl from '@mui/material/FormControl'
 
 import PageHeader from '@/components/layout/shared/PageHeader'
 import { toast } from 'react-toastify'
@@ -15,6 +19,7 @@ import { useRouter } from 'next/navigation'
 
 const CreateOrder = () => {
   const router = useRouter()
+  const [paymentMethod, setPaymentMethod] = React.useState<'debt' | 'wallet'>('debt')
 
   const handleCreateOrder = () => {
     toast.success('Tạo đơn hàng thành công!')
@@ -105,6 +110,30 @@ const CreateOrder = () => {
               </Grid2>
               <Grid2 size={{ xs: 12, md: 9 }}>
                 <TextField fullWidth multiline rows={4} placeholder="Enter Remarks" />
+              </Grid2>
+
+              <Grid2 size={{ xs: 12, md: 3 }} className='self-start mt-2'>
+                <Typography variant='body1' className='font-medium md:text-right text-slate-500'>
+                  <span className='text-error'>*</span> Payment Method:
+                </Typography>
+              </Grid2>
+              <Grid2 size={{ xs: 12, md: 9 }}>
+                <FormControl component="fieldset" fullWidth>
+                  <RadioGroup
+                    value={paymentMethod}
+                    onChange={(e) => setPaymentMethod(e.target.value as 'debt' | 'wallet')}
+                  >
+                    <Box className={`flex items-center justify-between p-3 border rounded-lg mbe-3 cursor-pointer ${paymentMethod === 'debt' ? 'border-primary bg-primary/5' : 'border-slate-200'}`} onClick={() => setPaymentMethod('debt')}>
+                      <FormControlLabel value="debt" control={<Radio />} label={<Typography className='font-bold'>Ghi nhận công nợ (Postpaid)</Typography>} className='m-0' />
+                      <Typography variant='caption' className='text-slate-500'>Thanh toán đối soát vào cuối tháng</Typography>
+                    </Box>
+                    
+                    <Box className={`flex items-center justify-between p-3 border rounded-lg cursor-pointer ${paymentMethod === 'wallet' ? 'border-primary bg-primary/5' : 'border-slate-200'}`} onClick={() => setPaymentMethod('wallet')}>
+                      <FormControlLabel value="wallet" control={<Radio />} label={<Typography className='font-bold'>Trừ tiền ví (Prepaid)</Typography>} className='m-0' />
+                      <Typography variant='caption' className='text-slate-500'>Số dư khả dụng: <strong className='text-success'>$1,500.00</strong></Typography>
+                    </Box>
+                  </RadioGroup>
+                </FormControl>
               </Grid2>
             </Grid2>
 
