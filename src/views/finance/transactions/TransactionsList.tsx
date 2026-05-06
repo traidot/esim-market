@@ -41,14 +41,14 @@ const TransactionsList = () => {
   }
 
   const transactions = [
-    { id: 'TRX-10293', agent: 'TravelConnect', agentCode: 'TC', type: 'Charge', typeLabel: 'Phát sinh (Mua eSIM)', amount: -12.50, status: 'Completed', date: '2026-04-25T14:20:00Z' },
+    { id: 'TRX-10293', agent: 'TravelConnect', agentCode: 'TC', type: 'Charge', typeLabel: 'Phát sinh (Mua eSIM)', amount: -12.50, status: 'Completed', date: '2026-04-25T14:20:00Z', orderId: 'ORD-99812', package: 'Nhật Bản 10GB 7 Ngày' },
     { id: 'TRX-10294', agent: 'Global eSIM Hub', agentCode: 'GE', type: 'Payment', typeLabel: 'Thanh toán', amount: 500.00, status: 'Completed', date: '2026-04-25T14:15:00Z' },
-    { id: 'TRX-10295', agent: 'CheapData Agency', agentCode: 'CD', type: 'Charge', typeLabel: 'Phát sinh (Mua eSIM)', amount: -4.50, status: 'Pending', date: '2026-04-25T14:00:00Z' },
+    { id: 'TRX-10295', agent: 'CheapData Agency', agentCode: 'CD', type: 'Charge', typeLabel: 'Phát sinh (Mua eSIM)', amount: -4.50, status: 'Pending', date: '2026-04-25T14:00:00Z', orderId: 'ORD-99810', package: 'Thái Lan 50GB' },
     { id: 'TRX-10296', agent: 'Nomad Partner', agentCode: 'NP', type: 'CreditNote', typeLabel: 'Giảm trừ (Credit Note)', amount: 9.00, status: 'Completed', date: '2026-04-25T13:45:00Z' },
     { id: 'TRX-10297', agent: 'Asia Roaming', agentCode: 'AR', type: 'DebitNote', typeLabel: 'Truy thu (Debit Note)', amount: -150.00, status: 'Failed', date: '2026-04-24T10:30:00Z' },
     { id: 'TRX-10298', agent: 'TravelConnect', agentCode: 'TC', type: 'Payment', typeLabel: 'Thanh toán', amount: 1000.00, status: 'Completed', date: '2026-04-23T09:15:00Z' },
-    { id: 'TRX-10299', agent: 'TravelConnect', agentCode: 'TC', type: 'Charge', typeLabel: 'Phát sinh (Mua eSIM)', amount: -25.00, status: 'Completed', date: '2026-04-23T10:00:00Z' },
-    { id: 'TRX-10300', agent: 'Global eSIM Hub', agentCode: 'GE', type: 'Charge', typeLabel: 'Phát sinh (Mua eSIM)', amount: -50.00, status: 'Completed', date: '2026-04-23T11:20:00Z' },
+    { id: 'TRX-10299', agent: 'TravelConnect', agentCode: 'TC', type: 'Charge', typeLabel: 'Phát sinh (Mua eSIM)', amount: -25.00, status: 'Completed', date: '2026-04-23T10:00:00Z', orderId: 'ORD-99805', package: 'Hàn Quốc 15GB' },
+    { id: 'TRX-10300', agent: 'Global eSIM Hub', agentCode: 'GE', type: 'Charge', typeLabel: 'Phát sinh (Mua eSIM)', amount: -50.00, status: 'Completed', date: '2026-04-23T11:20:00Z', orderId: 'ORD-99801', package: 'Hoa Kỳ 30GB 30 Ngày' },
   ]
 
   const totalIn = transactions.filter(t => t.amount > 0 && t.status === 'Completed').reduce((acc, t) => acc + t.amount, 0)
@@ -114,7 +114,7 @@ const TransactionsList = () => {
 
       <Grid2 container spacing={6} className='mbe-6'>
         <Grid2 size={{ xs: 12, sm: 6, md: 3 }}>
-          <Card className='border-none shadow-sm'>
+          <Card className='border-none shadow-sm h-full'>
             <CardContent className='p-6 flex items-center gap-4'>
               <Avatar variant='rounded' className='bg-primary/10 text-primary bs-[48px] is-[48px]'>
                 <i className='tabler-receipt-2 text-[28px]' />
@@ -127,7 +127,7 @@ const TransactionsList = () => {
           </Card>
         </Grid2>
         <Grid2 size={{ xs: 12, sm: 6, md: 3 }}>
-          <Card className='border-none shadow-sm bg-success/5 border-success/20'>
+          <Card className='border-none shadow-sm bg-success/5 border-success/20 h-full'>
             <CardContent className='p-6 flex items-center gap-4'>
               <Avatar variant='rounded' className='bg-success/20 text-success bs-[48px] is-[48px]'>
                 <i className='tabler-arrow-up-right text-[28px]' />
@@ -140,7 +140,7 @@ const TransactionsList = () => {
           </Card>
         </Grid2>
         <Grid2 size={{ xs: 12, sm: 6, md: 3 }}>
-          <Card className='border-none shadow-sm bg-error/5 border-error/20'>
+          <Card className='border-none shadow-sm bg-error/5 border-error/20 h-full'>
             <CardContent className='p-6 flex items-center gap-4'>
               <Avatar variant='rounded' className='bg-error/20 text-error bs-[48px] is-[48px]'>
                 <i className='tabler-arrow-down-right text-[28px]' />
@@ -153,7 +153,7 @@ const TransactionsList = () => {
           </Card>
         </Grid2>
         <Grid2 size={{ xs: 12, sm: 6, md: 3 }}>
-          <Card className='border-none shadow-sm bg-warning/5 border-warning/20'>
+          <Card className='border-none shadow-sm bg-warning/5 border-warning/20 h-full'>
             <CardContent className='p-6 flex items-center gap-4'>
               <Avatar variant='rounded' className='bg-warning/20 text-warning bs-[48px] is-[48px]'>
                 <i className='tabler-clock text-[28px]' />
@@ -169,8 +169,8 @@ const TransactionsList = () => {
 
       <Card className='border-none shadow-sm'>
         <Box className='p-6 border-be flex flex-wrap justify-between items-center gap-4'>
-          <Grid2 container spacing={4} className='w-full lg:w-3/4'>
-            <Grid2 size={{ xs: 12, sm: 6, md: 3 }}>
+          <Grid2 container spacing={4} className='w-full'>
+            <Grid2 size={{ xs: 12, sm: 6, md: 2 }}>
               <TextField 
                 fullWidth 
                 placeholder='Mã giao dịch...' 
@@ -180,7 +180,7 @@ const TransactionsList = () => {
                 }}
               />
             </Grid2>
-            <Grid2 size={{ xs: 12, sm: 6, md: 3 }}>
+            <Grid2 size={{ xs: 12, sm: 6, md: 2.5 }}>
               <TextField select fullWidth size='small' defaultValue='all' label='Loại Giao dịch'>
                 <MenuItem value='all'>Tất cả</MenuItem>
                 <MenuItem value='charge'>Phát sinh (Charge)</MenuItem>
@@ -189,7 +189,7 @@ const TransactionsList = () => {
                 <MenuItem value='debitnote'>Truy thu (Debit Note)</MenuItem>
               </TextField>
             </Grid2>
-            <Grid2 size={{ xs: 12, sm: 6, md: 3 }}>
+            <Grid2 size={{ xs: 12, sm: 6, md: 2.5 }}>
               <TextField select fullWidth size='small' defaultValue='all' label='Trạng thái'>
                 <MenuItem value='all'>Tất cả</MenuItem>
                 <MenuItem value='completed'>Thành công</MenuItem>
@@ -197,12 +197,21 @@ const TransactionsList = () => {
                 <MenuItem value='failed'>Thất bại</MenuItem>
               </TextField>
             </Grid2>
-            <Grid2 size={{ xs: 12, sm: 6, md: 3 }}>
+            <Grid2 size={{ xs: 12, sm: 6, md: 2.5 }}>
               <TextField 
                 type="date" 
                 fullWidth 
                 size='small' 
                 label='Từ ngày'
+                InputLabelProps={{ shrink: true }}
+              />
+            </Grid2>
+            <Grid2 size={{ xs: 12, sm: 6, md: 2.5 }}>
+              <TextField 
+                type="date" 
+                fullWidth 
+                size='small' 
+                label='Đến ngày'
                 InputLabelProps={{ shrink: true }}
               />
             </Grid2>
@@ -245,11 +254,18 @@ const TransactionsList = () => {
                       </TableCell>
                     )}
                     <TableCell>
-                      <Box className='flex items-center gap-2'>
-                        <Avatar variant='rounded' className={`bg-${typeColor}/10 text-${typeColor} is-8 bs-8`}>
+                      <Box className='flex items-start gap-2'>
+                        <Avatar variant='rounded' className={`bg-${typeColor}/10 text-${typeColor} is-8 bs-8 mt-1`}>
                           <i className={`${getTypeIcon(t.type)} text-lg`} />
                         </Avatar>
-                        <Typography variant='body2' className='font-bold'>{t.typeLabel}</Typography>
+                        <Box>
+                          <Typography variant='body2' className='font-bold'>{t.typeLabel}</Typography>
+                          {t.orderId && (
+                            <Typography variant='caption' className='text-slate-500 block'>
+                              Đơn: <span className='font-bold text-primary'>{t.orderId}</span> - {t.package}
+                            </Typography>
+                          )}
+                        </Box>
                       </Box>
                     </TableCell>
                     <TableCell className='text-right'>

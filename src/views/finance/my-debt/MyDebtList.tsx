@@ -74,7 +74,7 @@ const MyDebtList = () => {
         ]}
         actions={
           <Stack direction='row' spacing={2}>
-            <Button variant='contained' color='primary' startIcon={<i className='tabler-cash-banknote' />} onClick={() => handleOpenPayment(currentDebt)}>Thanh toán ngay</Button>
+            <Button variant='tonal' color='primary' startIcon={<i className='tabler-info-circle' />} onClick={() => setOpenPaymentDialog(true)}>Thông tin chuyển khoản</Button>
           </Stack>
         }
         className='mbe-6'
@@ -82,7 +82,7 @@ const MyDebtList = () => {
 
       <Grid2 container spacing={6} className='mbe-6'>
         <Grid2 size={{ xs: 12, md: 4 }}>
-          <Card className='border-none shadow-sm bg-error/5 border-error/20'>
+          <Card className='border-none shadow-sm bg-error/5 border-error/20 h-full'>
             <CardContent className='p-6 flex flex-col justify-between h-full'>
               <Box>
                 <Typography variant='caption' className='font-bold text-error uppercase'>Tổng Công Nợ Phải Trả</Typography>
@@ -125,13 +125,26 @@ const MyDebtList = () => {
       <Card className='border-none shadow-sm'>
         <Box className='p-6 border-be flex justify-between items-center'>
           <Typography variant='h6' className='font-black'>Sao kê hàng tháng (Monthly Statements)</Typography>
-          <TextField 
-            size='small'
-            placeholder='Tìm kiếm kỳ...' 
-            InputProps={{
-              startAdornment: <InputAdornment position='start'><i className='tabler-search' /></InputAdornment>
-            }}
-          />
+          <Stack direction='row' spacing={4}>
+            <TextField 
+              select
+              size='small'
+              defaultValue='2026'
+              label='Năm'
+              className='min-is-[100px]'
+            >
+              <MenuItem value='2026'>2026</MenuItem>
+              <MenuItem value='2025'>2025</MenuItem>
+              <MenuItem value='2024'>2024</MenuItem>
+            </TextField>
+            <TextField 
+              size='small'
+              placeholder='Tìm kiếm kỳ...' 
+              InputProps={{
+                startAdornment: <InputAdornment position='start'><i className='tabler-search' /></InputAdornment>
+              }}
+            />
+          </Stack>
         </Box>
         
         <TableContainer>
@@ -184,7 +197,6 @@ const MyDebtList = () => {
                     <Stack direction='row' spacing={1} justifyContent='flex-end'>
                       <Button size='small' variant='outlined' color='secondary' startIcon={<i className='tabler-file-download' />}>Tải Invoice</Button>
                       <Button component={Link} href='/finance/transactions' size='small' variant='tonal' color='primary'>Lịch sử Giao dịch</Button>
-                      <Button size='small' variant='contained' color='success' startIcon={<i className='tabler-cash-banknote' />} onClick={() => handleOpenPayment(stmt.closing)} disabled={stmt.closing <= 0}>Thanh toán</Button>
                     </Stack>
                   </TableCell>
                 </TableRow>
@@ -195,56 +207,28 @@ const MyDebtList = () => {
       </Card>
 
       <Dialog open={openPaymentDialog} onClose={() => setOpenPaymentDialog(false)} maxWidth='sm' fullWidth>
-        <DialogTitle className='font-black'>Thanh toán công nợ</DialogTitle>
+        <DialogTitle className='font-black'>Hướng dẫn thanh toán công nợ</DialogTitle>
         <DialogContent className='flex flex-col gap-4 p-6 pt-2'>
           <Typography variant='body2' className='text-slate-500 mbe-2'>
-            Vui lòng nhập thông tin thanh toán. Bộ phận kế toán sẽ đối soát và cập nhật công nợ cho bạn.
+            Hệ thống không thực hiện thanh toán trực tiếp. Vui lòng chuyển khoản theo thông tin dưới đây, sau đó bộ phận vận hành của Market sẽ đối soát và cập nhật trạng thái cho bạn.
           </Typography>
           
-          <TextField 
-            label='Số tiền thanh toán (USD)' 
-            type='number' 
-            fullWidth 
-            value={paymentAmount}
-            onChange={(e) => setPaymentAmount(Number(e.target.value))}
-            slotProps={{
-              input: {
-                startAdornment: <InputAdornment position='start'>$</InputAdornment>
-              }
-            }}
-          />
-          
-          <TextField 
-            select 
-            label='Phương thức thanh toán' 
-            fullWidth 
-            defaultValue='bank_transfer'
-          >
-            <MenuItem value='bank_transfer'>Chuyển khoản ngân hàng</MenuItem>
-            <MenuItem value='cash'>Tiền mặt</MenuItem>
-          </TextField>
-
-          <TextField 
-            label='Mã tham chiếu / Ghi chú' 
-            placeholder='Nhập mã giao dịch hoặc nội dung CK' 
-            fullWidth 
-            multiline
-            rows={2}
-          />
-
-          <Box className='p-4 bg-primary/5 rounded-lg border border-primary/20 mt-2'>
-            <Typography variant='subtitle2' className='font-bold text-primary mbe-1'>Thông tin chuyển khoản:</Typography>
-            <Typography variant='body2' className='text-slate-700'>Ngân hàng: <strong>Vietcombank</strong></Typography>
-            <Typography variant='body2' className='text-slate-700'>Số TK: <strong>0123456789</strong></Typography>
-            <Typography variant='body2' className='text-slate-700'>Chủ TK: <strong>CONG TY TNHH ESIM MARKET</strong></Typography>
-            <Typography variant='body2' className='text-slate-700 mt-1 text-xs text-slate-500'>Nội dung CK: THANH TOAN CONG NO [TÊN ĐẠI LÝ]</Typography>
+          <Box className='p-6 bg-primary/5 rounded-lg border border-primary/20 mt-2'>
+            <Typography variant='subtitle2' className='font-black text-primary mbe-2 text-lg'>Thông tin chuyển khoản:</Typography>
+            <Typography variant='body1' className='text-slate-700 mbe-1'>Ngân hàng: <strong>Vietcombank (VCB)</strong></Typography>
+            <Typography variant='body1' className='text-slate-700 mbe-1'>Số tài khoản: <strong>0123456789</strong></Typography>
+            <Typography variant='body1' className='text-slate-700 mbe-1'>Chủ tài khoản: <strong>CONG TY TNHH ESIM MARKET</strong></Typography>
+            <Typography variant='body1' className='text-slate-700 mt-4 p-3 bg-white/50 rounded border border-dashed border-primary/30'>
+              Nội dung chuyển khoản: <strong className='text-primary'>THANH TOAN CONG NO [TÊN ĐẠI LÝ]</strong>
+            </Typography>
+            <Typography variant='caption' className='text-slate-500 mt-4 block italic'>
+              * Sau khi chuyển khoản thành công, vui lòng chờ 15-30 phút để quản trị viên phê duyệt.
+            </Typography>
           </Box>
-
         </DialogContent>
         <DialogActions className='p-6 pt-0'>
-          <Button variant='tonal' color='secondary' onClick={() => setOpenPaymentDialog(false)}>Hủy bỏ</Button>
-          <Button variant='contained' color='primary' startIcon={<i className='tabler-send' />} onClick={handlePaymentSubmit}>
-            Xác nhận thanh toán
+          <Button variant='contained' color='primary' fullWidth onClick={() => setOpenPaymentDialog(false)}>
+            Tôi đã hiểu
           </Button>
         </DialogActions>
       </Dialog>

@@ -36,9 +36,9 @@ const AgentPricing = ({ id }: { id: string }) => {
   const agentName = id.toUpperCase() === 'A001' ? 'TravelConnect Solutions' : 'Global eSIM Hub'
 
   const countries = [
-    { code: 'JP', name: 'Nhật Bản', defaultMarkup: '30%', customMarkup: '20%', status: 'Custom' },
-    { code: 'US', name: 'Hoa Kỳ', defaultMarkup: '30%', customMarkup: '-', status: 'Default' },
-    { code: 'TH', name: 'Thái Lan', defaultMarkup: '30%', customMarkup: '15%', status: 'Custom' },
+    { code: 'JP', name: 'Nhật Bản', defaultMarkup: '15%', customMarkup: '10%', status: 'Custom' },
+    { code: 'US', name: 'Hoa Kỳ', defaultMarkup: '15%', customMarkup: '-', status: 'Default' },
+    { code: 'TH', name: 'Thái Lan', defaultMarkup: '15%', customMarkup: '12%', status: 'Custom' },
   ]
 
   const packages = [
@@ -49,8 +49,8 @@ const AgentPricing = ({ id }: { id: string }) => {
   return (
     <>
       <PageHeader
-        title={`Cấu hình Giá riêng: ${agentName}`}
-        description="Định giá bán (chiết khấu/markup) theo 3 cấp độ: Toàn hệ thống, Theo Quốc gia, và Theo từng Gói cước."
+        title={`Cấu hình Giá đặc thù: ${agentName}`}
+        description="Thiết lập các quy tắc Ghi đè (Override) dành riêng cho đại lý này. Lưu ý: Cấu hình tại đây sẽ có độ ưu tiên cao nhất, vượt qua Bảng giá chuẩn hệ thống."
         breadcrumbs={[
           { label: 'Trang chủ', href: '/' }, 
           { label: 'Đại lý', href: '/downstream/agents' }, 
@@ -75,8 +75,13 @@ const AgentPricing = ({ id }: { id: string }) => {
 
         {activeTab === 0 && (
           <CardContent className='p-8'>
-            <Typography variant='h5' className='font-black mbe-2'>Cấu hình Giá Toàn hệ thống</Typography>
-            <Typography variant='body2' className='text-slate-500 mbe-6'>Mức chiết khấu hoặc Markup này sẽ được áp dụng cho toàn bộ eSIM trừ khi bị ghi đè ở cấp Quốc gia hoặc Gói.</Typography>
+            <Box className='flex items-center gap-2 mbe-2'>
+              <Typography variant='h5' className='font-black'>Cấu hình Giá Toàn hệ thống</Typography>
+              <Chip label="Ưu tiên: Cao" color="primary" size="small" variant="tonal" className="h-5" />
+            </Box>
+            <Typography variant='body2' className='text-slate-500 mbe-6'>
+              Mức chiết khấu hoặc Markup này sẽ được áp dụng cho toàn bộ eSIM của đại lý này, **ghi đè hoàn toàn** cấu hình mặc định theo Cấp bậc (Tier).
+            </Typography>
             
             <Grid2 container spacing={6} className='max-w-2xl'>
               <Grid2 size={{ xs: 12 }}>
@@ -89,10 +94,10 @@ const AgentPricing = ({ id }: { id: string }) => {
               <Grid2 size={{ xs: 12, md: 6 }}>
                 <TextField 
                   fullWidth 
-                  label='Giảm giá trên Giá bán lẻ (Discount off Retail)' 
+                  label='Giảm giá trên Giá niêm yết (Marketplace Discount)' 
                   defaultValue={15} 
                   InputProps={{ endAdornment: <InputAdornment position='end'>%</InputAdornment> }}
-                  helperText="Đại lý sẽ mua rẻ hơn giá trên Chợ (Marketplace) 15%"
+                  helperText="Đại lý sẽ mua rẻ hơn giá niêm yết trên Chợ 15%"
                 />
               </Grid2>
               <Grid2 size={{ xs: 12, md: 6 }}>
@@ -137,12 +142,12 @@ const AgentPricing = ({ id }: { id: string }) => {
                           <Typography className='font-bold'>{country.name}</Typography>
                         </Box>
                       </TableCell>
-                      <TableCell className='text-slate-500'>Discount {country.defaultMarkup}</TableCell>
+                      <TableCell className='text-slate-500'>Markup {country.defaultMarkup}</TableCell>
                       <TableCell>
                         {country.status === 'Custom' ? (
                           <TextField size='small' defaultValue={parseInt(country.customMarkup)} InputProps={{ endAdornment: <InputAdornment position='end'>%</InputAdornment> }} className='w-24' />
                         ) : (
-                          <Typography className='text-slate-400 italic'>- Kế thừa -</Typography>
+                          <Typography className='text-slate-400 italic'>- Theo Tier -</Typography>
                         )}
                       </TableCell>
                       <TableCell className='text-center'>
@@ -173,8 +178,8 @@ const AgentPricing = ({ id }: { id: string }) => {
                 <TableHead>
                   <TableRow>
                     <TableCell className='font-black uppercase text-[11px]'>Gói cước (SKU)</TableCell>
-                    <TableCell className='font-black uppercase text-[11px] text-right'>Giá Vốn (Base)</TableCell>
-                    <TableCell className='font-black uppercase text-[11px] text-right'>Giá Bán Lẻ (Retail)</TableCell>
+                    <TableCell className='font-black uppercase text-[11px] text-right'>Giá Vốn (Cost)</TableCell>
+                    <TableCell className='font-black uppercase text-[11px] text-right'>Giá Niêm yết (Marketplace)</TableCell>
                     <TableCell className='font-black uppercase text-[11px]'>Giá Riêng (Agent Pays)</TableCell>
                     <TableCell className='font-black uppercase text-[11px] text-right'>Lợi Nhuận Gộp</TableCell>
                     <TableCell className='font-black uppercase text-[11px] text-right'>Thao tác</TableCell>

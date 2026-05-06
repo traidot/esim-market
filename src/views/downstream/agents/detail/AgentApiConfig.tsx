@@ -94,7 +94,7 @@ const AgentApiConfig = ({ id }: { id: string }) => {
             <CardContent className='p-6'>
               <Box className='flex justify-between items-center mbe-6'>
                 <Typography variant='h6' className='font-black'>API Keys</Typography>
-                <Button variant='outlined' size='small' color='error' startIcon={<i className='tabler-refresh' />}>Tạo lại Key mới (Revoke)</Button>
+                <Button variant='outlined' size='small' color='error' startIcon={<i className='tabler-refresh' />}>Làm mới API Key (Rotate)</Button>
               </Box>
 
               <Stack spacing={6}>

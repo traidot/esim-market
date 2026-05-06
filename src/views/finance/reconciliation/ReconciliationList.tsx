@@ -1,5 +1,6 @@
 'use client'
 
+import React, { useState } from 'react'
 import Grid2 from '@mui/material/Grid2'
 import Card from '@mui/material/Card'
 import CardContent from '@mui/material/CardContent'
@@ -17,10 +18,22 @@ import TableContainer from '@mui/material/TableContainer'
 import TableHead from '@mui/material/TableHead'
 import TableRow from '@mui/material/TableRow'
 import Chip from '@mui/material/Chip'
+import Avatar from '@mui/material/Avatar'
+import Dialog from '@mui/material/Dialog'
+import DialogTitle from '@mui/material/DialogTitle'
+import DialogContent from '@mui/material/DialogContent'
+import DialogActions from '@mui/material/DialogActions'
+import LinearProgress from '@mui/material/LinearProgress'
+import Alert from '@mui/material/Alert'
+import Divider from '@mui/material/Divider'
 
 import PageHeader from '@/components/layout/shared/PageHeader'
 
 const ReconciliationList = () => {
+  const [isMatchToolOpen, setIsMatchToolOpen] = useState(false)
+  const [matchingStep, setMatchingStep] = useState<'upload' | 'processing' | 'result'>('upload')
+  const [matchProgress, setMatchProgress] = useState(0)
+
   const transactions = [
     { 
       id: 'ORD-99812', 
@@ -100,6 +113,27 @@ const ReconciliationList = () => {
     }
   }
 
+  const handleStartMatching = () => {
+    setMatchingStep('processing')
+    let progress = 0
+    const interval = setInterval(() => {
+      progress += 10
+      setMatchProgress(progress)
+      if (progress >= 100) {
+        clearInterval(interval)
+        setMatchingStep('result')
+      }
+    }, 200)
+  }
+
+  const handleCloseMatchTool = () => {
+    setIsMatchToolOpen(false)
+    setTimeout(() => {
+      setMatchingStep('upload')
+      setMatchProgress(0)
+    }, 300)
+  }
+
   return (
     <>
       <PageHeader
@@ -112,7 +146,14 @@ const ReconciliationList = () => {
         ]}
         actions={
           <Stack direction='row' spacing={2}>
-            <Button variant='outlined' color='secondary' startIcon={<i className='tabler-adjustments' />}>Công cụ Khớp lệnh</Button>
+            <Button 
+              variant='outlined' 
+              color='secondary' 
+              startIcon={<i className='tabler-adjustments' />}
+              onClick={() => setIsMatchToolOpen(true)}
+            >
+              Công cụ Khớp lệnh
+            </Button>
             <Button variant='contained' color='primary' startIcon={<i className='tabler-file-export' />}>Xuất File Đối soát</Button>
           </Stack>
         }
@@ -121,7 +162,7 @@ const ReconciliationList = () => {
 
       <Grid2 container spacing={6} className='mbe-6'>
         <Grid2 size={{ xs: 12, md: 3 }}>
-          <Card className='border-none shadow-sm'>
+          <Card className='border-none shadow-sm h-full'>
             <CardContent className='p-6'>
               <Typography variant='caption' className='font-bold text-slate-500 uppercase'>Doanh thu B2B (Đại lý)</Typography>
               <Typography variant='h4' className='font-black text-primary'>
@@ -131,7 +172,7 @@ const ReconciliationList = () => {
           </Card>
         </Grid2>
         <Grid2 size={{ xs: 12, md: 3 }}>
-          <Card className='border-none shadow-sm'>
+          <Card className='border-none shadow-sm h-full'>
             <CardContent className='p-6'>
               <Typography variant='caption' className='font-bold text-slate-500 uppercase'>Chi phí Nhập (NCC)</Typography>
               <Typography variant='h4' className='font-black text-warning'>
@@ -141,7 +182,7 @@ const ReconciliationList = () => {
           </Card>
         </Grid2>
         <Grid2 size={{ xs: 12, md: 3 }}>
-          <Card className='border-none shadow-sm'>
+          <Card className='border-none shadow-sm h-full'>
             <CardContent className='p-6'>
               <Typography variant='caption' className='font-bold text-slate-500 uppercase'>Lợi nhuận gộp</Typography>
               <Box className='flex items-baseline gap-2'>
@@ -154,7 +195,7 @@ const ReconciliationList = () => {
           </Card>
         </Grid2>
         <Grid2 size={{ xs: 12, md: 3 }}>
-          <Card className='border-none shadow-sm bg-error/5 border-error/20'>
+          <Card className='border-none shadow-sm bg-error/5 border-error/20 h-full'>
             <CardContent className='p-6 flex flex-col justify-between h-full'>
               <Box>
                 <Typography variant='caption' className='font-bold text-error uppercase'>Giao dịch Lệch/Lỗi</Typography>
@@ -289,6 +330,145 @@ const ReconciliationList = () => {
           </Table>
         </TableContainer>
       </Card>
+
+      {/* Match Tool Dialog */}
+      <Dialog 
+        open={isMatchToolOpen} 
+        onClose={handleCloseMatchTool}
+        maxWidth='md'
+        fullWidth
+      >
+        <DialogTitle className='flex justify-between items-center border-be p-6'>
+          <Box>
+            <Typography variant='h5' className='font-black'>Công cụ Khớp lệnh (Smart Matching Engine)</Typography>
+            <Typography variant='caption' className='text-slate-500'>Tự động đối chiếu dữ liệu giữa Nhà cung cấp và Hệ thống</Typography>
+          </Box>
+          <Button onClick={handleCloseMatchTool} className='min-is-0 p-1'><i className='tabler-x text-xl' /></Button>
+        </DialogTitle>
+        
+        <DialogContent className='p-6'>
+          {matchingStep === 'upload' && (
+            <Box className='flex flex-col gap-6 py-4'>
+              <Alert icon={<i className='tabler-info-circle' />} severity='info' className='bg-info/5 border-info/20 text-info'>
+                Tải lên file báo cáo (CSV/Excel) xuất từ cổng NCC (Airalo, eSIM Go, v.v.) để hệ thống bắt đầu so khớp.
+              </Alert>
+              
+              <Grid2 container spacing={4}>
+                <Grid2 size={{ xs: 12, md: 6 }}>
+                  <TextField select fullWidth label='Chọn Nhà cung cấp' defaultValue='airalo'>
+                    <MenuItem value='airalo'>Airalo API</MenuItem>
+                    <MenuItem value='esimgo'>eSIM Go</MenuItem>
+                    <MenuItem value='redtea'>Redtea Mobile</MenuItem>
+                  </TextField>
+                </Grid2>
+                <Grid2 size={{ xs: 12, md: 6 }}>
+                  <TextField type='date' fullWidth label='Kỳ đối soát' InputLabelProps={{ shrink: true }} defaultValue='2026-04-01' />
+                </Grid2>
+              </Grid2>
+
+              <Box 
+                className='border-2 border-dashed border-slate-200 rounded-lg p-10 flex flex-col items-center justify-center bg-slate-50 hover:bg-slate-100 transition-colors cursor-pointer'
+                onClick={handleStartMatching}
+              >
+                <Avatar className='bg-primary/10 text-primary mb-4 bs-12 is-12'>
+                  <i className='tabler-cloud-upload text-3xl' />
+                </Avatar>
+                <Typography variant='h6' className='font-black mbe-1 text-center'>Tải lên File báo cáo NCC</Typography>
+                <Typography variant='caption' className='text-slate-500 text-center'>Hỗ trợ .csv, .xlsx (Tối đa 20MB)</Typography>
+              </Box>
+            </Box>
+          )}
+
+          {matchingStep === 'processing' && (
+            <Box className='py-12 flex flex-col items-center gap-6'>
+              <Box className='relative bs-24 is-24 flex items-center justify-center'>
+                <i className='tabler-refresh text-primary text-5xl animate-spin' />
+              </Box>
+              <Box className='w-full max-w-sm'>
+                <Typography variant='h6' className='font-black text-center mbe-2'>Đang phân tích dữ liệu...</Typography>
+                <Typography variant='body2' className='text-center text-slate-500 mbe-4'>Đã xử lý {matchProgress}% dữ liệu đơn hàng</Typography>
+                <LinearProgress variant='determinate' value={matchProgress} className='rounded-full bs-2' />
+              </Box>
+            </Box>
+          )}
+
+          {matchingStep === 'result' && (
+            <Box className='flex flex-col gap-6 py-4'>
+              <Box className='bg-success/5 border border-success/20 rounded-lg p-4 flex items-center gap-4'>
+                <Avatar className='bg-success text-white'>
+                  <i className='tabler-check' />
+                </Avatar>
+                <Box>
+                  <Typography variant='subtitle2' className='font-black text-success uppercase'>Hoàn tất đối soát</Typography>
+                  <Typography variant='caption' className='text-slate-600'>Phân tích xong 1,240 giao dịch trong kỳ.</Typography>
+                </Box>
+              </Box>
+
+              <Grid2 container spacing={4}>
+                <Grid2 size={{ xs: 12, md: 4 }}>
+                  <Card variant='outlined' className='p-4 border-slate-200'>
+                    <Typography variant='h4' className='font-black text-success'>1,232</Typography>
+                    <Typography variant='caption' className='font-bold text-slate-500 uppercase italic'>Khớp hoàn toàn</Typography>
+                  </Card>
+                </Grid2>
+                <Grid2 size={{ xs: 12, md: 4 }}>
+                  <Card variant='outlined' className='p-4 border-error/30 bg-error/5 text-error'>
+                    <Typography variant='h4' className='font-black'>6</Typography>
+                    <Typography variant='caption' className='font-bold uppercase italic'>Lệch giá vốn</Typography>
+                  </Card>
+                </Grid2>
+                <Grid2 size={{ xs: 12, md: 4 }}>
+                  <Card variant='outlined' className='p-4 border-warning/30 bg-warning/5 text-warning'>
+                    <Typography variant='h4' className='font-black'>2</Typography>
+                    <Typography variant='caption' className='font-bold uppercase italic'>Thiếu trong hệ thống</Typography>
+                  </Card>
+                </Grid2>
+              </Grid2>
+
+              <Divider />
+
+              <Box>
+                <Typography variant='subtitle2' className='font-black uppercase mbe-3'>Chi tiết các đơn lệch/thiếu:</Typography>
+                <TableContainer className='border rounded-lg max-bs-64'>
+                  <Table size='small' stickyHeader>
+                    <TableHead>
+                      <TableRow>
+                        <TableCell className='font-black text-[10px] uppercase'>Mã Đơn (NCC)</TableCell>
+                        <TableCell className='font-black text-[10px] uppercase'>Vấn đề</TableCell>
+                        <TableCell className='font-black text-[10px] uppercase text-right'>Giá Hệ thống</TableCell>
+                        <TableCell className='font-black text-[10px] uppercase text-right'>Giá NCC</TableCell>
+                      </TableRow>
+                    </TableHead>
+                    <TableBody>
+                      <TableRow>
+                        <TableCell className='font-bold text-error'>AIR-22931</TableCell>
+                        <TableCell><Chip label='Thiếu trong DB' size='small' color='warning' variant='tonal' /></TableCell>
+                        <TableCell className='text-right'>$0.00</TableCell>
+                        <TableCell className='text-right font-bold'>$5.50</TableCell>
+                      </TableRow>
+                      <TableRow>
+                        <TableCell className='font-bold'>ORD-99810</TableCell>
+                        <TableCell><Chip label='Lệch giá vốn' size='small' color='error' variant='tonal' /></TableCell>
+                        <TableCell className='text-right'>$5.00</TableCell>
+                        <TableCell className='text-right font-bold text-error'>$5.10</TableCell>
+                      </TableRow>
+                    </TableBody>
+                  </Table>
+                </TableContainer>
+              </Box>
+            </Box>
+          )}
+        </DialogContent>
+
+        <DialogActions className='p-6 border-bs'>
+          <Button variant='tonal' color='secondary' onClick={handleCloseMatchTool}>Hủy bỏ</Button>
+          {matchingStep === 'result' ? (
+            <Button variant='contained' color='primary' startIcon={<i className='tabler-file-download' />}>Tải báo cáo chi tiết (.xlsx)</Button>
+          ) : (
+            <Button variant='contained' color='primary' disabled={matchingStep === 'processing'} onClick={handleStartMatching}>Bắt đầu xử lý</Button>
+          )}
+        </DialogActions>
+      </Dialog>
     </>
   )
 }

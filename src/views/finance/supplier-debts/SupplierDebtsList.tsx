@@ -25,17 +25,17 @@ import PageHeader from '@/components/layout/shared/PageHeader'
 
 const SupplierDebtsList = () => {
   const suppliers = [
-    { id: 'airalo', name: 'Airalo API', code: 'AI', debt: 15240.00, creditLimit: 100000.00, status: 'Active', dueDate: '15/05/2026' },
-    { id: '1global', name: '1Global (Truphone)', code: '1G', debt: 48500.00, creditLimit: 50000.00, status: 'Critical', dueDate: '05/05/2026' },
-    { id: 'redtea', name: 'Redtea Mobile', code: 'RT', debt: 500.00, creditLimit: 20000.00, status: 'Active', dueDate: '10/05/2026' },
-    { id: 'esimgo', name: 'eSIM Go', code: 'EG', debt: 12500.00, creditLimit: 25000.00, status: 'Warning', dueDate: '20/05/2026' },
+    { id: 'airalo', name: 'Airalo API', code: 'AI', balance: 15240.00, creditLimit: 100000.00, status: 'Active', dueDate: '15/05/2026', type: 'postpaid' },
+    { id: '1global', name: '1Global (Truphone)', code: '1G', balance: 5000.00, creditLimit: 0, status: 'Active', dueDate: '-', type: 'prepaid' },
+    { id: 'redtea', name: 'Redtea Mobile', code: 'RT', balance: 500.00, creditLimit: 20000.00, status: 'Active', dueDate: '10/05/2026', type: 'postpaid' },
+    { id: 'esimgo', name: 'eSIM Go', code: 'EG', balance: 12500.00, creditLimit: 25000.00, status: 'Warning', dueDate: '20/05/2026', type: 'postpaid' },
   ]
 
   // Mock global metrics
-  const totalPayable = suppliers.reduce((acc, curr) => acc + curr.debt, 0)
-  const totalCreditAvailable = suppliers.reduce((acc, curr) => acc + curr.creditLimit, 0)
+  const totalPayable = suppliers.filter(s => s.type === 'postpaid').reduce((acc, curr) => acc + curr.balance, 0)
+  const totalWallet = suppliers.filter(s => s.type === 'prepaid').reduce((acc, curr) => acc + curr.balance, 0)
   const totalSuppliers = suppliers.length
-  const criticalSuppliers = suppliers.filter(s => (s.debt / s.creditLimit) > 0.8).length
+  const criticalSuppliers = suppliers.filter(s => s.type === 'postpaid' && (s.balance / s.creditLimit) > 0.8).length
 
   return (
     <>
@@ -58,7 +58,7 @@ const SupplierDebtsList = () => {
 
       <Grid2 container spacing={6} className='mbe-6'>
         <Grid2 size={{ xs: 12, md: 3 }}>
-          <Card className='border-none shadow-sm bg-warning/5 border-warning/20'>
+          <Card className='border-none shadow-sm bg-warning/5 border-warning/20 h-full'>
             <CardContent className='p-6'>
               <Typography variant='caption' className='font-bold text-warning uppercase'>Tổng Nợ Phải Trả</Typography>
               <Typography variant='h3' className='font-black text-warning'>
@@ -68,27 +68,27 @@ const SupplierDebtsList = () => {
           </Card>
         </Grid2>
         <Grid2 size={{ xs: 12, md: 3 }}>
-          <Card className='border-none shadow-sm'>
+          <Card className='border-none shadow-sm bg-success/5 border-success/20 h-full'>
             <CardContent className='p-6'>
-              <Typography variant='caption' className='font-bold text-slate-500 uppercase'>Hạn mức tín dụng tổng</Typography>
-              <Typography variant='h3' className='font-black text-primary'>
-                {totalCreditAvailable.toLocaleString('en-US', { style: 'currency', currency: 'USD' })}
+              <Typography variant='caption' className='font-bold text-success uppercase'>Tổng Tiền Trong Ví (Upstream)</Typography>
+              <Typography variant='h3' className='font-black text-success'>
+                {totalWallet.toLocaleString('en-US', { style: 'currency', currency: 'USD' })}
               </Typography>
             </CardContent>
           </Card>
         </Grid2>
         <Grid2 size={{ xs: 12, md: 3 }}>
-          <Card className='border-none shadow-sm'>
+          <Card className='border-none shadow-sm h-full'>
             <CardContent className='p-6'>
-              <Typography variant='caption' className='font-bold text-slate-500 uppercase'>Số NCC Đang nợ</Typography>
+              <Typography variant='caption' className='font-bold text-slate-500 uppercase'>Số NCC Đang nợ/Dùng Ví</Typography>
               <Typography variant='h3' className='font-black'>
-                {suppliers.filter(s => s.debt > 0).length} <span className='text-sm text-slate-400'>/ {totalSuppliers}</span>
+                {suppliers.filter(s => s.balance > 0).length} <span className='text-sm text-slate-400'>/ {totalSuppliers}</span>
               </Typography>
             </CardContent>
           </Card>
         </Grid2>
         <Grid2 size={{ xs: 12, md: 3 }}>
-          <Card className='border-none shadow-sm bg-error/5 border-error/20'>
+          <Card className='border-none shadow-sm bg-error/5 border-error/20 h-full'>
             <CardContent className='p-6 flex flex-col justify-between h-full'>
               <Box>
                 <Typography variant='caption' className='font-bold text-error uppercase'>Cần thanh toán gấp</Typography>
@@ -96,7 +96,7 @@ const SupplierDebtsList = () => {
                   {criticalSuppliers} <span className='text-sm'>NCC</span>
                 </Typography>
               </Box>
-              <Typography variant='caption' className='text-slate-600 font-bold'>Tránh bị ngắt kết nối API</Typography>
+              <Typography variant='caption' className='text-slate-600 font-bold'>Duy trì hoạt động API</Typography>
             </CardContent>
           </Card>
         </Grid2>
@@ -131,16 +131,16 @@ const SupplierDebtsList = () => {
             <TableHead>
               <TableRow>
                 <TableCell className='font-black uppercase text-[11px]'>Nhà Cung Cấp (Upstream)</TableCell>
-                <TableCell className='font-black uppercase text-[11px] text-right bg-warning/5 text-warning'>Dư Nợ Phải Trả</TableCell>
-                <TableCell className='font-black uppercase text-[11px] w-48'>Đã sử dụng (Line of Credit)</TableCell>
+                <TableCell className='font-black uppercase text-[11px]'>Mô hình</TableCell>
+                <TableCell className='font-black uppercase text-[11px] text-right'>Số Dư / Nợ</TableCell>
+                <TableCell className='font-black uppercase text-[11px] w-48'>Sử dụng Hạn mức</TableCell>
                 <TableCell className='font-black uppercase text-[11px] text-center'>Hạn Thanh Toán</TableCell>
-                <TableCell className='font-black uppercase text-[11px] text-center'>Trạng thái Mạng</TableCell>
                 <TableCell className='font-black uppercase text-[11px] text-right'>Thao tác</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
               {suppliers.map((supplier) => {
-                const usageRatio = (supplier.debt / supplier.creditLimit) * 100
+                const usageRatio = (supplier.balance / (supplier.creditLimit || 1)) * 100
                 const usageColor = usageRatio > 90 ? 'error' : usageRatio > 50 ? 'warning' : 'primary'
 
                 return (
@@ -156,48 +156,58 @@ const SupplierDebtsList = () => {
                         </Box>
                       </Box>
                     </TableCell>
-                    <TableCell className='text-right bg-warning/5'>
-                      <Typography variant='subtitle2' className={`font-black ${usageRatio > 90 ? 'text-error' : 'text-warning'}`}>
-                        {supplier.debt.toLocaleString('en-US', { style: 'currency', currency: 'USD' })}
+                    <TableCell>
+                      <Chip 
+                        label={supplier.type === 'prepaid' ? 'Prepaid (Ví)' : 'Postpaid (Nợ)'} 
+                        color={supplier.type === 'prepaid' ? 'success' : 'primary'} 
+                        size='small' 
+                        variant='tonal' 
+                        className='font-bold' 
+                      />
+                    </TableCell>
+                    <TableCell className='text-right'>
+                      <Typography variant='subtitle2' className={`font-black ${supplier.type === 'postpaid' ? 'text-warning' : 'text-success'}`}>
+                        {supplier.balance.toLocaleString('en-US', { style: 'currency', currency: 'USD' })}
+                      </Typography>
+                      <Typography variant='caption' className='text-slate-400'>
+                        {supplier.type === 'prepaid' ? 'Số dư khả dụng' : 'Công nợ chưa trả'}
                       </Typography>
                     </TableCell>
                     <TableCell>
-                      <Box className='flex justify-between items-center mbe-1'>
-                        <Typography variant='caption' className='font-bold text-slate-500'>
-                          {usageRatio.toFixed(1)}%
-                        </Typography>
-                        <Typography variant='caption' className='text-slate-400'>
-                          Max: {supplier.creditLimit / 1000}k
-                        </Typography>
-                      </Box>
-                      <LinearProgress 
-                        variant='determinate' 
-                        value={usageRatio} 
-                        color={usageColor} 
-                        className='bs-2 rounded-full' 
-                      />
+                      {supplier.type === 'postpaid' ? (
+                        <>
+                          <Box className='flex justify-between items-center mbe-1'>
+                            <Typography variant='caption' className='font-bold text-slate-500'>
+                              {usageRatio.toFixed(1)}%
+                            </Typography>
+                            <Typography variant='caption' className='text-slate-400'>
+                              Max: {supplier.creditLimit / 1000}k
+                            </Typography>
+                          </Box>
+                          <LinearProgress 
+                            variant='determinate' 
+                            value={usageRatio} 
+                            color={usageColor} 
+                            className='bs-2 rounded-full' 
+                          />
+                        </>
+                      ) : (
+                        <Typography variant='caption' className='text-slate-400 italic'>Không áp dụng hạn mức</Typography>
+                      )}
                     </TableCell>
                     <TableCell className='text-center'>
-                      <Typography variant='body2' className={`font-bold ${usageRatio > 90 ? 'text-error' : ''}`}>
+                      <Typography variant='body2' className={`font-bold ${supplier.type === 'postpaid' && usageRatio > 90 ? 'text-error' : ''}`}>
                         {supplier.dueDate}
                       </Typography>
-                    </TableCell>
-                    <TableCell className='text-center'>
-                      <Chip 
-                        label={supplier.status === 'Critical' ? 'Sắp ngắt kết nối' : 'Đang hoạt động'} 
-                        color={supplier.status === 'Critical' ? 'error' : 'success'} 
-                        size='small' 
-                        variant='tonal' 
-                      />
                     </TableCell>
                     <TableCell className='text-right'>
                       <Stack direction='row' spacing={1} justifyContent='flex-end'>
                         <Button 
                           size='small' 
                           variant='contained' 
-                          color='success' 
+                          color={supplier.type === 'prepaid' ? 'success' : 'primary'} 
                         >
-                          Ủy nhiệm chi
+                          {supplier.type === 'prepaid' ? 'Nạp tiền' : 'Thanh toán'}
                         </Button>
                       </Stack>
                     </TableCell>
