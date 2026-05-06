@@ -1,9 +1,9 @@
 'use client'
 
-import ProductCatalog from '@/views/marketplace/products/ProductCatalog'
+import AdminProductCatalog from '@/views/marketplace/products/AdminProductCatalog'
 
 const MarketplaceProductsPage = () => {
-  return <ProductCatalog />
+  return <AdminProductCatalog />
 }
 
 export default MarketplaceProductsPage

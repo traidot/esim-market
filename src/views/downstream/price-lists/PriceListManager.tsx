@@ -49,10 +49,7 @@ const PriceListManager = () => {
           { label: 'Quản lý Bảng giá' }
         ]}
         actions={
-          <Stack direction='row' spacing={2}>
-            <Button variant='tonal' color='primary' startIcon={<i className='tabler-file-export' />}>Export CSV</Button>
-            <Button variant='contained' startIcon={<i className='tabler-link' />}>Copy API Link</Button>
-          </Stack>
+          <Button variant='contained' color='success' startIcon={<i className='tabler-file-spreadsheet' />}>Xuất Excel</Button>
         }
         className='mbe-6'
       />
@@ -92,20 +89,48 @@ const PriceListManager = () => {
 
       <Card className='border-none shadow-sm'>
         <Box className='p-6 border-be flex justify-between items-center'>
-          <Grid2 container spacing={4} className='w-full lg:w-2/3'>
-            <Grid2 size={{ xs: 12, sm: 6 }}>
+          <Grid2 container spacing={4} className='w-full'>
+            <Grid2 size={{ xs: 12, md: 3 }}>
               <TextField 
                 fullWidth 
-                placeholder='Tìm kiếm SKU, tên quốc gia...' 
+                placeholder='Tìm kiếm SKU...' 
                 size='small'
                 InputProps={{
                   startAdornment: <InputAdornment position='start'><i className='tabler-search' /></InputAdornment>
                 }}
               />
             </Grid2>
-            <Grid2 size={{ xs: 12, sm: 6 }}>
-              <TextField select fullWidth size='small' defaultValue='all' label='Lọc theo Quy tắc áp dụng'>
+            <Grid2 size={{ xs: 12, sm: 6, md: 2 }}>
+              <TextField select fullWidth size='small' defaultValue='all' label='Quốc gia/Vùng'>
                 <MenuItem value='all'>Tất cả</MenuItem>
+                <MenuItem value='jp'>Nhật Bản</MenuItem>
+                <MenuItem value='us'>Hoa Kỳ</MenuItem>
+                <MenuItem value='th'>Thái Lan</MenuItem>
+                <MenuItem value='eu'>Châu Âu</MenuItem>
+              </TextField>
+            </Grid2>
+            <Grid2 size={{ xs: 12, sm: 6, md: 2 }}>
+              <TextField select fullWidth size='small' defaultValue='all' label='Dung lượng (GB)'>
+                <MenuItem value='all'>Tất cả</MenuItem>
+                <MenuItem value='1'>1 GB</MenuItem>
+                <MenuItem value='5'>5 GB</MenuItem>
+                <MenuItem value='10'>10 GB</MenuItem>
+                <MenuItem value='50'>50 GB</MenuItem>
+                <MenuItem value='unlimited'>Không giới hạn</MenuItem>
+              </TextField>
+            </Grid2>
+            <Grid2 size={{ xs: 12, sm: 6, md: 2 }}>
+              <TextField select fullWidth size='small' defaultValue='all' label='Thời hạn (Ngày)'>
+                <MenuItem value='all'>Tất cả</MenuItem>
+                <MenuItem value='7'>7 Ngày</MenuItem>
+                <MenuItem value='10'>10 Ngày</MenuItem>
+                <MenuItem value='15'>15 Ngày</MenuItem>
+                <MenuItem value='30'>30 Ngày</MenuItem>
+              </TextField>
+            </Grid2>
+            <Grid2 size={{ xs: 12, sm: 6, md: 3 }}>
+              <TextField select fullWidth size='small' defaultValue='all' label='Quy tắc áp dụng'>
+                <MenuItem value='all'>Tất cả quy tắc</MenuItem>
                 <MenuItem value='pkg'>Ghi đè Gói</MenuItem>
                 <MenuItem value='country'>Ghi đè Quốc gia</MenuItem>
                 <MenuItem value='tier'>Giá mặc định (Tier)</MenuItem>
@@ -120,8 +145,9 @@ const PriceListManager = () => {
               <TableRow>
                 <TableCell className='font-black uppercase text-[11px]'>Gói cước (SKU)</TableCell>
                 <TableCell className='font-black uppercase text-[11px]'>Quốc gia/Vùng</TableCell>
-                <TableCell className='font-black uppercase text-[11px] text-right'>Giá Bán Lẻ (Retail)</TableCell>
-                <TableCell className='font-black uppercase text-[11px] text-right bg-primary/5 text-primary'>Giá Đại Lý (Agent Price)</TableCell>
+                <TableCell className='font-black uppercase text-[11px] text-right'>Giá Gốc (NCC)</TableCell>
+                <TableCell className='font-black uppercase text-[11px] text-right'>Giá Bán Chợ (Retail)</TableCell>
+                <TableCell className='font-black uppercase text-[11px] text-right bg-primary/5 text-primary'>Giá Đại Lý (Agent)</TableCell>
                 <TableCell className='font-black uppercase text-[11px] text-right'>Lợi Nhuận Gộp</TableCell>
                 <TableCell className='font-black uppercase text-[11px]'>Quy tắc áp dụng</TableCell>
               </TableRow>
@@ -141,6 +167,11 @@ const PriceListManager = () => {
                     </TableCell>
                     <TableCell className='text-right'>
                       <Typography variant='body2' className='text-slate-500'>
+                        {pkg.basePrice.toLocaleString('en-US', { style: 'currency', currency: 'USD' })}
+                      </Typography>
+                    </TableCell>
+                    <TableCell className='text-right'>
+                      <Typography variant='body2' className='text-slate-500'>
                         {pkg.retailPrice.toLocaleString('en-US', { style: 'currency', currency: 'USD' })}
                       </Typography>
                     </TableCell>
@@ -152,9 +183,6 @@ const PriceListManager = () => {
                     <TableCell className='text-right'>
                       <Typography variant='body2' className='font-bold text-success'>
                         {profit.toLocaleString('en-US', { style: 'currency', currency: 'USD' })}
-                      </Typography>
-                      <Typography variant='caption' className='text-slate-400'>
-                        Vốn: {pkg.basePrice.toLocaleString('en-US', { style: 'currency', currency: 'USD' })}
                       </Typography>
                     </TableCell>
                     <TableCell>

@@ -21,10 +21,17 @@ import Avatar from '@mui/material/Avatar'
 import Grid2 from '@mui/material/Grid2'
 import Select from '@mui/material/Select'
 import MenuItem from '@mui/material/MenuItem'
+import Dialog from '@mui/material/Dialog'
+import DialogTitle from '@mui/material/DialogTitle'
+import DialogContent from '@mui/material/DialogContent'
+import DialogActions from '@mui/material/DialogActions'
 
 import PageHeader from '@/components/layout/shared/PageHeader'
 
 const UpstreamTransactions = () => {
+  const [isLogOpen, setIsLogOpen] = useState(false)
+  const [selectedLog, setSelectedLog] = useState<any>(null)
+
   const transactions = [
     { id: 'TX-9821', supplier: 'Airalo', action: 'Mua eSIM', package: 'Japan 10GB', amount: '$8.50', status: 'Success', date: '28/04/2026 01:15' },
     { id: 'TX-9820', supplier: 'Nomad', action: 'Gia hạn gói', package: 'USA 20GB', amount: '$22.00', status: 'Success', date: '28/04/2026 00:45' },
@@ -39,6 +46,11 @@ const UpstreamTransactions = () => {
         title="Lịch sử giao dịch Upstream"
         description="Nhật ký chi tiết các lệnh gọi API, mua hàng và biến động số dư với Nhà cung cấp"
         breadcrumbs={[{ label: 'Trang chủ', href: '/' }, { label: 'Nguồn cung' }, { label: 'Lịch sử giao dịch' }]}
+        actions={
+          <Button variant='contained' color='success' startIcon={<i className='tabler-file-spreadsheet' />}>
+            Xuất Excel
+          </Button>
+        }
         className='mbe-6'
       />
 
@@ -156,7 +168,9 @@ const UpstreamTransactions = () => {
                     <Typography variant='caption' className='font-bold text-slate-500'>{tx.date}</Typography>
                   </TableCell>
                   <TableCell className='text-center'>
-                    <IconButton size='small'><i className='tabler-code text-[18px]' /></IconButton>
+                    <IconButton size='small' onClick={() => { setSelectedLog(tx); setIsLogOpen(true); }}>
+                      <i className='tabler-code text-[18px]' />
+                    </IconButton>
                   </TableCell>
                 </TableRow>
               ))}
@@ -164,6 +178,85 @@ const UpstreamTransactions = () => {
           </Table>
         </TableContainer>
       </Card>
+
+      <Dialog 
+        open={isLogOpen} 
+        onClose={() => setIsLogOpen(false)}
+        maxWidth='md'
+        fullWidth
+      >
+        <DialogTitle className='flex items-center justify-between'>
+          <Typography variant='h5' component='span' className='font-black'>API Request/Response Log</Typography>
+          <IconButton onClick={() => setIsLogOpen(false)} size='small'>
+            <i className='tabler-x' />
+          </IconButton>
+        </DialogTitle>
+        <DialogContent>
+          {selectedLog && (
+            <Box className='flex flex-col gap-4 m-bs-2'>
+              <Box className='flex justify-between items-center bg-slate-50 p-4 rounded-lg'>
+                <Box>
+                  <Typography variant='caption' className='text-slate-500'>Mã giao dịch</Typography>
+                  <Typography variant='body1' className='font-mono font-bold'>{selectedLog.id}</Typography>
+                </Box>
+                <Box>
+                  <Typography variant='caption' className='text-slate-500'>Trạng thái</Typography>
+                  <Box>
+                    <Chip 
+                      label={selectedLog.status} 
+                      size='small' 
+                      color={selectedLog.status === 'Success' ? 'success' : 'error'} 
+                      variant='tonal'
+                      className='font-black'
+                    />
+                  </Box>
+                </Box>
+              </Box>
+
+              <Typography variant='subtitle2' className='font-black uppercase text-slate-500 mt-2'>Request Payload</Typography>
+              <Box className='bg-[#1E1E1E] rounded-lg p-4 overflow-x-auto'>
+                <pre className='text-[#D4D4D4] font-mono text-xs m-0'>
+{`POST /v2/orders
+Host: api.${selectedLog.supplier.toLowerCase()}.com
+Content-Type: application/json
+Authorization: Bearer ***
+
+{
+  "package_id": "${selectedLog.package}",
+  "quantity": 1,
+  "reference_id": "${selectedLog.id}"
+}`}
+                </pre>
+              </Box>
+
+              <Typography variant='subtitle2' className='font-black uppercase text-slate-500 mt-2'>Response Body</Typography>
+              <Box className='bg-[#1E1E1E] rounded-lg p-4 overflow-x-auto'>
+                <pre className='text-[#D4D4D4] font-mono text-xs m-0'>
+{selectedLog.status === 'Success' ? `{
+  "data": {
+    "order_id": "ORD-${Math.floor(Math.random() * 10000)}",
+    "status": "completed",
+    "iccid": "8984400000000000000",
+    "amount": "${selectedLog.amount}"
+  },
+  "meta": {
+    "message": "Success"
+  }
+}` : `{
+  "error": {
+    "code": "INSUFFICIENT_FUNDS",
+    "message": "The wallet balance is not enough to process this order."
+  }
+}`}
+                </pre>
+              </Box>
+            </Box>
+          )}
+        </DialogContent>
+        <DialogActions className='p-6 pt-0'>
+          <Button variant='contained' color='primary' onClick={() => setIsLogOpen(false)}>Đóng</Button>
+        </DialogActions>
+      </Dialog>
     </>
   )
 }

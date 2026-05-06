@@ -24,7 +24,9 @@ const AgentDetail = ({ id }: { id: string }) => {
     email: 'contact@travelconnect.vn',
     tier: 'PLATINUM',
     color: 'primary',
-    balance: 5240.00,
+    type: id.toLowerCase() === 'a001' ? 'postpaid' : 'prepaid',
+    balance: id.toLowerCase() === 'a001' ? 5240.00 : 15000.00,
+    limit: 50000,
     totalSales: 125000,
     ordersThisMonth: 1240,
     markupProfitThisMonth: 4500.50,
@@ -50,33 +52,59 @@ const AgentDetail = ({ id }: { id: string }) => {
         actions={
           <Stack direction='row' spacing={2}>
             <Button variant='tonal' color='error' startIcon={<i className='tabler-ban' />}>Khóa Đại lý</Button>
-            <Button variant='contained' startIcon={<i className='tabler-cash' />}>Thu nợ</Button>
+            {agent.type === 'postpaid' ? (
+              <Button variant='contained' startIcon={<i className='tabler-cash' />}>Thu nợ</Button>
+            ) : (
+              <Button variant='contained' color='success' startIcon={<i className='tabler-wallet' />}>Nạp tiền</Button>
+            )}
           </Stack>
         }
         className='mbe-6'
       />
 
       <Grid2 container spacing={6}>
-        {/* WALLET BALANCE CARD -> ACCRUED DEBT CARD */}
+        {/* WALLET BALANCE / ACCRUED DEBT CARD */}
         <Grid2 size={{ xs: 12, md: 4 }}>
-          <Card className='border-none shadow-sm bg-error/5 border-error/20 h-full'>
-            <CardContent className='p-8 flex flex-col justify-center h-full text-center'>
-              <Typography variant='subtitle2' className='font-black uppercase mbe-2 text-error'>Công nợ hiện tại</Typography>
-              <Typography variant='h2' className='font-black mbe-4 text-slate-900'>${agent.balance.toLocaleString('en-US', {minimumFractionDigits: 2})}</Typography>
-              
-              <Box className='mbe-2 flex justify-between'>
-                <Typography variant='caption' className='font-bold text-slate-500'>Sử dụng hạn mức</Typography>
-                <Typography variant='caption' className='font-black'>{(agent.balance / 50000 * 100).toFixed(1)}%</Typography>
-              </Box>
-              <LinearProgress 
-                variant='determinate' 
-                value={(agent.balance / 50000) * 100} 
-                color={(agent.balance / 50000) * 100 > 80 ? 'error' : 'primary'} 
-                className='bs-2 rounded-full mbe-2' 
-              />
-              <Typography variant='caption' className='text-slate-400'>Hạn mức tín dụng: $50,000</Typography>
-            </CardContent>
-          </Card>
+          {agent.type === 'postpaid' ? (
+            <Card className='border-none shadow-sm bg-error/5 border-error/20 h-full'>
+              <CardContent className='p-8 flex flex-col justify-center h-full text-center'>
+                <Box className='flex justify-between items-start mbe-2'>
+                  <Typography variant='subtitle2' className='font-black uppercase text-error'>Công nợ hiện tại</Typography>
+                  <Chip label="Dùng Công nợ" size="small" color="error" variant="tonal" className="font-bold" />
+                </Box>
+                <Typography variant='h2' className='font-black mbe-4 text-slate-900'>${agent.balance.toLocaleString('en-US', {minimumFractionDigits: 2})}</Typography>
+                
+                <Box className='mbe-2 flex justify-between'>
+                  <Typography variant='caption' className='font-bold text-slate-500'>Sử dụng hạn mức</Typography>
+                  <Typography variant='caption' className='font-black'>{(agent.balance / agent.limit * 100).toFixed(1)}%</Typography>
+                </Box>
+                <LinearProgress 
+                  variant='determinate' 
+                  value={(agent.balance / agent.limit) * 100} 
+                  color={(agent.balance / agent.limit) * 100 > 80 ? 'error' : 'primary'} 
+                  className='bs-2 rounded-full mbe-2' 
+                />
+                <Typography variant='caption' className='text-slate-400'>Hạn mức tín dụng: ${agent.limit.toLocaleString()}</Typography>
+              </CardContent>
+            </Card>
+          ) : (
+            <Card className='border-none shadow-sm bg-success/5 border-success/20 h-full'>
+              <CardContent className='p-8 flex flex-col justify-center h-full text-center'>
+                <Box className='flex justify-between items-start mbe-2'>
+                  <Typography variant='subtitle2' className='font-black uppercase text-success'>Số dư ví</Typography>
+                  <Chip label="Dùng Ví" size="small" color="success" variant="tonal" className="font-bold" />
+                </Box>
+                <Typography variant='h2' className='font-black mbe-4 text-slate-900'>${agent.balance.toLocaleString('en-US', {minimumFractionDigits: 2})}</Typography>
+                <Typography variant='caption' className='text-slate-400'>Số dư khả dụng hiện tại.</Typography>
+                
+                <Box className='mt-4'>
+                  <Button variant="contained" color="success" size="small" startIcon={<i className='tabler-plus' />}>
+                    Nạp thêm tiền
+                  </Button>
+                </Box>
+              </CardContent>
+            </Card>
+          )}
         </Grid2>
 
         {/* SALES PERFORMANCE */}

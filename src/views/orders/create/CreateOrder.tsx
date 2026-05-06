@@ -8,10 +8,8 @@ import Button from '@mui/material/Button'
 import TextField from '@mui/material/TextField'
 import MenuItem from '@mui/material/MenuItem'
 import Grid2 from '@mui/material/Grid2'
-import Radio from '@mui/material/Radio'
-import RadioGroup from '@mui/material/RadioGroup'
-import FormControlLabel from '@mui/material/FormControlLabel'
-import FormControl from '@mui/material/FormControl'
+import ToggleButton from '@mui/material/ToggleButton'
+import ToggleButtonGroup from '@mui/material/ToggleButtonGroup'
 
 import PageHeader from '@/components/layout/shared/PageHeader'
 import { toast } from 'react-toastify'
@@ -19,7 +17,8 @@ import { useRouter } from 'next/navigation'
 
 const CreateOrder = () => {
   const router = useRouter()
-  const [paymentMethod, setPaymentMethod] = React.useState<'debt' | 'wallet'>('debt')
+  // Dev toggle to demonstrate different agent types
+  const [agentType, setAgentType] = React.useState<'prepaid' | 'postpaid'>('postpaid')
 
   const handleCreateOrder = () => {
     toast.success('Tạo đơn hàng thành công!')
@@ -32,6 +31,18 @@ const CreateOrder = () => {
         title="New Order"
         breadcrumbs={[{ label: 'Trang chủ', href: '/' }, { label: 'Đơn hàng', href: '/orders/list' }, { label: 'New Order' }]}
         className='mbe-6'
+        actions={
+          <ToggleButtonGroup
+            color="primary"
+            value={agentType}
+            exclusive
+            onChange={(_, val) => val && setAgentType(val)}
+            size="small"
+          >
+            <ToggleButton value="postpaid">Đại lý Trả sau (Công nợ)</ToggleButton>
+            <ToggleButton value="prepaid">Đại lý Trả trước (Ví)</ToggleButton>
+          </ToggleButtonGroup>
+        }
       />
 
       <Card className='border-none shadow-sm'>
@@ -118,22 +129,25 @@ const CreateOrder = () => {
                 </Typography>
               </Grid2>
               <Grid2 size={{ xs: 12, md: 9 }}>
-                <FormControl component="fieldset" fullWidth>
-                  <RadioGroup
-                    value={paymentMethod}
-                    onChange={(e) => setPaymentMethod(e.target.value as 'debt' | 'wallet')}
-                  >
-                    <Box className={`flex items-center justify-between p-3 border rounded-lg mbe-3 cursor-pointer ${paymentMethod === 'debt' ? 'border-primary bg-primary/5' : 'border-slate-200'}`} onClick={() => setPaymentMethod('debt')}>
-                      <FormControlLabel value="debt" control={<Radio />} label={<Typography className='font-bold'>Ghi nhận công nợ (Postpaid)</Typography>} className='m-0' />
-                      <Typography variant='caption' className='text-slate-500'>Thanh toán đối soát vào cuối tháng</Typography>
+                {agentType === 'postpaid' ? (
+                  <Box className='flex items-center justify-between p-3 border border-primary bg-primary/5 rounded-lg'>
+                    <Box>
+                      <Typography className='font-bold'>Ghi nhận công nợ (Postpaid)</Typography>
+                      <Typography variant='caption' className='text-slate-500'>Đơn hàng sẽ được đối soát và thanh toán vào cuối kỳ (15 tháng sau).</Typography>
                     </Box>
-                    
-                    <Box className={`flex items-center justify-between p-3 border rounded-lg cursor-pointer ${paymentMethod === 'wallet' ? 'border-primary bg-primary/5' : 'border-slate-200'}`} onClick={() => setPaymentMethod('wallet')}>
-                      <FormControlLabel value="wallet" control={<Radio />} label={<Typography className='font-bold'>Trừ tiền ví (Prepaid)</Typography>} className='m-0' />
-                      <Typography variant='caption' className='text-slate-500'>Số dư khả dụng: <strong className='text-success'>$1,500.00</strong></Typography>
+                    <i className='tabler-file-invoice text-2xl text-primary' />
+                  </Box>
+                ) : (
+                  <Box className='flex items-center justify-between p-3 border border-success bg-success/5 rounded-lg'>
+                    <Box>
+                      <Typography className='font-bold'>Trừ tiền ví (Prepaid)</Typography>
+                      <Typography variant='caption' className='text-slate-500'>
+                        Số dư hiện tại: <strong className='text-success'>$1,500.00</strong>
+                      </Typography>
                     </Box>
-                  </RadioGroup>
-                </FormControl>
+                    <i className='tabler-wallet text-2xl text-success' />
+                  </Box>
+                )}
               </Grid2>
             </Grid2>
 

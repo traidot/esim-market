@@ -1,6 +1,6 @@
 'use client'
 
-import React from 'react'
+import React, { useState } from 'react'
 import Card from '@mui/material/Card'
 import CardContent from '@mui/material/CardContent'
 import Typography from '@mui/material/Typography'
@@ -19,13 +19,20 @@ import TextField from '@mui/material/TextField'
 import InputAdornment from '@mui/material/InputAdornment'
 import Avatar from '@mui/material/Avatar'
 import Grid2 from '@mui/material/Grid2'
-import Select from '@mui/material/Select'
 import MenuItem from '@mui/material/MenuItem'
 import Tooltip from '@mui/material/Tooltip'
+import Select from '@mui/material/Select'
+import Dialog from '@mui/material/Dialog'
+import DialogTitle from '@mui/material/DialogTitle'
+import DialogContent from '@mui/material/DialogContent'
+import DialogActions from '@mui/material/DialogActions'
 
 import PageHeader from '@/components/layout/shared/PageHeader'
 
 const DownstreamTransactions = () => {
+  const [isLogOpen, setIsLogOpen] = useState(false)
+  const [selectedLog, setSelectedLog] = useState<any>(null)
+  
   const transactions = [
     { id: 'DTX-5091', agent: 'TravelConnect', action: 'CREATE_ORDER', package: 'Japan 10GB', amount: '$12.50', status: 'Success', date: '28/04/2026 01:15', latency: '320ms' },
     { id: 'DTX-5090', agent: 'Global eSIM Hub', action: 'TOPUP_BALANCE', package: '-', amount: '$500.00', status: 'Success', date: '28/04/2026 00:45', latency: '150ms' },
@@ -166,7 +173,9 @@ const DownstreamTransactions = () => {
                   </TableCell>
                   <TableCell className='text-center'>
                     <Tooltip title="Xem JSON Request/Response">
-                      <IconButton size='small'><i className='tabler-code text-[18px]' /></IconButton>
+                      <IconButton size='small' onClick={() => { setSelectedLog(tx); setIsLogOpen(true); }}>
+                        <i className='tabler-code text-[18px]' />
+                      </IconButton>
                     </Tooltip>
                   </TableCell>
                 </TableRow>
@@ -175,6 +184,92 @@ const DownstreamTransactions = () => {
           </Table>
         </TableContainer>
       </Card>
+
+      <Dialog 
+        open={isLogOpen} 
+        onClose={() => setIsLogOpen(false)}
+        maxWidth='md'
+        fullWidth
+      >
+        <DialogTitle className='flex items-center justify-between'>
+          <Typography variant='h5' component='span' className='font-black'>Downstream API Log (Agent Request)</Typography>
+          <IconButton onClick={() => setIsLogOpen(false)} size='small'>
+            <i className='tabler-x' />
+          </IconButton>
+        </DialogTitle>
+        <DialogContent>
+          {selectedLog && (
+            <Box className='flex flex-col gap-4 m-bs-2'>
+              <Box className='flex justify-between items-center bg-slate-50 p-4 rounded-lg'>
+                <Box>
+                  <Typography variant='caption' className='text-slate-500'>Mã GD / Req ID</Typography>
+                  <Typography variant='body1' className='font-mono font-bold'>{selectedLog.id}</Typography>
+                </Box>
+                <Box>
+                  <Typography variant='caption' className='text-slate-500'>Đại lý</Typography>
+                  <Typography variant='body1' className='font-bold'>{selectedLog.agent}</Typography>
+                </Box>
+                <Box>
+                  <Typography variant='caption' className='text-slate-500'>Trạng thái</Typography>
+                  <Box>
+                    <Chip 
+                      label={selectedLog.status} 
+                      size='small' 
+                      color={selectedLog.status === 'Success' ? 'success' : 'error'} 
+                      variant='tonal'
+                      className='font-black'
+                    />
+                  </Box>
+                </Box>
+              </Box>
+
+              <Typography variant='subtitle2' className='font-black uppercase text-slate-500 mt-2'>Incoming Request (From Agent)</Typography>
+              <Box className='bg-[#1E1E1E] rounded-lg p-4 overflow-x-auto'>
+                <pre className='text-[#D4D4D4] font-mono text-xs m-0'>
+{`POST /api/v1/orders
+User-Agent: Downstream-Client/1.0
+X-Agent-Key: AGENT_***
+Content-Type: application/json
+
+{
+  "action": "${selectedLog.action}",
+  "sku": "${selectedLog.package}",
+  "ref_id": "${selectedLog.id}",
+  "timestamp": "${selectedLog.date}"
+}`}
+                </pre>
+              </Box>
+
+              <Typography variant='subtitle2' className='font-black uppercase text-slate-500 mt-2'>Outgoing Response (Our System)</Typography>
+              <Box className='bg-[#1E1E1E] rounded-lg p-4 overflow-x-auto'>
+                <pre className='text-[#D4D4D4] font-mono text-xs m-0'>
+{selectedLog.status === 'Success' ? `{
+  "status": "200 OK",
+  "data": {
+    "transaction_id": "${selectedLog.id}",
+    "status": "PROCESSED",
+    "amount": "${selectedLog.amount}",
+    "details": {
+      "package": "${selectedLog.package}",
+      "processed_at": "${new Date().toISOString()}"
+    }
+  }
+}` : `{
+  "status": "400 Bad Request",
+  "error": {
+    "code": "INVALID_PACKAGE",
+    "message": "The requested package SKU is currently unavailable or inactive."
+  }
+}`}
+                </pre>
+              </Box>
+            </Box>
+          )}
+        </DialogContent>
+        <DialogActions className='p-6 pt-0'>
+          <Button variant='contained' color='primary' onClick={() => setIsLogOpen(false)}>Đóng</Button>
+        </DialogActions>
+      </Dialog>
     </>
   )
 }

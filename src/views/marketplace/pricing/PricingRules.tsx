@@ -34,7 +34,7 @@ const PricingRules = () => {
 
       <Grid2 container spacing={6}>
         {/* Global Markup Strategy */}
-        <Grid2 size={{ xs: 12, md: 8 }}>
+        <Grid2 size={{ xs: 12 }}>
           <Card className='border-none shadow-sm'>
             <CardHeader 
               title='Quy tắc Markup Mặc định' 
@@ -86,43 +86,7 @@ const PricingRules = () => {
           </Card>
         </Grid2>
 
-        {/* Dynamic Pricing Settings */}
-        <Grid2 size={{ xs: 12, md: 4 }}>
-          <Card className='border-none shadow-sm h-full'>
-            <CardHeader title='Tùy chọn Nâng cao' />
-            <Divider />
-            <CardContent>
-              <Stack spacing={4}>
-                <FormControlLabel
-                  control={<Switch defaultChecked />}
-                  label={
-                    <Box>
-                      <Typography variant='body2' className='font-bold'>Định giá thông minh</Typography>
-                      <Typography variant='caption' className='text-slate-400'>Tự động giảm giá khi supplier giảm giá sâu</Typography>
-                    </Box>
-                  }
-                />
-                <FormControlLabel
-                  control={<Switch />}
-                  label={
-                    <Box>
-                      <Typography variant='body2' className='font-bold'>Ẩn giá vốn</Typography>
-                      <Typography variant='caption' className='text-slate-400'>Không hiển thị giá vốn trong nhật ký cho nhân viên</Typography>
-                    </Box>
-                  }
-                />
-                <Divider />
-                <Typography variant='caption' className='font-bold text-slate-500 uppercase'>Cảnh báo rủi ro</Typography>
-                <TextField 
-                  fullWidth 
-                  label="Biên lợi nhuận tối thiểu (%)" 
-                  defaultValue="2" 
-                  helperText="Cảnh báo nếu lợi nhuận sau markup thấp hơn mức này"
-                />
-              </Stack>
-            </CardContent>
-          </Card>
-        </Grid2>
+
 
         {/* Override Rules Table */}
         <Grid2 size={{ xs: 12 }}>

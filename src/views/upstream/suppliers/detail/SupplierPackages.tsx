@@ -39,6 +39,8 @@ const SupplierPackages = () => {
   const [selectedCountry, setSelectedCountry] = useState<string | null>(null)
   const [isUploadModalOpen, setIsUploadModalOpen] = useState(false)
   const [isUpdating, setIsUpdating] = useState(false)
+  const [selectedPkg, setSelectedPkg] = useState<any>(null)
+  const [isDetailOpen, setIsDetailOpen] = useState(false)
   
   // Mock data cho nhà cung cấp
   const supplierInfo = {
@@ -219,8 +221,9 @@ const SupplierPackages = () => {
                           />
                         </TableCell>
                         <TableCell className='text-right'>
-                          <IconButton size='small'><i className='tabler-eye text-[18px]' /></IconButton>
-                          <IconButton size='small'><i className='tabler-settings text-[18px]' /></IconButton>
+                          <IconButton size='small' onClick={() => { setSelectedPkg(pkg); setIsDetailOpen(true); }}>
+                            <i className='tabler-eye text-[18px]' />
+                          </IconButton>
                         </TableCell>
                       </TableRow>
                     ))
@@ -269,6 +272,61 @@ const SupplierPackages = () => {
           >
             {isUpdating ? 'Đang cập nhật...' : 'Bắt đầu cập nhật giá'}
           </Button>
+        </DialogActions>
+      </Dialog>
+      <Dialog 
+        open={isDetailOpen} 
+        onClose={() => setIsDetailOpen(false)}
+        maxWidth='sm'
+        fullWidth
+      >
+        <DialogTitle className='flex items-center justify-between'>
+          <Typography variant='h5' component='span' className='font-black'>Chi tiết Gói cước</Typography>
+          <IconButton onClick={() => setIsDetailOpen(false)} size='small'>
+            <i className='tabler-x' />
+          </IconButton>
+        </DialogTitle>
+        <DialogContent>
+          {selectedPkg && (
+            <Box className='flex flex-col gap-4 m-bs-2'>
+              <Box className='p-4 bg-slate-50 rounded-lg'>
+                <Box className='flex justify-between items-center mbe-4'>
+                  <Typography variant='h6' className='font-bold'>{selectedPkg.name}</Typography>
+                  <Typography variant='h6' color='primary' className='font-black'>${selectedPkg.cost.toFixed(2)}</Typography>
+                </Box>
+                <Box className='mbe-4'>
+                   <Chip 
+                     label={selectedPkg.status === 'Active' ? 'Đang bán' : 'Tạm dừng'} 
+                     size='small' 
+                     color={selectedPkg.status === 'Active' ? 'success' : 'secondary'} 
+                     variant='tonal'
+                     className='font-bold'
+                   />
+                </Box>
+                <Grid2 container spacing={2}>
+                  <Grid2 size={{ xs: 6 }}>
+                    <Typography variant='caption' className='text-slate-500'>Quốc gia</Typography>
+                    <Typography variant='body1' className='font-medium'>{selectedPkg.country}</Typography>
+                  </Grid2>
+                  <Grid2 size={{ xs: 6 }}>
+                    <Typography variant='caption' className='text-slate-500'>Dung lượng</Typography>
+                    <Typography variant='body1' className='font-medium'>{selectedPkg.data}</Typography>
+                  </Grid2>
+                  <Grid2 size={{ xs: 6 }}>
+                    <Typography variant='caption' className='text-slate-500'>Thời hạn</Typography>
+                    <Typography variant='body1' className='font-medium'>{selectedPkg.duration}</Typography>
+                  </Grid2>
+                  <Grid2 size={{ xs: 6 }}>
+                    <Typography variant='caption' className='text-slate-500'>Mã gói</Typography>
+                    <Typography variant='body1' className='font-mono'>{selectedPkg.id}</Typography>
+                  </Grid2>
+                </Grid2>
+              </Box>
+            </Box>
+          )}
+        </DialogContent>
+        <DialogActions className='p-6 pt-0'>
+          <Button variant='contained' color='primary' onClick={() => setIsDetailOpen(false)}>Đóng</Button>
         </DialogActions>
       </Dialog>
     </>

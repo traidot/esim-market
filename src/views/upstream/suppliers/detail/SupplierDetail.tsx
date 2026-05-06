@@ -28,13 +28,14 @@ const SupplierDetail = ({ id }: { id: string }) => {
     logo: id.toUpperCase() === 'AIRALO' ? 'A' : 'N',
     color: id.toUpperCase() === 'AIRALO' ? 'primary.main' : 'info.main',
     status: 'Connected',
-    accruedCost: 3150.20,
-    creditLimit: 10000,
+    type: id.toUpperCase() === 'AIRALO' ? 'postpaid' : 'prepaid',
+    balance: id.toUpperCase() === 'AIRALO' ? 3150.20 : 5000.00,
+    limit: 10000,
     ordersThisMonth: 850,
     successRate: 99.2
   }
 
-  const quotaPercent = (supplier.accruedCost / supplier.creditLimit) * 100
+  const quotaPercent = (supplier.balance / supplier.limit) * 100
 
   const alerts = [
     { type: 'warning', title: 'Giá vốn thay đổi', msg: 'Gói Japan 10GB vừa tăng giá từ $8.00 lên $8.50. Vui lòng cập nhật giá bán Marketplace.' },
@@ -55,7 +56,11 @@ const SupplierDetail = ({ id }: { id: string }) => {
         breadcrumbs={[{ label: 'Trang chủ', href: '/' }, { label: 'Nguồn cung', href: '/upstream/suppliers' }, { label: supplier.name }]}
         actions={
           <Stack direction='row' spacing={2}>
-            <Button variant='tonal' color='success' startIcon={<i className='tabler-credit-card' />}>Thanh toán Nợ</Button>
+            {supplier.type === 'postpaid' ? (
+              <Button variant='tonal' color='primary' startIcon={<i className='tabler-credit-card' />}>Thanh toán Nợ</Button>
+            ) : (
+              <Button variant='tonal' color='success' startIcon={<i className='tabler-wallet' />}>Nạp tiền ví</Button>
+            )}
             <Button variant='contained' startIcon={<i className='tabler-refresh' />}>Đồng bộ API</Button>
           </Stack>
         }
@@ -64,28 +69,49 @@ const SupplierDetail = ({ id }: { id: string }) => {
 
       <Grid2 container spacing={6}>
         {/* STATS & QUOTA */}
-        <Grid2 size={{ xs: 12, md: 4 }}>
-          <Card className='border-none shadow-sm bg-primary/5 border-primary/20 h-full'>
-            <CardContent className='p-8'>
-              <Typography variant='subtitle2' className='font-black uppercase mbe-2 text-primary'>Công nợ hiện tại</Typography>
-              <Typography variant='h2' className='font-black mbe-4 text-slate-900'>${supplier.accruedCost.toLocaleString()}</Typography>
-              
-              <Box className='mbe-2 flex justify-between'>
-                <Typography variant='caption' className='font-bold text-slate-500'>Sử dụng hạn mức</Typography>
-                <Typography variant='caption' className='font-black'>{quotaPercent.toFixed(1)}%</Typography>
-              </Box>
-              <LinearProgress 
-                variant='determinate' 
-                value={quotaPercent} 
-                color={quotaPercent > 80 ? 'error' : 'primary'} 
-                className='bs-2 rounded-full mbe-2' 
-              />
-              <Typography variant='caption' className='text-slate-400'>Hạn mức tối đa: ${supplier.creditLimit.toLocaleString()}</Typography>
-            </CardContent>
-          </Card>
+        <Grid2 size={{ xs: 12, md: 6 }}>
+          {supplier.type === 'postpaid' ? (
+            <Card className='border-none shadow-sm bg-primary/5 border-primary/20 h-full'>
+              <CardContent className='p-8'>
+                <Box className='flex justify-between items-start mbe-2'>
+                  <Typography variant='subtitle2' className='font-black uppercase text-primary'>Công nợ hiện tại (Postpaid)</Typography>
+                  <Chip label="Hợp đồng đối soát" size="small" color="primary" variant="tonal" className="font-bold" />
+                </Box>
+                <Typography variant='h2' className='font-black mbe-4 text-slate-900'>${supplier.balance.toLocaleString()}</Typography>
+                
+                <Box className='mbe-2 flex justify-between'>
+                  <Typography variant='caption' className='font-bold text-slate-500'>Sử dụng hạn mức</Typography>
+                  <Typography variant='caption' className='font-black'>{quotaPercent.toFixed(1)}%</Typography>
+                </Box>
+                <LinearProgress 
+                  variant='determinate' 
+                  value={quotaPercent} 
+                  color={quotaPercent > 80 ? 'error' : 'primary'} 
+                  className='bs-2 rounded-full mbe-2' 
+                />
+                <Typography variant='caption' className='text-slate-400'>Hạn mức tối đa: ${supplier.limit.toLocaleString()}</Typography>
+              </CardContent>
+            </Card>
+          ) : (
+            <Card className='border-none shadow-sm bg-success/5 border-success/20 h-full'>
+              <CardContent className='p-8'>
+                <Box className='flex justify-between items-start mbe-2'>
+                  <Typography variant='subtitle2' className='font-black uppercase text-success'>Số dư ví (Prepaid)</Typography>
+                  <Chip label="Trừ tiền ví" size="small" color="success" variant="tonal" className="font-bold" />
+                </Box>
+                <Typography variant='h2' className='font-black mbe-4 text-slate-900'>${supplier.balance.toLocaleString()}</Typography>
+                
+                <Box className='flex items-center gap-2 mt-6'>
+                  <Button variant="contained" color="success" size="small" startIcon={<i className='tabler-plus' />}>
+                    Nạp tiền vào ví
+                  </Button>
+                </Box>
+              </CardContent>
+            </Card>
+          )}
         </Grid2>
 
-        <Grid2 size={{ xs: 12, md: 4 }}>
+        <Grid2 size={{ xs: 12, md: 6 }}>
           <Card className='border-none shadow-sm h-full'>
             <CardContent className='p-8'>
               <Box className='flex justify-between items-center mbe-4'>
@@ -98,21 +124,6 @@ const SupplierDetail = ({ id }: { id: string }) => {
                 </Avatar>
               </Box>
               <Button fullWidth variant='outlined' size='small' component={Link} href={`/upstream/suppliers/${id}/packages`}>Quản lý sản phẩm</Button>
-            </CardContent>
-          </Card>
-        </Grid2>
-
-        <Grid2 size={{ xs: 12, md: 4 }}>
-          <Card className='border-none shadow-sm h-full'>
-            <CardContent className='p-8'>
-              <Typography variant='subtitle2' className='font-black uppercase mbe-4 text-slate-500'>API Health</Typography>
-              <Box className='flex items-center gap-4 mbe-2'>
-                <Typography variant='h3' className='font-black text-success'>{supplier.successRate}%</Typography>
-                <Box className='flex-grow'>
-                  <LinearProgress variant='determinate' value={supplier.successRate} color='success' className='bs-2 rounded-full' />
-                </Box>
-              </Box>
-              <Typography variant='caption' className='text-slate-400 font-bold italic'>Ổn định (Latency: 120ms)</Typography>
             </CardContent>
           </Card>
         </Grid2>

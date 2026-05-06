@@ -31,27 +31,6 @@ const DashboardPage = () => {
 
   return (
     <Box>
-      {/* Bộ chuyển đổi vai trò (Demo) */}
-      <Box className='flex justify-end mbe-4 gap-2'>
-        <Typography variant='caption' className='flex items-center text-slate-400'>Chế độ xem (Demo):</Typography>
-        <Button 
-          variant={role === 'admin' ? 'contained' : 'tonal'} 
-          size='small' 
-          onClick={() => setRole('admin')}
-          color='primary'
-        >
-          Quản trị 3M
-        </Button>
-        <Button 
-          variant={role === 'agent' ? 'contained' : 'tonal'} 
-          size='small' 
-          onClick={() => setRole('agent')}
-          color='secondary'
-        >
-          Đại lý
-        </Button>
-      </Box>
-
       {role === 'admin' ? <AdminDashboard /> : <AgentDashboard />}
     </Box>
   )

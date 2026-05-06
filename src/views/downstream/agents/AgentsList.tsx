@@ -16,10 +16,10 @@ import PageHeader from '@/components/layout/shared/PageHeader'
 
 const AgentsList = () => {
   const agents = [
-    { id: 'A001', name: 'TravelConnect Solutions', email: 'contact@travelconnect.vn', tier: 'PLATINUM', balance: '$5,240.00', status: 'Active', orders: 1240, color: 'primary' },
-    { id: 'A002', name: 'Global eSIM Hub', email: 'hub@globale.sim', tier: 'GOLD', balance: '$1,120.50', status: 'Active', orders: 850, color: 'warning' },
-    { id: 'A003', name: 'CheapData Agency', email: 'sales@cheapdata.com', tier: 'SILVER', balance: '$15.00', status: 'Low Balance', orders: 45, color: 'secondary' },
-    { id: 'A004', name: 'Nomad Partner', email: 'partner@nomad.com', tier: 'GOLD', balance: '$0.00', status: 'Inactive', orders: 0, color: 'error' }
+    { id: 'A001', name: 'TravelConnect Solutions', email: 'contact@travelconnect.vn', tier: 'PLATINUM', balance: '$5,240.00', status: 'Active', orders: 1240, color: 'primary', type: 'postpaid' },
+    { id: 'A002', name: 'Global eSIM Hub', email: 'hub@globale.sim', tier: 'GOLD', balance: '$1,120.50', status: 'Active', orders: 850, color: 'warning', type: 'prepaid' },
+    { id: 'A003', name: 'CheapData Agency', email: 'sales@cheapdata.com', tier: 'SILVER', balance: '$15.00', status: 'Low Balance', orders: 45, color: 'secondary', type: 'prepaid' },
+    { id: 'A004', name: 'Nomad Partner', email: 'partner@nomad.com', tier: 'GOLD', balance: '$0.00', status: 'Inactive', orders: 0, color: 'error', type: 'prepaid' }
   ]
 
   return (
@@ -73,8 +73,12 @@ const AgentsList = () => {
                     <Typography variant='body2' className='font-black'>{agent.orders.toLocaleString()}</Typography>
                   </Grid2>
                   <Grid2 size={{ xs: 4 }}>
-                    <Typography variant='caption' className='font-black uppercase text-slate-400 block mbe-1 text-[10px]'>Công nợ (Nợ)</Typography>
-                    <Typography variant='body2' className='font-black text-error'>{agent.balance}</Typography>
+                    <Typography variant='caption' className='font-black uppercase text-slate-400 block mbe-1 text-[10px]'>
+                      {agent.type === 'postpaid' ? 'Công nợ (Nợ)' : 'Số dư (Ví)'}
+                    </Typography>
+                    <Typography variant='body2' className={`font-black ${agent.type === 'postpaid' ? 'text-error' : 'text-success'}`}>
+                      {agent.balance}
+                    </Typography>
                   </Grid2>
                 </Grid2>
 
