@@ -32,6 +32,14 @@ const UpstreamTransactions = () => {
   const [isLogOpen, setIsLogOpen] = useState(false)
   const [selectedLog, setSelectedLog] = useState<any>(null)
 
+  // Filter States
+  const [supplier, setSupplier] = useState('all')
+  const [region, setRegion] = useState('all')
+  const [status, setStatus] = useState('all')
+  const [simType, setSimType] = useState('all')
+  const [dataLimit, setDataLimit] = useState('all')
+  const [validity, setValidity] = useState('all')
+
   const transactions = [
     { id: 'TX-9821', supplier: 'Airalo', action: 'Mua eSIM', package: 'Japan 10GB', amount: '$8.50', status: 'Success', date: '28/04/2026 01:15' },
     { id: 'TX-9820', supplier: 'Nomad', action: 'Gia hạn gói', package: 'USA 20GB', amount: '$22.00', status: 'Success', date: '28/04/2026 00:45' },
@@ -56,14 +64,24 @@ const UpstreamTransactions = () => {
 
       <Card className='border-none shadow-sm mbe-6'>
         <CardContent>
-          <Grid2 container spacing={4} className='items-end'>
+          <Grid2 container spacing={4}>
+            {/* Row 1 */}
             <Grid2 size={{ xs: 12, md: 3 }}>
               <Typography variant='subtitle2' className='font-black mbe-2 uppercase text-[11px] text-slate-500'>Nhà cung cấp</Typography>
-              <Select fullWidth size='small' defaultValue='all'>
+              <Select fullWidth size='small' value={supplier} onChange={(e) => setSupplier(e.target.value)}>
                 <MenuItem value='all'>Tất cả NCC</MenuItem>
                 <MenuItem value='airalo'>Airalo Global</MenuItem>
                 <MenuItem value='nomad'>Nomad Global</MenuItem>
                 <MenuItem value='keepgo'>KeepGo</MenuItem>
+              </Select>
+            </Grid2>
+            <Grid2 size={{ xs: 12, md: 3 }}>
+              <Typography variant='subtitle2' className='font-black mbe-2 uppercase text-[11px] text-slate-500'>Vùng / Quốc gia</Typography>
+              <Select fullWidth size='small' value={region} onChange={(e) => setRegion(e.target.value)}>
+                <MenuItem value='all'>Toàn cầu</MenuItem>
+                <MenuItem value='asia'>Châu Á</MenuItem>
+                <MenuItem value='europe'>Châu Âu</MenuItem>
+                <MenuItem value='america'>Châu Mỹ</MenuItem>
               </Select>
             </Grid2>
             <Grid2 size={{ xs: 12, md: 4 }}>
@@ -74,25 +92,46 @@ const UpstreamTransactions = () => {
               </Stack>
             </Grid2>
             <Grid2 size={{ xs: 12, md: 2 }}>
-              <Typography variant='subtitle2' className='font-black mbe-2 uppercase text-[11px] text-slate-500'>Vùng / Quốc gia</Typography>
-              <Select fullWidth size='small' defaultValue='all'>
-                <MenuItem value='all'>Toàn cầu</MenuItem>
-                <MenuItem value='asia'>Châu Á</MenuItem>
-                <MenuItem value='europe'>Châu Âu</MenuItem>
-                <MenuItem value='america'>Châu Mỹ</MenuItem>
-              </Select>
-            </Grid2>
-            <Grid2 size={{ xs: 12, md: 2 }}>
               <Typography variant='subtitle2' className='font-black mbe-2 uppercase text-[11px] text-slate-500'>Trạng thái</Typography>
-              <Select fullWidth size='small' defaultValue='all'>
+              <Select fullWidth size='small' value={status} onChange={(e) => setStatus(e.target.value)}>
                 <MenuItem value='all'>Tất cả trạng thái</MenuItem>
                 <MenuItem value='success'>Thành công (Success)</MenuItem>
                 <MenuItem value='failed'>Thất bại (Failed)</MenuItem>
               </Select>
             </Grid2>
-            <Grid2 size={{ xs: 12, md: 1 }}>
-              <Button variant='tonal' color='primary' fullWidth className='min-bs-[38px]'>
-                <i className='tabler-search' />
+
+            {/* Row 2 - New Filters */}
+            <Grid2 size={{ xs: 12, sm: 6, md: 3 }}>
+              <Typography variant='subtitle2' className='font-black mbe-2 uppercase text-[11px] text-slate-500'>Loại eSIM</Typography>
+              <Select fullWidth size='small' value={simType} onChange={(e) => setSimType(e.target.value)}>
+                <MenuItem value='all'>Tất cả loại</MenuItem>
+                <MenuItem value='Daily'>Daily (Theo ngày)</MenuItem>
+                <MenuItem value='Total'>Total (Tổng dung lượng)</MenuItem>
+              </Select>
+            </Grid2>
+            <Grid2 size={{ xs: 12, sm: 6, md: 3 }}>
+              <Typography variant='subtitle2' className='font-black mbe-2 uppercase text-[11px] text-slate-500'>Dung lượng</Typography>
+              <Select fullWidth size='small' value={dataLimit} onChange={(e) => setDataLimit(e.target.value)}>
+                <MenuItem value='all'>Tất cả dung lượng</MenuItem>
+                <MenuItem value='1GB'>1GB</MenuItem>
+                <MenuItem value='5GB'>5GB</MenuItem>
+                <MenuItem value='10GB'>10GB</MenuItem>
+                <MenuItem value='Unlimited'>Không giới hạn</MenuItem>
+              </Select>
+            </Grid2>
+            <Grid2 size={{ xs: 12, sm: 6, md: 3 }}>
+              <Typography variant='subtitle2' className='font-black mbe-2 uppercase text-[11px] text-slate-500'>Thời hạn (Ngày)</Typography>
+              <Select fullWidth size='small' value={validity} onChange={(e) => setValidity(e.target.value)}>
+                <MenuItem value='all'>Tất cả thời hạn</MenuItem>
+                <MenuItem value='1 Ngày'>1 Ngày</MenuItem>
+                <MenuItem value='7 Ngày'>7 Ngày</MenuItem>
+                <MenuItem value='30 Ngày'>30 Ngày</MenuItem>
+              </Select>
+            </Grid2>
+            <Grid2 size={{ xs: 12, sm: 6, md: 3 }}>
+              <Typography variant='subtitle2' className='font-black mbe-2 opacity-0 uppercase text-[11px] hidden md:block'>Tìm kiếm</Typography>
+              <Button variant='contained' color='primary' fullWidth className='min-bs-[38px]' startIcon={<i className='tabler-search' />}>
+                Lọc kết quả
               </Button>
             </Grid2>
           </Grid2>

@@ -30,8 +30,8 @@ const InventoryStatus = () => {
     <>
       <PageHeader
         title="Quản lý Kho (Inventory)"
-        description="Theo dõi hạn mức API của các nhà cung cấp và quản lý các lô mã eSIM nhập tay"
-        breadcrumbs={[{ label: 'Trang chủ', href: '/' }, { label: 'Chợ eSIM' }, { label: 'Kho' }]}
+        description="Quản lý và theo dõi các lô mã eSIM nhập tay trực tiếp vào hệ thống"
+        breadcrumbs={[{ label: 'Trang chủ', href: '/' }, { label: 'Nguồn cung' }, { label: 'Kho' }]}
         actions={
           <Button variant='contained' startIcon={<i className='tabler-download' />}>Nhập lô mã mới</Button>
         }
@@ -39,40 +39,6 @@ const InventoryStatus = () => {
       />
 
       <Grid2 container spacing={6}>
-        {/* API Quota Usage */}
-        <Grid2 size={{ xs: 12 }}>
-          <Card className='border-none shadow-sm'>
-            <CardHeader 
-              title='Hạn mức API (API Quotas)' 
-              subheader='Dữ liệu được cập nhật tự động từ các Supplier'
-              action={<Button variant='tonal' size='small' startIcon={<i className='tabler-refresh' />}>Làm mới</Button>}
-            />
-            <Divider />
-            <CardContent>
-              <Grid2 container spacing={6}>
-                {quotas.map((q, i) => (
-                  <Grid2 key={i} size={{ xs: 12, md: 4 }}>
-                    <Box className='p-4 bg-slate-50 rounded-xl border border-slate-100'>
-                      <Box className='flex justify-between items-center mbe-2'>
-                        <Typography variant='body2' className='font-black'>{q.supplier}</Typography>
-                        <Typography variant='caption' className='font-bold'>{q.used}/{q.total}</Typography>
-                      </Box>
-                      <LinearProgress 
-                        variant="determinate" 
-                        value={(q.used / q.total) * 100} 
-                        color={q.color as any}
-                        sx={{ height: 8, borderRadius: 4 }}
-                      />
-                      <Typography variant='caption' className='text-slate-400 mt-2 block'>
-                        Còn lại: {q.total - q.used} giao dịch
-                      </Typography>
-                    </Box>
-                  </Grid2>
-                ))}
-              </Grid2>
-            </CardContent>
-          </Card>
-        </Grid2>
 
         {/* Static Inventory Batches */}
         <Grid2 size={{ xs: 12 }}>
@@ -80,6 +46,17 @@ const InventoryStatus = () => {
             <CardHeader 
               title='Lô mã eSIM nhập tay (Manual Batches)' 
               subheader='Danh sách các mã eSIM được nhập trực tiếp vào hệ thống'
+              action={
+                <Button 
+                  variant='tonal' 
+                  color='primary' 
+                  size='small' 
+                  startIcon={<i className='tabler-file-download' />}
+                  className='font-black'
+                >
+                  Xuất Excel
+                </Button>
+              }
             />
             <CardContent className='p-0'>
               <Box className='overflow-x-auto'>

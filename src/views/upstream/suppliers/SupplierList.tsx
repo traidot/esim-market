@@ -30,7 +30,7 @@ const SupplierList = () => {
       connectionStatus: 'Connected',
       packagesCount: 450,
       lastSync: '2 giờ trước',
-      color: 'primary',
+      color: '#7367F0', // Indigo
       icon: 'tabler-square-rounded-letter-a'
     },
     {
@@ -42,7 +42,7 @@ const SupplierList = () => {
       connectionStatus: 'Connected',
       packagesCount: 1200,
       lastSync: '15 phút trước',
-      color: 'info',
+      color: '#00BAD1', // Cyan
       icon: 'tabler-square-rounded-letter-n'
     },
     {
@@ -54,7 +54,7 @@ const SupplierList = () => {
       connectionStatus: 'Disconnected',
       packagesCount: 0,
       lastSync: 'N/A',
-      color: 'error',
+      color: '#EA5455', // Red
       icon: 'tabler-square-rounded-letter-g'
     }
   ]
@@ -80,13 +80,21 @@ const SupplierList = () => {
       <Grid2 container spacing={6}>
         {suppliers.map((supplier, index) => (
           <Grid2 key={index} size={{ xs: 12, sm: 6, md: 4 }}>
-            <Card className='h-full border-none shadow-sm hover:shadow-md transition-all group border-2 border-transparent hover:border-primary/20'>
+            <Card 
+              className='h-full border-none shadow-sm hover:shadow-lg transition-all group border-2 border-transparent'
+              sx={{ '&:hover': { borderColor: `${supplier.color}40` } }}
+            >
               <CardContent className='p-6'>
                 <Box className='flex justify-between items-start mbe-4'>
                   <Box className='flex items-center gap-3'>
                     <Avatar 
                       variant='rounded' 
-                      className={`bg-${supplier.color}/10 text-${supplier.color} w-[56px] h-[56px]`}
+                      sx={{ 
+                        backgroundColor: `${supplier.color}15`, 
+                        color: supplier.color,
+                        width: 56, 
+                        height: 56 
+                      }}
                     >
                       <i className={`${supplier.icon} text-3xl`} />
                     </Avatar>
@@ -95,43 +103,45 @@ const SupplierList = () => {
                       <Typography variant='body2' className='text-slate-400'>{supplier.code}</Typography>
                     </Box>
                   </Box>
-                  <Chip 
-                    label={supplier.connectionStatus} 
-                    size='small' 
-                    color={supplier.connectionStatus === 'Connected' ? 'success' : 'default'}
-                    variant='tonal'
-                    className='font-black uppercase text-[10px]'
-                  />
+                  <Box className='flex flex-col items-end gap-2'>
+                    <Chip 
+                      label={supplier.connectionStatus} 
+                      size='small' 
+                      color={supplier.connectionStatus === 'Connected' ? 'success' : 'default'}
+                      variant='tonal'
+                      className='font-black uppercase text-[10px]'
+                    />
+                    <IconButton size='small' className='text-slate-300 hover:text-primary transition-colors'>
+                      <i className='tabler-settings text-[18px]' />
+                    </IconButton>
+                  </Box>
                 </Box>
 
                 <Divider className='mbe-4 border-dashed' />
 
                 <Grid2 container spacing={4} className='mbe-6'>
-                  <Grid2 size={{ xs: 4 }}>
+                  <Grid2 size={{ xs: 6 }}>
                     <Typography variant='caption' className='font-black uppercase text-slate-400 block mbe-1 text-[10px]'>Đơn (Tháng)</Typography>
-                    <Typography variant='body2' className='font-black text-primary'>{supplier.id === '3' ? 0 : 850}</Typography>
+                    <Typography variant='body2' className='font-black' sx={{ color: supplier.color }}>{supplier.id === '3' ? 0 : 850}</Typography>
                   </Grid2>
-                  <Grid2 size={{ xs: 4 }}>
+                  <Grid2 size={{ xs: 6 }}>
                     <Typography variant='caption' className='font-black uppercase text-slate-400 block mbe-1 text-[10px]'>Tổng Gói</Typography>
                     <Typography variant='body2' className='font-black'>{supplier.packagesCount}</Typography>
-                  </Grid2>
-                  <Grid2 size={{ xs: 4 }}>
-                    <Typography variant='caption' className='font-black uppercase text-slate-400 block mbe-1 text-[10px]'>Tổng Tiền (Nợ)</Typography>
-                    <Typography variant='body2' className='font-black text-error'>{supplier.id === '3' ? '$0.00' : '$3,150.20'}</Typography>
-                  </Grid2>
-                  <Grid2 size={{ xs: 12 }}>
-                    <Typography variant='caption' className='font-black uppercase text-slate-400 block mbe-1'>Lần đồng bộ cuối</Typography>
-                    <Box className='flex items-center gap-1'>
-                      <i className='tabler-clock text-slate-400 text-sm' />
-                      <Typography variant='caption' className='font-bold text-slate-600'>{supplier.lastSync}</Typography>
-                    </Box>
                   </Grid2>
                 </Grid2>
 
                 <Button 
                   fullWidth 
                   variant='contained' 
-                  className='shadow-none group-hover:shadow-lg transition-all py-2.5'
+                  className='shadow-none transition-all py-2.5 font-bold'
+                  sx={{ 
+                    backgroundColor: supplier.color,
+                    '&:hover': {
+                      backgroundColor: supplier.color,
+                      filter: 'brightness(0.9)',
+                      boxShadow: `0 8px 20px -8px ${supplier.color}`
+                    }
+                  }}
                   startIcon={<i className='tabler-layout-dashboard' />}
                   component={Link}
                   href={`/upstream/suppliers/${supplier.code.toLowerCase()}`}

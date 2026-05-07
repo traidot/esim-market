@@ -40,7 +40,11 @@ const AgentProductCatalog = () => {
   // New Filter States
   const [filterData, setFilterData] = useState('all')
   const [filterValidity, setFilterValidity] = useState('all')
-  const [filterStatus, setFilterStatus] = useState('all')
+  const [filterSimType, setFilterSimType] = useState('all')
+  
+  // Sorting States
+  const [sortBy, setSortBy] = useState('none')
+  const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc')
   
   // Dev toggle to demonstrate different agent types
   const [agentType, setAgentType] = useState<'prepaid' | 'postpaid'>('postpaid')
@@ -72,16 +76,16 @@ const AgentProductCatalog = () => {
   ]
 
   const baseProducts = [
-    { code: 'JP-30D-10GB', name: 'Nhật Bản Siêu Tốc', country: 'Nhật Bản', data: '10GB', validity: '30 Ngày', price: '$12.50', status: 'Đang hoạt động' },
-    { code: 'EU-15D-5GB', name: 'Roaming Châu Âu', country: 'Châu Âu', data: '5GB', validity: '15 Ngày', price: '$9.00', status: 'Đang hoạt động' },
-    { code: 'US-30D-20GB', name: 'Mỹ Không giới hạn', country: 'Hoa Kỳ', data: '20GB', validity: '30 Ngày', price: '$22.00', status: 'Tạm dừng' },
-    { code: 'VN-30D-20GB', name: 'Viettel 4G Local', country: 'Việt Nam', data: '20GB', validity: '30 Ngày', price: '$5.50', status: 'Đang hoạt động' },
-    { code: 'TH-07D-Unlimited', name: 'Thái Lan Travel', country: 'Thái Lan', data: 'Unlimited', validity: '7 Ngày', price: '$6.20', status: 'Đang hoạt động' },
-    { code: 'TH-15D-15GB', name: 'Thái Lan Business', country: 'Thái Lan', data: '15GB', validity: '15 Ngày', price: '$12.00', status: 'Đang hoạt động' },
-    { code: 'TH-30D-50GB', name: 'Thái Lan Dài Hạn', country: 'Thái Lan', data: '50GB', validity: '30 Ngày', price: '$25.00', status: 'Đang hoạt động' },
-    { code: 'KR-14D-10GB', name: 'Hàn Quốc Tốc Độ Cao', country: 'Hàn Quốc', data: '10GB', validity: '14 Ngày', price: '$15.00', status: 'Đang hoạt động' },
-    { code: 'TW-05D-3GB', name: 'Đài Loan Ngắn Ngày', country: 'Đài Loan', data: '3GB', validity: '5 Ngày', price: '$4.50', status: 'Đang hoạt động' },
-    { code: 'CN-30D-50GB', name: 'Trung Quốc Vượt Tường Lửa', country: 'Trung Quốc', data: '50GB', validity: '30 Ngày', price: '$28.00', status: 'Đang hoạt động' }
+    { code: 'JP-30D-10GB', name: 'Nhật Bản Siêu Tốc', country: 'Nhật Bản', data: '10GB', validity: '30 Ngày', price: '$12.50', status: 'Đang hoạt động', type: 'Total' },
+    { code: 'EU-15D-5GB', name: 'Roaming Châu Âu', country: 'Châu Âu', data: '5GB', validity: '15 Ngày', price: '$9.00', status: 'Đang hoạt động', type: 'Daily' },
+    { code: 'US-30D-20GB', name: 'Mỹ Không giới hạn', country: 'Hoa Kỳ', data: '20GB', validity: '30 Ngày', price: '$22.00', status: 'Tạm dừng', type: 'Total' },
+    { code: 'VN-30D-20GB', name: 'Viettel 4G Local', country: 'Việt Nam', data: '20GB', validity: '30 Ngày', price: '$5.50', status: 'Đang hoạt động', type: 'Total' },
+    { code: 'TH-07D-Unlimited', name: 'Thái Lan Travel', country: 'Thái Lan', data: 'Unlimited', validity: '7 Ngày', price: '$6.20', status: 'Đang hoạt động', type: 'Daily' },
+    { code: 'TH-15D-15GB', name: 'Thái Lan Business', country: 'Thái Lan', data: '15GB', validity: '15 Ngày', price: '$12.00', status: 'Đang hoạt động', type: 'Total' },
+    { code: 'TH-30D-50GB', name: 'Thái Lan Dài Hạn', country: 'Thái Lan', data: '50GB', validity: '30 Ngày', price: '$25.00', status: 'Đang hoạt động', type: 'Total' },
+    { code: 'KR-14D-10GB', name: 'Hàn Quốc Tốc Độ Cao', country: 'Hàn Quốc', data: '10GB', validity: '14 Ngày', price: '$15.00', status: 'Đang hoạt động', type: 'Daily' },
+    { code: 'TW-05D-3GB', name: 'Đài Loan Ngắn Ngày', country: 'Đài Loan', data: '3GB', validity: '5 Ngày', price: '$4.50', status: 'Đang hoạt động', type: 'Total' },
+    { code: 'CN-30D-50GB', name: 'Trung Quốc Vượt Tường Lửa', country: 'Trung Quốc', data: '50GB', validity: '30 Ngày', price: '$28.00', status: 'Đang hoạt động', type: 'Total' }
   ]
 
   const products = Array.from({ length: 50 }).map((_, index) => {
@@ -94,22 +98,45 @@ const AgentProductCatalog = () => {
       data: base.data,
       validity: base.validity,
       price: base.price,
+      type: base.type,
       status: index % 7 === 0 ? 'Tạm dừng' : 'Đang hoạt động'
     }
   })
 
+  const filteredProducts = products.filter(p => {
+    const matchSearch = p.name.toLowerCase().includes(searchTerm.toLowerCase()) || p.country.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchContinent = selectedContinent === 'all' || countries.find(c => c.name === p.country)?.region === selectedContinent;
+    const matchCountries = selectedCountries.length === 0 || selectedCountries.some(c => c.name === p.country);
+    const matchData = filterData === 'all' || p.data === filterData;
+    const matchValidity = filterValidity === 'all' || p.validity === filterValidity;
+    const matchSimType = filterSimType === 'all' || p.type === filterSimType;
     const matchStatus = p.status === 'Đang hoạt động';
 
-    return matchSearch && matchContinent && matchCountries && matchData && matchValidity && matchStatus;
+    return matchSearch && matchContinent && matchCountries && matchData && matchValidity && matchSimType && matchStatus;
+  }).sort((a, b) => {
+    if (sortBy === 'none') return 0;
+    
+    let valA: any = a[sortBy as keyof typeof a];
+    let valB: any = b[sortBy as keyof typeof b];
+
+    if (sortBy === 'price') {
+      valA = parseFloat(valA.replace('$', ''));
+      valB = parseFloat(valB.replace('$', ''));
+    }
+
+    if (valA < valB) return sortOrder === 'asc' ? -1 : 1;
+    if (valA > valB) return sortOrder === 'asc' ? 1 : -1;
+    return 0;
   })
 
   const resetFilters = () => {
     setFilterData('all')
     setFilterValidity('all')
-    setFilterStatus('all')
+    setFilterSimType('all')
     setSelectedContinent('all')
     setSelectedCountries([])
     setSearchTerm('')
+    setSortBy('none')
   }
 
   return (
@@ -125,7 +152,7 @@ const AgentProductCatalog = () => {
         <CardContent>
           <Box className='flex justify-between items-center mbe-6'>
             <Typography variant='h6' className='font-black uppercase text-sm text-slate-500'>Bộ lọc tìm kiếm</Typography>
-            {(selectedContinent !== 'all' || selectedCountries.length > 0 || filterData !== 'all' || filterValidity !== 'all' || filterStatus !== 'all' || searchTerm !== '') && (
+            {(selectedContinent !== 'all' || selectedCountries.length > 0 || filterData !== 'all' || filterValidity !== 'all' || filterSimType !== 'all' || searchTerm !== '' || sortBy !== 'none') && (
               <Button size='small' variant='text' color='error' onClick={resetFilters} startIcon={<i className='tabler-trash' />}>
                 Xóa tất cả bộ lọc
               </Button>
@@ -202,7 +229,32 @@ const AgentProductCatalog = () => {
               />
             </Grid2>
 
-            <Grid2 size={{ xs: 12, sm: 4, md: 4 }}>
+            <Grid2 size={{ xs: 12, sm: 6, md: 3 }}>
+              <TextField 
+                select 
+                fullWidth 
+                size='small' 
+                label='Sắp xếp theo' 
+                value={sortBy}
+                onChange={(e) => setSortBy(e.target.value)}
+                InputProps={{
+                  startAdornment: (
+                    <InputAdornment position='start'>
+                      <IconButton size='small' onClick={() => setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc')}>
+                        <i className={sortOrder === 'asc' ? 'tabler-sort-ascending' : 'tabler-sort-descending'} />
+                      </IconButton>
+                    </InputAdornment>
+                  )
+                }}
+              >
+                <MenuItem value='none'>Mặc định</MenuItem>
+                <MenuItem value='price'>Giá cước</MenuItem>
+                <MenuItem value='data'>Dung lượng</MenuItem>
+                <MenuItem value='validity'>Thời hạn</MenuItem>
+              </TextField>
+            </Grid2>
+
+            <Grid2 size={{ xs: 12, sm: 6, md: 3 }}>
               <TextField 
                 select 
                 fullWidth 
@@ -220,7 +272,8 @@ const AgentProductCatalog = () => {
                 <MenuItem value='Unlimited'>Không giới hạn</MenuItem>
               </TextField>
             </Grid2>
-            <Grid2 size={{ xs: 12, sm: 6, md: 6 }}>
+
+            <Grid2 size={{ xs: 12, sm: 6, md: 3 }}>
               <TextField 
                 select 
                 fullWidth 
@@ -235,6 +288,21 @@ const AgentProductCatalog = () => {
                 <MenuItem value='14 Ngày'>14 Ngày</MenuItem>
                 <MenuItem value='15 Ngày'>15 Ngày</MenuItem>
                 <MenuItem value='30 Ngày'>30 Ngày</MenuItem>
+              </TextField>
+            </Grid2>
+
+            <Grid2 size={{ xs: 12, sm: 6, md: 3 }}>
+              <TextField 
+                select 
+                fullWidth 
+                size='small' 
+                label='Loại sim' 
+                value={filterSimType}
+                onChange={(e) => setFilterSimType(e.target.value)}
+              >
+                <MenuItem value='all'>Tất cả loại</MenuItem>
+                <MenuItem value='Daily'>Gói Daily (Theo ngày)</MenuItem>
+                <MenuItem value='Total'>Gói Total (Tổng dung lượng)</MenuItem>
               </TextField>
             </Grid2>
           </Grid2>
@@ -257,6 +325,7 @@ const AgentProductCatalog = () => {
                 <tr className='bg-slate-50 border-be'>
                   <th className='p-4 text-xs font-black text-slate-500 uppercase'>Gói cước</th>
                   <th className='p-4 text-xs font-black text-slate-500 uppercase'>Quốc gia</th>
+                  <th className='p-4 text-xs font-black text-slate-500 uppercase'>Loại sim</th>
                   <th className='p-4 text-xs font-black text-slate-500 uppercase'>Dung lượng</th>
                   <th className='p-4 text-xs font-black text-slate-500 uppercase'>Thời hạn</th>
                   <th className='p-4 text-xs font-black text-slate-500 uppercase'>Giá</th>
@@ -276,6 +345,15 @@ const AgentProductCatalog = () => {
                         <Typography variant='body2'>{countries.find(c => c.name === p.country)?.flag || '🌐'}</Typography>
                         <Typography variant='body2'>{p.country}</Typography>
                       </Box>
+                    </td>
+                    <td className='p-4'>
+                      <Chip 
+                        label={p.type} 
+                        size='small' 
+                        variant='tonal' 
+                        color={p.type === 'Daily' ? 'warning' : 'info'} 
+                        className='font-bold'
+                      />
                     </td>
                     <td className='p-4'><Typography variant='body2' className='font-bold'>{p.data}</Typography></td>
                     <td className='p-4'><Typography variant='body2'>{p.validity}</Typography></td>
