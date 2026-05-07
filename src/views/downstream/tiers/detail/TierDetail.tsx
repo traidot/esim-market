@@ -150,6 +150,32 @@ const TierDetail = ({ id }: { id: string }) => {
           </Stack>
         </Grid2>
       </Grid2>
+
+      {/* Agents List Dialog */}
+      <Dialog open={isDialogOpen} onClose={() => setIsDialogOpen(false)} fullWidth maxWidth='xs'>
+        <DialogTitle className='font-black flex justify-between items-center'>
+          Danh sách Đại lý - {tierName}
+          <Button size='small' color='secondary' onClick={() => setIsDialogOpen(false)}>Đóng</Button>
+        </DialogTitle>
+        <DialogContent className='p-0'>
+          <List>
+            {mockAgents.map((agent) => (
+              <ListItem key={agent.id} disablePadding className='border-b last:border-0'>
+                <ListItemButton onClick={() => router.push(`/downstream/agents/${agent.id}`)}>
+                  <ListItemAvatar>
+                    <Avatar sx={{ bgcolor: 'primary.main', fontSize: '14px' }}>{agent.name[0]}</Avatar>
+                  </ListItemAvatar>
+                  <ListItemText 
+                    primary={<Typography className='font-black'>{agent.name}</Typography>} 
+                    secondary={agent.email} 
+                  />
+                  <i className='tabler-chevron-right text-slate-300' />
+                </ListItemButton>
+              </ListItem>
+            ))}
+          </List>
+        </DialogContent>
+      </Dialog>
     </>
   )
 }

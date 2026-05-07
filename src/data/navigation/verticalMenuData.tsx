@@ -41,7 +41,6 @@ const verticalMenuData = (dictionary: Awaited<ReturnType<typeof getDictionary>>)
       children: [
         { label: 'Đại lý & Đối tác', icon: 'tabler-users', href: getUrl('/downstream/agents'), exactMatch: false },
         { label: 'Nhóm Cấp bậc (Tiers)', icon: 'tabler-hierarchy-2', href: getUrl('/downstream/tiers'), exactMatch: false },
-        { label: 'Quản lý Bảng giá', icon: 'tabler-file-spreadsheet', href: getUrl('/downstream/price-lists') },
         { label: 'Giao dịch (API Logs)', icon: 'tabler-api', href: getUrl('/downstream/transactions') },
         { label: 'Cổng API (Gateway)', icon: 'tabler-key', href: getUrl('/downstream/api-keys') }
       ]

@@ -29,16 +29,20 @@ import PageHeader from '@/components/layout/shared/PageHeader'
 const AgentPricing = ({ id }: { id: string }) => {
   const [activeTab, setActiveTab] = useState(0)
 
+  const agentName = id.toUpperCase() === 'A001' ? 'TravelConnect Solutions' : 'Global eSIM Hub'
+  const agentTier = id.toUpperCase() === 'A001' ? 'PLATINUM' : 'GOLD'
+  const tierMarkup = agentTier === 'PLATINUM' ? 5 : 10
+
+  const [inheritTier, setInheritTier] = useState(true)
+
   const handleTabChange = (event: React.SyntheticEvent, newValue: number) => {
     setActiveTab(newValue)
   }
 
-  const agentName = id.toUpperCase() === 'A001' ? 'TravelConnect Solutions' : 'Global eSIM Hub'
-
   const countries = [
-    { code: 'JP', name: 'Nhật Bản', defaultMarkup: '15%', customMarkup: '10%', status: 'Custom' },
-    { code: 'US', name: 'Hoa Kỳ', defaultMarkup: '15%', customMarkup: '-', status: 'Default' },
-    { code: 'TH', name: 'Thái Lan', defaultMarkup: '15%', customMarkup: '12%', status: 'Custom' },
+    { code: 'JP', name: 'Nhật Bản', defaultMarkup: `${tierMarkup}%`, customMarkup: '10%', status: 'Custom' },
+    { code: 'US', name: 'Hoa Kỳ', defaultMarkup: `${tierMarkup}%`, customMarkup: '-', status: 'Default' },
+    { code: 'TH', name: 'Thái Lan', defaultMarkup: `${tierMarkup}%`, customMarkup: '12%', status: 'Custom' },
   ]
 
   const packages = [
@@ -70,7 +74,6 @@ const AgentPricing = ({ id }: { id: string }) => {
         <Tabs value={activeTab} onChange={handleTabChange} className='border-be'>
           <Tab label="1. Toàn hệ thống (Global)" />
           <Tab label="2. Theo Quốc gia (Country)" />
-          <Tab label="3. Theo Gói cước (Package)" />
         </Tabs>
 
         {activeTab === 0 && (
@@ -80,34 +83,78 @@ const AgentPricing = ({ id }: { id: string }) => {
               <Chip label="Ưu tiên: Cao" color="primary" size="small" variant="tonal" className="h-5" />
             </Box>
             <Typography variant='body2' className='text-slate-500 mbe-6'>
-              Mức chiết khấu hoặc Markup này sẽ được áp dụng cho toàn bộ eSIM của đại lý này, **ghi đè hoàn toàn** cấu hình mặc định theo Cấp bậc (Tier).
+              Mức Markup này sẽ được áp dụng cho toàn bộ eSIM của đại lý này, **ghi đè hoàn toàn** cấu hình mặc định theo Cấp bậc (Tier).
             </Typography>
             
-            <Grid2 container spacing={6} className='max-w-2xl'>
-              <Grid2 size={{ xs: 12 }}>
-                <FormControlLabel
-                  control={<Switch defaultChecked color='primary' />}
-                  label={<Typography className='font-bold'>Kế thừa cấu hình từ Cấp bậc (Tier)</Typography>}
-                  className='mbe-4'
-                />
+            <Grid2 container spacing={8}>
+              <Grid2 size={{ xs: 12, md: 7 }}>
+                <Stack spacing={6}>
+                  <Box className='flex items-center justify-between p-4 bg-slate-50 rounded-lg border border-dashed border-slate-200'>
+                    <FormControlLabel
+                      control={<Switch checked={inheritTier} onChange={(e) => setInheritTier(e.target.checked)} color='primary' />}
+                      label={
+                        <Box>
+                          <Typography className='font-black'>Kế thừa cấu hình từ Cấp bậc (Tier)</Typography>
+                          <Typography variant='caption' className='text-slate-400'>Cấp bậc hiện tại: {agentTier} (Markup +{tierMarkup}%)</Typography>
+                        </Box>
+                      }
+                    />
+                    {inheritTier && (
+                      <Chip label={`Đang áp dụng: +${tierMarkup}%`} color='success' variant='tonal' size='small' className='font-black' />
+                    )}
+                  </Box>
+
+                  {!inheritTier && (
+                    <Box>
+                      <Typography variant='subtitle2' className='font-black mbe-2 uppercase text-[11px] text-slate-500 text-primary'>Tỉ lệ nâng giá riêng (%)</Typography>
+                      <TextField 
+                        fullWidth 
+                        placeholder={`Ví dụ: 8`}
+                        defaultValue={tierMarkup} 
+                        InputProps={{ 
+                          endAdornment: <InputAdornment position='end'>%</InputAdornment>,
+                          className: 'font-black text-lg'
+                        }}
+                        helperText={`Ghi đè mức +${tierMarkup}% của cấp bậc ${agentTier}`}
+                      />
+                    </Box>
+                  )}
+                </Stack>
               </Grid2>
-              <Grid2 size={{ xs: 12, md: 6 }}>
-                <TextField 
-                  fullWidth 
-                  label='Giảm giá trên Giá niêm yết (Marketplace Discount)' 
-                  defaultValue={15} 
-                  InputProps={{ endAdornment: <InputAdornment position='end'>%</InputAdornment> }}
-                  helperText="Đại lý sẽ mua rẻ hơn giá niêm yết trên Chợ 15%"
-                />
-              </Grid2>
-              <Grid2 size={{ xs: 12, md: 6 }}>
-                <TextField 
-                  fullWidth 
-                  label='Giá cố định cộng thêm (Fixed Fee)' 
-                  defaultValue={0} 
-                  InputProps={{ startAdornment: <InputAdornment position='start'>$</InputAdornment> }}
-                  helperText="Cộng thêm một khoản cố định vào mỗi đơn hàng"
-                />
+
+              <Grid2 size={{ xs: 12, md: 5 }}>
+                <Card className='bg-indigo-50/50 border-indigo-100 border border-solid shadow-none'>
+                  <CardContent className='p-6'>
+                    <Typography variant='subtitle2' className='font-black mbe-4 uppercase text-[11px] text-indigo-600 flex items-center gap-2'>
+                      <i className='tabler-calculator' />
+                      Bảng tính giá minh họa
+                    </Typography>
+                    
+                    <Stack spacing={3}>
+                      <Box className='flex justify-between'>
+                        <Typography variant='body2' className='text-slate-500'>Giá gốc (Upstream Cost):</Typography>
+                        <Typography variant='body2' className='font-bold'>$10.00</Typography>
+                      </Box>
+                      <Box className='flex justify-between'>
+                        <Typography variant='body2' className='text-slate-500'>Tỉ lệ nâng giá:</Typography>
+                        <Typography variant='body2' className='font-black text-indigo-600'>+{inheritTier ? tierMarkup : 8}%</Typography>
+                      </Box>
+                      <Divider className='border-indigo-100 border-dashed' />
+                      <Box className='flex justify-between items-center'>
+                        <Typography variant='body1' className='font-black'>Giá bán cho Đại lý:</Typography>
+                        <Typography variant='h5' className='font-black text-primary'>
+                          ${(10 * (1 + (inheritTier ? tierMarkup : 8) / 100)).toFixed(2)}
+                        </Typography>
+                      </Box>
+                    </Stack>
+                    
+                    <Box className='mt-4 p-3 bg-white rounded border border-indigo-100'>
+                      <Typography variant='caption' className='text-slate-400 italic block'>
+                        * Giá trên chỉ mang tính chất minh họa dựa trên ví dụ $10.00 giá gốc. Giá thực tế sẽ thay đổi theo từng gói cước.
+                      </Typography>
+                    </Box>
+                  </CardContent>
+                </Card>
               </Grid2>
             </Grid2>
           </CardContent>
@@ -164,52 +211,6 @@ const AgentPricing = ({ id }: { id: string }) => {
           </CardContent>
         )}
 
-        {activeTab === 2 && (
-          <CardContent className='p-0'>
-            <Box className='p-6 border-be flex justify-between items-center bg-slate-50'>
-              <Box>
-                <Typography variant='h6' className='font-black'>Ghi đè giá theo Gói cụ thể (SKU)</Typography>
-                <Typography variant='body2' className='text-slate-500'>Thiết lập mức giá FIX CỨNG cho đại lý đối với một gói cụ thể. Mức ưu tiên cao nhất.</Typography>
-              </Box>
-              <Button variant='outlined' size='small' startIcon={<i className='tabler-plus' />}>Thêm Gói</Button>
-            </Box>
-            <TableContainer>
-              <Table>
-                <TableHead>
-                  <TableRow>
-                    <TableCell className='font-black uppercase text-[11px]'>Gói cước (SKU)</TableCell>
-                    <TableCell className='font-black uppercase text-[11px] text-right'>Giá Vốn (Cost)</TableCell>
-                    <TableCell className='font-black uppercase text-[11px] text-right'>Giá Niêm yết (Marketplace)</TableCell>
-                    <TableCell className='font-black uppercase text-[11px]'>Giá Riêng (Agent Pays)</TableCell>
-                    <TableCell className='font-black uppercase text-[11px] text-right'>Lợi Nhuận Gộp</TableCell>
-                    <TableCell className='font-black uppercase text-[11px] text-right'>Thao tác</TableCell>
-                  </TableRow>
-                </TableHead>
-                <TableBody>
-                  {packages.map((pkg) => (
-                    <TableRow key={pkg.sku}>
-                      <TableCell>
-                        <Typography variant='body2' className='font-black'>{pkg.name}</Typography>
-                        <Typography variant='caption' className='text-slate-400'>{pkg.sku}</Typography>
-                      </TableCell>
-                      <TableCell className='text-right text-slate-500 line-through'>{pkg.basePrice}</TableCell>
-                      <TableCell className='text-right font-bold'>{pkg.retailPrice}</TableCell>
-                      <TableCell>
-                        <TextField size='small' defaultValue={parseFloat(pkg.agentPrice.replace('$', ''))} InputProps={{ startAdornment: <InputAdornment position='start'>$</InputAdornment> }} className='w-32 bg-warning/5' />
-                      </TableCell>
-                      <TableCell className='text-right'>
-                        <Typography variant='body2' className='font-black text-success'>{pkg.profit}</Typography>
-                      </TableCell>
-                      <TableCell className='text-right'>
-                        <Button size='small' color='error'>Xóa</Button>
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </TableContainer>
-          </CardContent>
-        )}
       </Card>
     </>
   )

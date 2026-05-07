@@ -37,10 +37,10 @@ const AgentDetail = ({ id }: { id: string }) => {
   const progressToNextTier = (agent.totalSales / agent.nextTierTarget) * 100
 
   const quickLinks = [
+    { title: 'Bảng giá Đại lý', desc: 'Xem giá cuối cùng áp dụng', icon: 'tabler-file-invoice', href: `/downstream/agents/${id.toLowerCase()}/price-list`, color: 'primary' },
     { title: 'Quản lý Chiết khấu', desc: 'Định giá & Markup riêng', icon: 'tabler-cash', href: `/downstream/agents/${id.toLowerCase()}/pricing`, color: 'success' },
     { title: 'API & Webhooks', desc: 'Kết nối B2B', icon: 'tabler-plug-connected', href: `/downstream/agents/${id.toLowerCase()}/api-config`, color: 'info' },
-    { title: 'Nhật ký Giao dịch', desc: 'Lịch sử mua/bán chi tiết', icon: 'tabler-receipt-2', href: `/downstream/agents/${id.toLowerCase()}/transactions`, color: 'warning' },
-    { title: 'Đối soát Công nợ', desc: 'Chốt công nợ hàng tháng', icon: 'tabler-file-invoice', href: `/downstream/agents/${id.toLowerCase()}/debt`, color: 'error' }
+    { title: 'Nhật ký Giao dịch', desc: 'Lịch sử mua/bán chi tiết', icon: 'tabler-receipt-2', href: `/downstream/agents/${id.toLowerCase()}/transactions`, color: 'warning' }
   ]
 
   return (
@@ -49,16 +49,6 @@ const AgentDetail = ({ id }: { id: string }) => {
         title={`Dashboard: ${agent.name}`}
         description={`Quản lý tài khoản, doanh thu và cấu hình phân phối cho đại lý (${agent.id})`}
         breadcrumbs={[{ label: 'Trang chủ', href: '/' }, { label: 'Phân phối', href: '/downstream/agents' }, { label: agent.name }]}
-        actions={
-          <Stack direction='row' spacing={2}>
-            <Button variant='tonal' color='error' startIcon={<i className='tabler-ban' />}>Khóa Đại lý</Button>
-            {agent.type === 'postpaid' ? (
-              <Button variant='contained' startIcon={<i className='tabler-cash' />}>Thu nợ</Button>
-            ) : (
-              <Button variant='contained' color='success' startIcon={<i className='tabler-wallet' />}>Nạp tiền</Button>
-            )}
-          </Stack>
-        }
         className='mbe-6'
       />
 
@@ -108,9 +98,9 @@ const AgentDetail = ({ id }: { id: string }) => {
         </Grid2>
 
         {/* SALES PERFORMANCE */}
-        <Grid2 size={{ xs: 12, md: 4 }}>
+        <Grid2 size={{ xs: 12, md: 8 }}>
           <Card className='border-none shadow-sm h-full'>
-            <CardContent className='p-8'>
+            <CardContent className='p-8 h-full flex flex-col justify-center'>
               <Typography variant='subtitle2' className='font-black uppercase mbe-4 text-slate-500'>Doanh số (Tháng này)</Typography>
               <Grid2 container spacing={4}>
                 <Grid2 size={{ xs: 6 }}>
@@ -122,34 +112,10 @@ const AgentDetail = ({ id }: { id: string }) => {
                   <Typography variant='caption' className='text-slate-500 font-bold'>Lợi nhuận gộp</Typography>
                 </Grid2>
               </Grid2>
-              <Divider className='my-4' />
-              <Button fullWidth variant='text' size='small'>Xem báo cáo chi tiết</Button>
             </CardContent>
           </Card>
         </Grid2>
 
-        {/* TIER PROGRESS */}
-        <Grid2 size={{ xs: 12, md: 4 }}>
-          <Card className='border-none shadow-sm h-full'>
-            <CardContent className='p-8 flex flex-col justify-center h-full'>
-              <Box className='flex justify-between items-center mbe-2'>
-                <Typography variant='subtitle2' className='font-black uppercase text-slate-500'>Cấp bậc hiện tại</Typography>
-                <Chip label={agent.tier} color='primary' size='small' className='font-black' />
-              </Box>
-              <Typography variant='h3' className='font-black mbe-4'>${agent.totalSales.toLocaleString()} <span className='text-sm text-slate-400'>/ ${agent.nextTierTarget.toLocaleString()}</span></Typography>
-              <Box className='mbe-2 flex justify-between'>
-                <Typography variant='caption' className='font-bold text-slate-500'>Tiến độ lên cấp</Typography>
-                <Typography variant='caption' className='font-black'>{progressToNextTier.toFixed(1)}%</Typography>
-              </Box>
-              <LinearProgress 
-                variant='determinate' 
-                value={progressToNextTier} 
-                color='primary'
-                className='bs-2 rounded-full' 
-              />
-            </CardContent>
-          </Card>
-        </Grid2>
 
         {/* QUICK NAVIGATION */}
         <Grid2 size={{ xs: 12, md: 8 }}>
