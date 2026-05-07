@@ -60,7 +60,7 @@ const VerticalMenu = ({ dictionary, scrollMenu, menuData: customMenuData }: Prop
   const ScrollWrapper = isBreakpointReached ? 'div' : PerfectScrollbar
 
   // Recursive filter function for menu data based on role
-  const filterMenuDataByRole = (data: any[], currentRole: string) => {
+  const filterMenuDataByRole = (data: any[], currentRole: string): any[] => {
     return data
       .filter((item: any) => {
         if (!item.roles) return true

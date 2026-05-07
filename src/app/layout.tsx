@@ -32,8 +32,8 @@ import '@/app/globals.css'
 import '@assets/iconify-icons/generated-icons.css'
 
 export const metadata = {
-  title: 'QL Mua hàng',
-  description: 'Procurement & Quotation Management System (PQMS) System - Enterprise Management System'
+  title: 'eSIM Marketplace',
+  description: 'eSIM Marketplace - Enterprise Management System'
 }
 
 const RootLayout = async (props: ChildrenType) => {

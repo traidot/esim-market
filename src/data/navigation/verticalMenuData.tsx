@@ -73,8 +73,8 @@ const verticalMenuData = (dictionary: Awaited<ReturnType<typeof getDictionary>>)
       children: [
         { label: 'Tìm kiếm eSIM', icon: 'tabler-shopping-bag', href: getUrl('/agent/marketplace/store') },
         { label: 'Lịch sử mua eSIM', icon: 'tabler-history', href: getUrl('/agent/orders/my-orders') },
-        { label: 'Ví của tôi (Dùng cho đại lý dùng ví)', icon: 'tabler-wallet', href: getUrl('/agent/finance/wallet') },
-        { label: 'Quản lý công nợ (Dùng cho đại lý dùng nợ)', icon: 'tabler-file-invoice', href: getUrl('/agent/finance/my-debt') },
+        { label: 'Ví của tôi', icon: 'tabler-wallet', href: getUrl('/agent/finance/wallet') },
+        { label: 'Quản lý công nợ', icon: 'tabler-file-invoice', href: getUrl('/agent/finance/my-debt') },
         { label: 'Lịch sử Giao dịch', icon: 'tabler-receipt-2', href: getUrl('/agent/finance/transactions') },
         { label: 'Cấu hình API', icon: 'tabler-api', href: getUrl('/agent/system/api') }
       ]
