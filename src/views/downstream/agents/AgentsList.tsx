@@ -1,20 +1,15 @@
-'use client'
-
-import { useState } from 'react'
-import Link from 'next/link'
-import Grid2 from '@mui/material/Grid2'
-import Card from '@mui/material/Card'
-import CardContent from '@mui/material/CardContent'
-import Typography from '@mui/material/Typography'
-import Box from '@mui/material/Box'
-import Button from '@mui/material/Button'
-import Chip from '@mui/material/Chip'
-import Avatar from '@mui/material/Avatar'
-import Divider from '@mui/material/Divider'
+import TextField from '@mui/material/TextField'
+import InputAdornment from '@mui/material/InputAdornment'
+import Select from '@mui/material/Select'
+import MenuItem from '@mui/material/MenuItem'
 
 import PageHeader from '@/components/layout/shared/PageHeader'
 
 const AgentsList = () => {
+  const [searchTerm, setSearchTerm] = useState('')
+  const [tierFilter, setTierFilter] = useState('all')
+  const [statusFilter, setStatusFilter] = useState('all')
+
   const agents = [
     { id: 'A001', name: 'TravelConnect Solutions', email: 'contact@travelconnect.vn', tier: 'PLATINUM', balance: '$5,240.00', status: 'Active', orders: 1240, color: 'primary', type: 'postpaid' },
     { id: 'A002', name: 'Global eSIM Hub', email: 'hub@globale.sim', tier: 'GOLD', balance: '$1,120.50', status: 'Active', orders: 850, color: 'warning', type: 'prepaid' },
@@ -29,10 +24,55 @@ const AgentsList = () => {
         description="Quản lý mạng lưới phân phối, số dư ví và cấu hình chiết khấu cho từng đối tác"
         breadcrumbs={[{ label: 'Trang chủ', href: '/' }, { label: 'Phân phối' }, { label: 'Đại lý' }]}
         actions={
-          <Button variant='contained' startIcon={<i className='tabler-plus' />}>Thêm Đại lý</Button>
+          <Stack direction='row' spacing={2}>
+            <Button variant='contained' color='success' startIcon={<i className='tabler-file-spreadsheet' />}>Xuất Excel</Button>
+            <Button variant='contained' startIcon={<i className='tabler-plus' />}>Thêm Đại lý</Button>
+          </Stack>
         }
         className='mbe-6'
       />
+
+      {/* Advanced Filters */}
+      <Card className='border-none shadow-sm mbe-6'>
+        <CardContent className='p-4'>
+          <Grid2 container spacing={4} className='items-end'>
+            <Grid2 size={{ xs: 12, md: 4 }}>
+              <Typography variant='subtitle2' className='font-black mbe-2 uppercase text-[11px] text-slate-500'>Tìm kiếm đại lý</Typography>
+              <TextField 
+                fullWidth 
+                size='small' 
+                placeholder='Tên, email, mã đại lý...'
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                InputProps={{
+                  startAdornment: <InputAdornment position='start'><i className='tabler-search' /></InputAdornment>
+                }}
+              />
+            </Grid2>
+            <Grid2 size={{ xs: 6, md: 3 }}>
+              <Typography variant='subtitle2' className='font-black mbe-2 uppercase text-[11px] text-slate-500'>Cấp bậc (Tier)</Typography>
+              <Select fullWidth size='small' value={tierFilter} onChange={(e) => setTierFilter(e.target.value)}>
+                <MenuItem value='all'>Tất cả cấp bậc</MenuItem>
+                <MenuItem value='PLATINUM'>Platinum</MenuItem>
+                <MenuItem value='GOLD'>Gold</MenuItem>
+                <MenuItem value='SILVER'>Silver</MenuItem>
+              </Select>
+            </Grid2>
+            <Grid2 size={{ xs: 6, md: 3 }}>
+              <Typography variant='subtitle2' className='font-black mbe-2 uppercase text-[11px] text-slate-500'>Trạng thái</Typography>
+              <Select fullWidth size='small' value={statusFilter} onChange={(e) => setStatusFilter(e.target.value)}>
+                <MenuItem value='all'>Tất cả trạng thái</MenuItem>
+                <MenuItem value='Active'>Hoạt động</MenuItem>
+                <MenuItem value='Low Balance'>Sắp hết tiền</MenuItem>
+                <MenuItem value='Inactive'>Tạm dừng</MenuItem>
+              </Select>
+            </Grid2>
+            <Grid2 size={{ xs: 12, md: 2 }}>
+              <Button fullWidth variant='tonal' color='secondary' startIcon={<i className='tabler-filter-off' />}>Xóa lọc</Button>
+            </Grid2>
+          </Grid2>
+        </CardContent>
+      </Card>
 
       <Grid2 container spacing={6}>
         {agents.map((agent) => (
