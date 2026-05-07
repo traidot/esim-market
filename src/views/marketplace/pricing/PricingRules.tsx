@@ -30,6 +30,8 @@ const PricingRules = () => {
 
   const handleOpenOverride = () => setOpenOverride(true)
   const handleCloseOverride = () => setOpenOverride(false)
+
+  return (
     <>
       <PageHeader
         title="Bảng giá chuẩn hệ thống (Global Markup Rules)"

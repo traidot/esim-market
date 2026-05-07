@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import Link from 'next/link'
 import Card from '@mui/material/Card'
 import CardContent from '@mui/material/CardContent'
 import Typography from '@mui/material/Typography'
@@ -22,14 +23,17 @@ import Divider from '@mui/material/Divider'
 import MenuItem from '@mui/material/MenuItem'
 import ToggleButton from '@mui/material/ToggleButton'
 import ToggleButtonGroup from '@mui/material/ToggleButtonGroup'
+import Autocomplete from '@mui/material/Autocomplete'
+import Stack from '@mui/material/Stack'
+import Checkbox from '@mui/material/Checkbox'
 
 import { toast } from 'react-toastify'
 import PageHeader from '@/components/layout/shared/PageHeader'
 
 const AgentProductCatalog = () => {
   const [searchTerm, setSearchTerm] = useState('')
-  const [activeTab, setActiveTab] = useState(0)
-  const [selectedCountry, setSelectedCountry] = useState<string | null>(null)
+  const [selectedContinent, setSelectedContinent] = useState('all')
+  const [selectedCountries, setSelectedCountries] = useState<any[]>([])
   const [selectedProduct, setSelectedProduct] = useState<any>(null)
   const [openDialog, setOpenDialog] = useState(false)
   
@@ -94,21 +98,17 @@ const AgentProductCatalog = () => {
     }
   })
 
-  const filteredProducts = products.filter(p => {
-    const matchSearch = p.name.toLowerCase().includes(searchTerm.toLowerCase()) || p.country.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchCountry = !selectedCountry || p.country === selectedCountry;
-    const matchData = filterData === 'all' || p.data === filterData;
-    const matchValidity = filterValidity === 'all' || p.validity === filterValidity;
-    const matchStatus = filterStatus === 'all' || (filterStatus === 'active' ? p.status === 'Đang hoạt động' : p.status === 'Tạm dừng');
+    const matchStatus = p.status === 'Đang hoạt động';
 
-    return matchSearch && matchCountry && matchData && matchValidity && matchStatus;
+    return matchSearch && matchContinent && matchCountries && matchData && matchValidity && matchStatus;
   })
 
   const resetFilters = () => {
     setFilterData('all')
     setFilterValidity('all')
     setFilterStatus('all')
-    setSelectedCountry(null)
+    setSelectedContinent('all')
+    setSelectedCountries([])
     setSearchTerm('')
   }
 
@@ -119,101 +119,90 @@ const AgentProductCatalog = () => {
         description="Duyệt và quản lý các gói cước eSIM theo từng vùng lãnh thổ trên toàn cầu"
         breadcrumbs={[{ label: 'Trang chủ', href: '/' }, { label: 'Chợ eSIM' }, { label: 'Danh mục' }]}
         className='mbe-6'
-        actions={
-          <ToggleButtonGroup
-            color="primary"
-            value={agentType}
-            exclusive
-            onChange={(_, val) => val && setAgentType(val)}
-            size="small"
-          >
-            <ToggleButton value="postpaid">Đại lý Trả sau (Công nợ)</ToggleButton>
-            <ToggleButton value="prepaid">Đại lý Trả trước (Ví)</ToggleButton>
-          </ToggleButtonGroup>
-        }
       />
 
-      <Box className='mbe-6'>
-        <Card className='border-none shadow-sm'>
-          <CardContent className='p-4'>
-            <Box className='flex justify-between items-center flex-wrap gap-4'>
-              <Tabs 
-                value={activeTab} 
-                onChange={(_, val) => setActiveTab(val)}
-                className='border-be-0'
-                textColor="primary"
-                indicatorColor="primary"
-              >
-                <Tab label="Phổ biến" />
-                <Tab label="Châu Á" />
-                <Tab label="Châu Âu" />
-                <Tab label="Châu Mỹ" />
-                <Tab label="Toàn cầu" />
-              </Tabs>
-              <TextField
-                size='small'
-                placeholder='Nhập tên quốc gia bạn muốn tìm...'
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                slotProps={{
-                  input: {
-                    startAdornment: (
-                      <InputAdornment position='start'>
-                        <i className='tabler-search text-slate-400' />
-                      </InputAdornment>
-                    )
-                  }
-                }}
-                className='min-is-[300px]'
-              />
-            </Box>
-          </CardContent>
-        </Card>
-      </Box>
-
-      {/* Country Grid */}
-      <Box className='mbe-6'>
-        <Typography variant='h6' className='font-black mbe-4'>Quốc gia phổ biến</Typography>
-        <Grid2 container spacing={4}>
-          {countries.map((c) => (
-            <Grid2 key={c.code} size={{ xs: 6, sm: 4, md: 2, lg: 1.5 }}>
-              <Card 
-                className={`border-none shadow-sm cursor-pointer transition-all hover:shadow-md hover:scale-105 ${selectedCountry === c.name ? 'ring-2 ring-primary bg-primary/5' : ''}`}
-                onClick={() => setSelectedCountry(selectedCountry === c.name ? null : c.name)}
-              >
-                <CardContent className='flex flex-col items-center p-4'>
-                  <Typography variant='h3' className='mbe-2'>{c.flag}</Typography>
-                  <Typography variant='body2' className='font-bold text-center truncate w-full'>{c.name}</Typography>
-                </CardContent>
-              </Card>
-            </Grid2>
-          ))}
-          <Grid2 size={{ xs: 6, sm: 4, md: 2, lg: 1.5 }}>
-            <Card className='border-none shadow-sm cursor-pointer hover:bg-slate-50'>
-              <CardContent className='flex flex-col items-center p-4 justify-center h-full'>
-                <i className='tabler-plus text-2xl text-slate-400 mbe-2' />
-                <Typography variant='body2' className='text-slate-500 font-bold'>Xem thêm</Typography>
-              </CardContent>
-            </Card>
-          </Grid2>
-        </Grid2>
-      </Box>
-
-      {/* Product List */}
-      <Card className='border-none shadow-sm'>
+      <Card className='border-none shadow-sm mbe-6'>
         <CardContent>
-          <Box className='flex justify-between items-center mbe-4'>
-            <Typography variant='h6' className='font-black'>
-              {selectedCountry ? `Gói cước tại ${selectedCountry}` : 'Tất cả gói cước'} 
-              <Chip label={filteredProducts.length} size='small' className='mis-2' variant='tonal' color='primary' />
-            </Typography>
-            {(selectedCountry || filterData !== 'all' || filterValidity !== 'all' || filterStatus !== 'all' || searchTerm !== '') && (
-              <Button size='small' variant='text' onClick={resetFilters}>Xóa tất cả lọc</Button>
+          <Box className='flex justify-between items-center mbe-6'>
+            <Typography variant='h6' className='font-black uppercase text-sm text-slate-500'>Bộ lọc tìm kiếm</Typography>
+            {(selectedContinent !== 'all' || selectedCountries.length > 0 || filterData !== 'all' || filterValidity !== 'all' || filterStatus !== 'all' || searchTerm !== '') && (
+              <Button size='small' variant='text' color='error' onClick={resetFilters} startIcon={<i className='tabler-trash' />}>
+                Xóa tất cả bộ lọc
+              </Button>
             )}
           </Box>
+          
+          <Grid2 container spacing={6}>
+            <Grid2 size={{ xs: 12, md: 3 }}>
+              <TextField 
+                select 
+                fullWidth 
+                size='small' 
+                label='Khu vực (Châu lục)' 
+                value={selectedContinent}
+                onChange={(e) => setSelectedContinent(e.target.value)}
+              >
+                <MenuItem value='all'>Tất cả khu vực</MenuItem>
+                <MenuItem value='Châu Á'>Châu Á</MenuItem>
+                <MenuItem value='Châu Âu'>Châu Âu</MenuItem>
+                <MenuItem value='Mỹ'>Châu Mỹ</MenuItem>
+                <MenuItem value='Toàn cầu'>Toàn cầu</MenuItem>
+              </TextField>
+            </Grid2>
+            <Grid2 size={{ xs: 12, md: 5 }}>
+              <Autocomplete
+                multiple
+                size='small'
+                options={countries}
+                getOptionLabel={(option) => option.name}
+                value={selectedCountries}
+                onChange={(_, newValue) => setSelectedCountries(newValue)}
+                disableCloseOnSelect
+                renderInput={(params) => (
+                  <TextField {...params} label='Chọn Quốc gia' placeholder='Tìm quốc gia...' />
+                )}
+                renderOption={(props, option, { selected }) => (
+                  <li {...props}>
+                    <Checkbox
+                      icon={<i className='tabler-square' />}
+                      checkedIcon={<i className='tabler-square-check-filled' />}
+                      style={{ marginRight: 8 }}
+                      checked={selected}
+                    />
+                    {option.flag} {option.name}
+                  </li>
+                )}
+                renderTags={(value, getTagProps) =>
+                  value.map((option, index) => (
+                    <Chip
+                      label={`${option.flag} ${option.name}`}
+                      {...getTagProps({ index })}
+                      size='small'
+                      variant='tonal'
+                      key={option.code}
+                    />
+                  ))
+                }
+              />
+            </Grid2>
+            <Grid2 size={{ xs: 12, md: 4 }}>
+              <TextField
+                fullWidth
+                size='small'
+                placeholder='Tìm theo tên gói cước...'
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                InputProps={{
+                  startAdornment: (
+                    <InputAdornment position='start'>
+                      <i className='tabler-search' />
+                    </InputAdornment>
+                  )
+                }}
+              />
+            </Grid2>
 
-          <Grid2 container spacing={4} className='mbe-6'>
-            <Grid2 size={{ xs: 12, sm: 6, md: 4 }}>
+            <Grid2 size={{ xs: 12, sm: 4, md: 4 }}>
               <TextField 
                 select 
                 fullWidth 
@@ -231,7 +220,7 @@ const AgentProductCatalog = () => {
                 <MenuItem value='Unlimited'>Không giới hạn</MenuItem>
               </TextField>
             </Grid2>
-            <Grid2 size={{ xs: 12, sm: 6, md: 4 }}>
+            <Grid2 size={{ xs: 12, sm: 6, md: 6 }}>
               <TextField 
                 select 
                 fullWidth 
@@ -248,21 +237,19 @@ const AgentProductCatalog = () => {
                 <MenuItem value='30 Ngày'>30 Ngày</MenuItem>
               </TextField>
             </Grid2>
-            <Grid2 size={{ xs: 12, sm: 6, md: 4 }}>
-              <TextField 
-                select 
-                fullWidth 
-                size='small' 
-                label='Trạng thái' 
-                value={filterStatus}
-                onChange={(e) => setFilterStatus(e.target.value)}
-              >
-                <MenuItem value='all'>Tất cả trạng thái</MenuItem>
-                <MenuItem value='active'>Đang hoạt động</MenuItem>
-                <MenuItem value='paused'>Tạm dừng</MenuItem>
-              </TextField>
-            </Grid2>
           </Grid2>
+        </CardContent>
+      </Card>
+
+      {/* Product List */}
+      <Card className='border-none shadow-sm'>
+        <CardContent>
+          <Box className='flex justify-between items-center mbe-4'>
+            <Typography variant='h6' className='font-black'>
+              Danh sách Gói cước
+              <Chip label={filteredProducts.length} size='small' className='mis-2' variant='tonal' color='primary' />
+            </Typography>
+          </Box>
 
           <Box className='overflow-x-auto'>
             <table className='w-full text-left border-collapse'>
@@ -273,8 +260,6 @@ const AgentProductCatalog = () => {
                   <th className='p-4 text-xs font-black text-slate-500 uppercase'>Dung lượng</th>
                   <th className='p-4 text-xs font-black text-slate-500 uppercase'>Thời hạn</th>
                   <th className='p-4 text-xs font-black text-slate-500 uppercase'>Giá</th>
-                  <th className='p-4 text-xs font-black text-slate-500 uppercase'>Trạng thái</th>
-                  <th className='p-4 text-xs font-black text-slate-500 uppercase text-right'>Thao tác</th>
                 </tr>
               </thead>
               <tbody>
@@ -295,18 +280,6 @@ const AgentProductCatalog = () => {
                     <td className='p-4'><Typography variant='body2' className='font-bold'>{p.data}</Typography></td>
                     <td className='p-4'><Typography variant='body2'>{p.validity}</Typography></td>
                     <td className='p-4'><Typography variant='body2' className='font-black text-primary'>{p.price}</Typography></td>
-                    <td className='p-4'>
-                      <Chip label={p.status} size='small' color={p.status === 'Đang hoạt động' ? 'success' : 'secondary'} variant='tonal' />
-                    </td>
-                    <td className='p-4 text-right'>
-                      <Button 
-                        size='small' 
-                        variant='contained'
-                        onClick={() => handleOpenDialog(p)}
-                      >
-                        Mua ngay
-                      </Button>
-                    </td>
                   </tr>
                 ))}
               </tbody>
@@ -317,73 +290,42 @@ const AgentProductCatalog = () => {
 
       <Dialog open={openDialog} onClose={handleCloseDialog} fullWidth maxWidth='sm'>
         <DialogTitle className='flex items-center justify-between'>
-          <Typography variant='h5' component='span' className='font-black'>Xác nhận mua eSIM</Typography>
+          <Typography variant='h5' component='span' className='font-black'>Thông tin Tích hợp API</Typography>
           <IconButton onClick={handleCloseDialog} size='small'>
             <i className='tabler-x' />
           </IconButton>
         </DialogTitle>
         <DialogContent>
-          {selectedProduct && (
-            <Box className='flex flex-col gap-4 m-bs-2'>
-              <Box className='p-4 bg-slate-50 rounded-lg'>
-                <Box className='flex justify-between items-center mbe-4'>
-                  <Typography variant='h6' className='font-bold'>{selectedProduct.name}</Typography>
-                  <Typography variant='h6' color='primary' className='font-black'>{selectedProduct.price}</Typography>
-                </Box>
-                <Divider className='mbe-4' />
-                <Grid2 container spacing={2}>
-                  <Grid2 size={{ xs: 6 }}>
-                    <Typography variant='caption' className='text-slate-500'>Quốc gia</Typography>
-                    <Typography variant='body1' className='font-medium'>{selectedProduct.country}</Typography>
-                  </Grid2>
-                  <Grid2 size={{ xs: 6 }}>
-                    <Typography variant='caption' className='text-slate-500'>Dung lượng</Typography>
-                    <Typography variant='body1' className='font-medium'>{selectedProduct.data}</Typography>
-                  </Grid2>
-                  <Grid2 size={{ xs: 6 }}>
-                    <Typography variant='caption' className='text-slate-500'>Thời hạn</Typography>
-                    <Typography variant='body1' className='font-medium'>{selectedProduct.validity}</Typography>
-                  </Grid2>
-                  <Grid2 size={{ xs: 6 }}>
-                    <Typography variant='caption' className='text-slate-500'>Mã gói</Typography>
-                    <Typography variant='body1' className='font-mono'>{selectedProduct.code}</Typography>
-                  </Grid2>
-                </Grid2>
-              </Box>
+          <Box className='p-4 bg-primary/5 rounded-xl border border-primary/10 mbe-6 m-bs-2'>
+            <Typography variant='caption' className='font-bold text-primary uppercase block mbe-1'>Sản phẩm (Package SKU)</Typography>
+            <Typography variant='h6' className='font-black'>{selectedProduct?.code}</Typography>
+            <Typography variant='body2' className='text-slate-500'>{selectedProduct?.name} - {selectedProduct?.price}</Typography>
+          </Box>
 
-              <Box className='mbe-2'>
-                <Typography variant='subtitle2' className='font-bold mbe-2'>Phương thức thanh toán</Typography>
-                {agentType === 'postpaid' ? (
-                  <Box className='flex items-center justify-between p-3 border border-primary bg-primary/5 rounded-lg'>
-                    <Box>
-                      <Typography className='font-bold'>Ghi nhận công nợ (Postpaid)</Typography>
-                      <Typography variant='caption' className='text-slate-500'>Đơn hàng sẽ được đối soát và thanh toán vào cuối kỳ (15 tháng sau).</Typography>
-                    </Box>
-                    <i className='tabler-file-invoice text-2xl text-primary' />
-                  </Box>
-                ) : (
-                  <Box className='flex items-center justify-between p-3 border border-success bg-success/5 rounded-lg'>
-                    <Box>
-                      <Typography className='font-bold'>Trừ tiền ví (Prepaid)</Typography>
-                      <Typography variant='caption' className='text-slate-500'>
-                        Số dư hiện tại: <strong className='text-success'>$1,500.00</strong> <br/>
-                        Sau khi mua: <strong className='text-success'>$1,487.50</strong>
-                      </Typography>
-                    </Box>
-                    <i className='tabler-wallet text-2xl text-success' />
-                  </Box>
-                )}
-              </Box>
+          <Typography variant='subtitle2' className='font-black mbe-2 uppercase text-[11px] text-slate-500'>Mẫu lệnh gọi API (cURL)</Typography>
+          <Box className='p-4 bg-slate-900 rounded-lg overflow-x-auto mbe-4'>
+            <pre className='text-xs text-success m-0 font-mono'>
+              {`curl -X POST "https://api.esimmarket.com/v1/orders" \\
+  -H "Authorization: Bearer YOUR_API_KEY" \\
+  -H "Content-Type: application/json" \\
+  -d '{
+    "sku": "${selectedProduct?.code}",
+    "quantity": 1,
+    "agent_reference": "YOUR_ORDER_ID"
+  }'`}
+            </pre>
+          </Box>
 
-              <Typography variant='body2' className='text-slate-500 text-center m-t-2'>
-                Vui lòng kiểm tra kỹ thông tin gói cước trước khi thanh toán.
-              </Typography>
-            </Box>
-          )}
+
+          <Typography variant='body2' className='text-slate-600 italic'>
+            * Lưu ý: Hệ thống ESIM Market chỉ hỗ trợ mua sỉ qua API. Vui lòng đảm bảo số dư ví hoặc hạn mức công nợ để giao dịch thành công.
+          </Typography>
         </DialogContent>
         <DialogActions className='p-6 pt-0'>
-          <Button variant='tonal' color='secondary' onClick={handleCloseDialog}>Hủy</Button>
-          <Button variant='contained' color='primary' onClick={handleConfirmPurchase}>Xác nhận thanh toán</Button>
+          <Button onClick={handleCloseDialog} color='secondary' variant='tonal'>Đóng</Button>
+          <Button variant='contained' href='/system/api' component={Link} startIcon={<i className='tabler-file-description' />}>
+            Xem Tài liệu API
+          </Button>
         </DialogActions>
       </Dialog>
     </>
