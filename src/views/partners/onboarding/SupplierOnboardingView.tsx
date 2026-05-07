@@ -127,7 +127,7 @@ const SupplierOnboardingView = () => {
                            size='small' 
                            className='font-bold'
                            component={Link}
-                           href={`/partners/onboarding/${row.id}`}
+                           href={`/3m/partners/onboarding/${row.id}`}
                          >
                            Review
                          </Button>

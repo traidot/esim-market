@@ -40,13 +40,13 @@ const AgentTransactions = ({ id }: { id: string }) => {
         description="Lịch sử chi tiết các giao dịch mua hàng và hủy đơn của đại lý."
         breadcrumbs={[
           { label: 'Trang chủ', href: '/' }, 
-          { label: 'Đại lý', href: '/downstream/agents' }, 
-          { label: agentName, href: `/downstream/agents/${id}` },
+          { label: 'Đại lý', href: '/3m/downstream/agents' }, 
+          { label: agentName, href: `/3m/downstream/agents/${id}` },
           { label: 'Nhật ký' }
         ]}
         actions={
           <Stack direction='row' spacing={2}>
-            <Button variant='tonal' color='secondary' component={Link} href={`/downstream/agents/${id}`}>Quay lại</Button>
+            <Button variant='tonal' color='secondary' component={Link} href={`/3m/downstream/agents/${id}`}>Quay lại</Button>
             <Button variant='contained' color='primary' startIcon={<i className='tabler-download' />}>Xuất Excel</Button>
           </Stack>
         }

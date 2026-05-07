@@ -39,20 +39,22 @@ const TransactionsList = () => {
   // Filters
   const [searchTerm, setSearchTerm] = useState('')
   const [status, setStatus] = useState('all')
+  const [agentFilter, setAgentFilter] = useState('all')
+  const [supplierFilter, setSupplierFilter] = useState('all')
 
   const handleOpenDetail = (tx: any) => {
     setSelectedTx(tx)
     setOpenDialog(true)
   }
 
-  // Mock Transactions for Agent view
+  // Mock Transactions for Admin view
   const transactions = [
-    { id: 'TRX-10293', type: 'Purchase', typeLabel: 'Mua eSIM (Japan Travel)', amount: 12.50, flow: 'out', status: 'Completed', date: '2026-04-25T14:20:00Z', reference: 'ORD-99812', description: 'Gói 10GB - 30 Ngày' },
-    { id: 'TRX-10294', type: 'Payment', typeLabel: 'Thanh toán nợ công nợ', amount: 500.00, flow: 'in', status: 'Completed', date: '2026-04-25T14:15:00Z', reference: 'PAY-1122', description: 'Thanh toán qua Chuyển khoản' },
-    { id: 'TRX-10295', type: 'Purchase', typeLabel: 'Mua eSIM (Thailand Unlimited)', amount: 6.20, flow: 'out', status: 'Pending', date: '2026-04-25T14:00:00Z', reference: 'ORD-99810', description: 'Gói Unlimited - 7 Ngày' },
-    { id: 'TRX-10296', type: 'Payment', typeLabel: 'Thanh toán nợ công nợ', amount: 200.00, flow: 'in', status: 'Completed', date: '2026-04-25T12:00:00Z', reference: 'PAY-1123', description: 'Thanh toán qua Ví điện tử' },
-    { id: 'TRX-10297', type: 'Purchase', typeLabel: 'Mua eSIM (Europe Roaming)', amount: 9.00, flow: 'out', status: 'Completed', date: '2026-04-24T10:30:00Z', reference: 'ORD-99808', description: 'Gói 5GB - 15 Ngày' },
-    { id: 'TRX-10298', type: 'Adjustment', typeLabel: 'Điều chỉnh số dư', amount: 50.00, flow: 'in', status: 'Completed', date: '2026-04-24T09:00:00Z', reference: 'ADJ-001', description: 'Hoàn tiền lỗi hệ thống' },
+    { id: 'TRX-10293', agent: 'TravelConnect', supplier: 'Singtel', type: 'Purchase', typeLabel: 'Mua eSIM (Japan Travel)', amount: 12.50, flow: 'out', status: 'Completed', date: '2026-04-25T14:20:00Z', reference: 'ORD-99812', description: 'Gói 10GB - 30 Ngày' },
+    { id: 'TRX-10294', agent: 'Global eSIM Hub', supplier: '-', type: 'Payment', typeLabel: 'Thanh toán nợ công nợ', amount: 500.00, flow: 'in', status: 'Completed', date: '2026-04-25T14:15:00Z', reference: 'PAY-1122', description: 'Thanh toán qua Chuyển khoản' },
+    { id: 'TRX-10295', agent: 'CheapData Agency', supplier: 'AIS', type: 'Purchase', typeLabel: 'Mua eSIM (Thailand Unlimited)', amount: 6.20, flow: 'out', status: 'Pending', date: '2026-04-25T14:00:00Z', reference: 'ORD-99810', description: 'Gói Unlimited - 7 Ngày' },
+    { id: 'TRX-10296', agent: 'Nomad Partner', supplier: '-', type: 'Payment', typeLabel: 'Thanh toán nợ công nợ', amount: 200.00, flow: 'in', status: 'Completed', date: '2026-04-25T12:00:00Z', reference: 'PAY-1123', description: 'Thanh toán qua Ví điện tử' },
+    { id: 'TRX-10297', agent: 'TravelConnect', supplier: 'Orange FR', type: 'Purchase', typeLabel: 'Mua eSIM (Europe Roaming)', amount: 9.00, flow: 'out', status: 'Completed', date: '2026-04-24T10:30:00Z', reference: 'ORD-99808', description: 'Gói 5GB - 15 Ngày' },
+    { id: 'TRX-10298', agent: 'Global eSIM Hub', supplier: '-', type: 'Adjustment', typeLabel: 'Điều chỉnh số dư', amount: 50.00, flow: 'in', status: 'Completed', date: '2026-04-24T09:00:00Z', reference: 'ADJ-001', description: 'Hoàn tiền lỗi hệ thống' },
   ]
 
   const filteredTransactions = transactions.filter(t => {
@@ -67,8 +69,10 @@ const TransactionsList = () => {
                         t.typeLabel.toLowerCase().includes(searchTerm.toLowerCase())
     
     const matchStatus = status === 'all' || t.status.toLowerCase() === status.toLowerCase()
+    const matchAgent = agentFilter === 'all' || t.agent === agentFilter
+    const matchSupplier = supplierFilter === 'all' || t.supplier === supplierFilter
     
-    return matchSearch && matchStatus
+    return matchSearch && matchStatus && matchAgent && matchSupplier
   })
 
   const totalPurchase = transactions.filter(t => t.type === 'Purchase' && t.status === 'Completed').reduce((acc, t) => acc + t.amount, 0)
@@ -99,7 +103,7 @@ const TransactionsList = () => {
     <>
       <PageHeader
         title="Lịch sử Giao dịch"
-        description="Theo dõi chi tiết các giao dịch mua hàng và thanh toán công nợ của bạn."
+        description="Theo dõi chi tiết các giao dịch mua hàng và thanh toán công nợ của hệ thống."
         breadcrumbs={[{ label: 'Trang chủ', href: '/' }, { label: 'Tài chính' }, { label: 'Giao dịch' }]}
         actions={
           <Button variant='tonal' color='secondary' startIcon={<i className='tabler-download' />}>Xuất Sao kê</Button>
@@ -152,7 +156,7 @@ const TransactionsList = () => {
 
         <Box className='p-6 border-be bg-slate-50/30'>
           <Grid2 container spacing={4}>
-            <Grid2 size={{ xs: 12, sm: 6, md: 4 }}>
+            <Grid2 size={{ xs: 12, md: 3 }}>
               <TextField 
                 fullWidth 
                 placeholder='Tìm mã giao dịch, reference...' 
@@ -165,15 +169,36 @@ const TransactionsList = () => {
                 }}
               />
             </Grid2>
-            <Grid2 size={{ xs: 12, sm: 6, md: 3 }}>
+            <Grid2 size={{ xs: 6, md: 2 }}>
               <TextField select fullWidth size='small' value={status} onChange={(e) => setStatus(e.target.value)} label='Trạng thái' className='bg-white'>
-                <MenuItem value='all'>Tất cả trạng thái</MenuItem>
+                <MenuItem value='all'>Tất cả</MenuItem>
                 <MenuItem value='completed'>Thành công</MenuItem>
                 <MenuItem value='pending'>Đang xử lý</MenuItem>
                 <MenuItem value='failed'>Thất bại</MenuItem>
               </TextField>
             </Grid2>
-            <Grid2 size={{ xs: 12, sm: 12, md: 5 }}>
+            <Grid2 size={{ xs: 6, md: 2.5 }}>
+              <TextField select fullWidth size='small' value={agentFilter} onChange={(e) => setAgentFilter(e.target.value)} label='Đại lý' className='bg-white'>
+                <MenuItem value='all'>Tất cả Đại lý</MenuItem>
+                <MenuItem value='TravelConnect'>TravelConnect</MenuItem>
+                <MenuItem value='Global eSIM Hub'>Global eSIM Hub</MenuItem>
+                <MenuItem value='CheapData Agency'>CheapData Agency</MenuItem>
+                <MenuItem value='Nomad Partner'>Nomad Partner</MenuItem>
+              </TextField>
+            </Grid2>
+            <Grid2 size={{ xs: 6, md: 2.5 }}>
+              <TextField select fullWidth size='small' value={supplierFilter} onChange={(e) => setSupplierFilter(e.target.value)} label='Nhà cung cấp' className='bg-white'>
+                <MenuItem value='all'>Tất cả NCC</MenuItem>
+                <MenuItem value='Singtel'>Singtel</MenuItem>
+                <MenuItem value='AIS'>AIS</MenuItem>
+                <MenuItem value='Orange FR'>Orange FR</MenuItem>
+                <MenuItem value='Viettel'>Viettel</MenuItem>
+              </TextField>
+            </Grid2>
+            <Grid2 size={{ xs: 6, md: 2 }}>
+              <Button fullWidth variant='tonal' color='secondary' onClick={() => { setSearchTerm(''); setStatus('all'); setAgentFilter('all'); setSupplierFilter('all'); }}>Xóa lọc</Button>
+            </Grid2>
+            <Grid2 size={{ xs: 12, md: 6 }}>
               <Stack direction='row' spacing={2}>
                 <TextField type="date" fullWidth size='small' label='Từ ngày' InputLabelProps={{ shrink: true }} className='bg-white' />
                 <TextField type="date" fullWidth size='small' label='Đến ngày' InputLabelProps={{ shrink: true }} className='bg-white' />
@@ -187,6 +212,7 @@ const TransactionsList = () => {
             <TableHead>
               <TableRow className='bg-slate-50'>
                 <TableCell className='font-black uppercase text-[11px] whitespace-nowrap'>Mã GD & Thời gian</TableCell>
+                <TableCell className='font-black uppercase text-[11px]'>Đại lý / NCC</TableCell>
                 <TableCell className='font-black uppercase text-[11px]'>Nội dung / Diễn giải</TableCell>
                 <TableCell className='font-black uppercase text-[11px]'>Reference</TableCell>
                 <TableCell className='font-black uppercase text-[11px] text-right'>Số tiền</TableCell>
@@ -201,6 +227,12 @@ const TransactionsList = () => {
                     <Box className='flex flex-col'>
                       <Typography variant='body2' className='font-mono font-bold text-primary'>{t.id}</Typography>
                       <Typography variant='caption' className='text-slate-500'>{formatDate(t.date)}</Typography>
+                    </Box>
+                  </TableCell>
+                  <TableCell>
+                    <Box>
+                      <Typography variant='body2' className='font-black'>{t.agent}</Typography>
+                      <Typography variant='caption' className='text-primary font-bold'>{t.supplier}</Typography>
                     </Box>
                   </TableCell>
                   <TableCell>
@@ -236,7 +268,7 @@ const TransactionsList = () => {
                 </TableRow>
               )) : (
                 <TableRow>
-                  <TableCell colSpan={6} align='center' className='p-12'>
+                  <TableCell colSpan={7} align='center' className='p-12'>
                     <Typography variant='body2' className='text-slate-400 italic'>Không tìm thấy giao dịch nào phù hợp.</Typography>
                   </TableCell>
                 </TableRow>
@@ -251,7 +283,7 @@ const TransactionsList = () => {
       </Card>
 
       <Dialog open={openDialog} onClose={() => setOpenDialog(false)} maxWidth='sm' fullWidth>
-        <DialogTitle className='font-black flex justify-between items-center'>
+        <DialogTitle component='div' className='font-black flex justify-between items-center'>
           <span>Chi tiết Giao dịch</span>
           <IconButton onClick={() => setOpenDialog(false)} size='small'><i className='tabler-x' /></IconButton>
         </DialogTitle>
@@ -272,6 +304,14 @@ const TransactionsList = () => {
               </Box>
               
               <Grid2 container spacing={6}>
+                <Grid2 size={{ xs: 6 }}>
+                  <Typography variant='caption' className='text-slate-500 font-bold uppercase text-[10px]'>Đại lý</Typography>
+                  <Typography variant='body1' className='font-black'>{selectedTx.agent}</Typography>
+                </Grid2>
+                <Grid2 size={{ xs: 6 }}>
+                  <Typography variant='caption' className='text-slate-500 font-bold uppercase text-[10px]'>Nhà cung cấp (Upstream)</Typography>
+                  <Typography variant='body1' className='font-black text-primary'>{selectedTx.supplier}</Typography>
+                </Grid2>
                 <Grid2 size={{ xs: 6 }}>
                   <Typography variant='caption' className='text-slate-500 font-bold uppercase text-[10px]'>Loại giao dịch</Typography>
                   <Typography variant='body1' className='font-black'>{selectedTx.typeLabel}</Typography>

@@ -71,7 +71,7 @@ const QCListView = () => {
                       color='primary' 
                       className='font-bold' 
                       component={Link} 
-                      href={`/warehouse/qc/${qa.id}`}
+                      href={`/3m/warehouse/qc/${qa.id}`}
                       
                     >
                       {qa.id}

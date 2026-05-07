@@ -90,13 +90,13 @@ const AgentPriceList = ({ id }: { id: string }) => {
         description={`Danh sách giá bán cuối cùng được áp dụng cho đại lý này sau khi tính toán mọi quy tắc chiết khấu.`}
         breadcrumbs={[
           { label: 'Trang chủ', href: '/' }, 
-          { label: 'Đại lý', href: '/downstream/agents' }, 
-          { label: agentName, href: `/downstream/agents/${id}` },
+          { label: 'Đại lý', href: '/3m/downstream/agents' }, 
+          { label: agentName, href: `/3m/downstream/agents/${id}` },
           { label: 'Bảng giá' }
         ]}
         actions={
           <Stack direction='row' spacing={2}>
-            <Button variant='tonal' color='secondary' component={Link} href={`/downstream/agents/${id}`}>Quay lại</Button>
+            <Button variant='tonal' color='secondary' component={Link} href={`/3m/downstream/agents/${id}`}>Quay lại</Button>
             <Button variant='contained' color='success' startIcon={<i className='tabler-file-spreadsheet' />}>Xuất Excel</Button>
           </Stack>
         }

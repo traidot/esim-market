@@ -29,7 +29,7 @@ const InvoiceListView = () => {
       <PageHeader
         title='Supplier Invoices'
         description='Register vendor invoices and verify them against received goods and purchase orders'
-        breadcrumbs={[{ label: 'Home', href: '/' }, { label: 'Procurement Ops' }, { label: 'Supplier Invoices', href: '/commercial/invoices' }]}
+        breadcrumbs={[{ label: 'Home', href: '/' }, { label: 'Procurement Ops' }, { label: 'Supplier Invoices', href: '/3m/commercial/invoices' }]}
         actions={
           <Button variant='contained' color='primary' startIcon={<i className='tabler-receipt' />} onClick={() => setIsDialogOpen(true)} sx={{ height: 40 }}>
             Post Invoice
@@ -71,7 +71,7 @@ const InvoiceListView = () => {
                       color='primary' 
                       className='font-bold' 
                       component={Link} 
-                      href={`/commercial/invoices/${inv.id}`}
+                      href={`/3m/commercial/invoices/${inv.id}`}
                       
                     >
                       {inv.id}

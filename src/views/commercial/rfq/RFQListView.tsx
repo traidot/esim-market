@@ -28,7 +28,7 @@ const RFQListView = () => {
       <PageHeader
         title='Requests for Quotation (RFQ)'
         description='Manage supplier bidding processes and price solicitation campaigns'
-        breadcrumbs={[{ label: 'Home', href: '/' }, { label: 'Procurement Ops' }, { label: 'Requests for Quotation', href: '/commercial/rfq' }]}
+        breadcrumbs={[{ label: 'Home', href: '/' }, { label: 'Procurement Ops' }, { label: 'Requests for Quotation', href: '/3m/commercial/rfq' }]}
         actions={<Button variant='contained' color='primary' startIcon={<i className='tabler-file-plus' />} onClick={() => setIsDialogOpen(true)} sx={{ height: 40 }}>New RFQ</Button>}
       />
 
@@ -65,7 +65,7 @@ const RFQListView = () => {
                       color='primary' 
                       className='font-bold' 
                       component={Link} 
-                      href={`/commercial/rfq/${rfq.id}`}
+                      href={`/3m/commercial/rfq/${rfq.id}`}
                       
                     >
                       {rfq.id}

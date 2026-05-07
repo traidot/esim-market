@@ -61,7 +61,7 @@ const ZonesView = () => {
                     fullWidth 
                     size='small'
                     component={Link}
-                    href={`/warehouse/zones/${encodeURIComponent(zone.name)}`}
+                    href={`/3m/warehouse/zones/${encodeURIComponent(zone.name)}`}
                   >
                     Manage Bins
                   </Button>

@@ -40,9 +40,8 @@ const SupplierDetail = ({ id }: { id: string }) => {
 
 
   const quickLinks = [
-    { title: 'Danh sách gói', desc: 'Quản lý kho hàng eSIM', icon: 'tabler-packages', href: `/upstream/suppliers/${id}/packages`, color: 'primary' },
-    { title: 'Cấu hình API', desc: 'Thông số kỹ thuật & Keys', icon: 'tabler-settings-automation', href: `/upstream/suppliers/${id}/config`, color: 'info' },
-    { title: 'Đối soát Giao dịch', desc: 'Nhật ký mua hàng & nợ', icon: 'tabler-receipt-2', href: `/upstream/transactions?supplier=${id}`, color: 'success' }
+    { title: 'Cấu hình API', desc: 'Thông số kỹ thuật & Keys', icon: 'tabler-settings-automation', href: `/3m/upstream/suppliers/${id}/config`, color: 'info' },
+    { title: 'Đối soát Giao dịch', desc: 'Nhật ký mua hàng & nợ', icon: 'tabler-receipt-2', href: `/3m/upstream/transactions?supplier=${id}`, color: 'success' }
   ]
 
   return (
@@ -50,7 +49,7 @@ const SupplierDetail = ({ id }: { id: string }) => {
       <PageHeader
         title={`Dashboard: ${supplier.name}`}
         description="Quản lý hiệu năng, công nợ và cảnh báo hệ thống Upstream"
-        breadcrumbs={[{ label: 'Trang chủ', href: '/' }, { label: 'Nguồn cung', href: '/upstream/suppliers' }, { label: supplier.name }]}
+        breadcrumbs={[{ label: 'Trang chủ', href: '/' }, { label: 'Nguồn cung', href: '/3m/upstream/suppliers' }, { label: supplier.name }]}
 
         className='mbe-6'
       />

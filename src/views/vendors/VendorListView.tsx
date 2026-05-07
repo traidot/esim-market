@@ -47,7 +47,7 @@ const VendorListView = () => {
                 color='primary' 
                 className='font-bold' 
                 component={Link} 
-                href={`/partners/${info.row.original.id}`}
+                href={`/3m/partners/${info.row.original.id}`}
                 
               >
                 {info.getValue()}
@@ -78,7 +78,7 @@ const VendorListView = () => {
          cell: info => (
            <Button 
              component={Link}
-             href={`/partners/performance?vendor=${info.row.original.id}`}
+             href={`/3m/partners/performance?vendor=${info.row.original.id}`}
              variant='text' 
              size='small' 
              startIcon={<i className='tabler-file-certificate' />} 

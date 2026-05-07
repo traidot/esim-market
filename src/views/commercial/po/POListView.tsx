@@ -66,7 +66,7 @@ const POListView = () => {
                       color='primary' 
                       className='font-bold' 
                       component={Link} 
-                      href={`/commercial/po/${po.id}`}
+                      href={`/3m/commercial/po/${po.id}`}
                       
                     >
                       {po.id}

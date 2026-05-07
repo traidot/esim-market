@@ -1,9 +1,7 @@
-'use client'
-
 import AdminProductCatalog from '@/views/marketplace/products/AdminProductCatalog'
 
-const MarketplaceProductsPage = () => {
+const AdminProductCatalogPage = () => {
   return <AdminProductCatalog />
 }
 
-export default MarketplaceProductsPage
+export default AdminProductCatalogPage

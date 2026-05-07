@@ -87,7 +87,7 @@ const ContractManagementView = () => {
                       {contracts.map((row, i) => (
                         <tr key={i} className='border-be last:border-0 hover:bg-slate-50 transition-colors'>
                           <td className='p-4 text-sm font-black text-primary underline cursor-pointer'>
-                             <Link href={`/partners/contracts/${row.id}`}>
+                             <Link href={`/3m/partners/contracts/${row.id}`}>
                                 {row.id}
                              </Link>
                           </td>

@@ -81,7 +81,7 @@ const TierManager = () => {
                       <Typography variant='body2' className='font-black'>{t.minDeposit}</Typography>
                     </Box>
                   </Stack>
-                  <Button fullWidth variant='tonal' color={t.color as any} className='mt-8 font-black' component={Link} href={`/downstream/tiers/${t.name.toLowerCase()}`}>Cấu hình chi tiết</Button>
+                  <Button fullWidth variant='tonal' color={t.color as any} className='mt-8 font-black' component={Link} href={`/3m/downstream/tiers/${t.name.toLowerCase()}`}>Cấu hình chi tiết</Button>
                 </Box>
               </CardContent>
             </Card>

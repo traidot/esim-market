@@ -260,7 +260,7 @@ const SupplierQuotes = () => {
                     </Avatar>
                     <Typography variant='h6' className='font-black'>Chuẩn hóa dữ liệu Marketplace</Typography>
                     <Typography variant='body2' className='mbe-6 text-slate-500'>Tự động ánh xạ tên Quốc gia và đơn vị Data của NCC sang chuẩn Marketplace.</Typography>
-                    <Button variant='contained' component={Link} href={`/upstream/suppliers/${selectedSupplier.toLowerCase()}/mapping`}>
+                    <Button variant='contained' component={Link} href={`/3m/upstream/suppliers/${selectedSupplier.toLowerCase()}/mapping`}>
                       Mở trình Chuẩn hóa (Normalization)
                     </Button>
                   </Box>

@@ -149,7 +149,7 @@ const SupplierPackages = () => {
         description={`Quản lý và cập nhật báo giá cho ${supplierInfo.total} gói cước từ ${supplierInfo.name}`}
         breadcrumbs={[
           { label: 'Trang chủ', href: '/' },
-          { label: 'Nguồn cung', href: '/upstream/suppliers' },
+          { label: 'Nguồn cung', href: '/3m/upstream/suppliers' },
           { label: supplierInfo.name }
         ]}
         actions={

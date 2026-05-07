@@ -51,7 +51,7 @@ const AgentWalletView = () => {
     <>
       <PageHeader
         title="Ví của tôi (My Wallet)"
-        description="Quản lý số dư, nạp tiền và theo dõi lịch sử biến động số dư ví của bạn."
+        description="Quản lý số dư và theo dõi lịch sử biến động số dư ví của bạn."
         breadcrumbs={[{ label: 'Trang chủ', href: '/' }, { label: 'Tài chính' }, { label: 'Ví tiền' }]}
         className='mbe-6'
       />
@@ -80,7 +80,7 @@ const AgentWalletView = () => {
                   </Box>
                   <Divider orientation='vertical' flexItem className='border-white/20' />
                   <Box>
-                    <Typography variant='caption' className='text-white/60 block uppercase text-[10px]'>Nạp tiền lần cuối</Typography>
+                    <Typography variant='caption' className='text-white/60 block uppercase text-[10px]'>Cập nhật lần cuối</Typography>
                     <Typography variant='body2' className='text-white font-bold'>{walletData.lastTopup}</Typography>
                   </Box>
                 </Box>
@@ -89,14 +89,6 @@ const AgentWalletView = () => {
                   <Button 
                     variant='contained' 
                     className='bg-white text-primary hover:bg-white/90 font-black px-8'
-                    startIcon={<i className='tabler-plus' />}
-                    onClick={() => setOpenDepositDialog(true)}
-                  >
-                    Nạp tiền ngay
-                  </Button>
-                  <Button 
-                    variant='tonal' 
-                    className='bg-white/20 text-white hover:bg-white/30 border-none font-black'
                     startIcon={<i className='tabler-history' />}
                     component={Link}
                     href='/agent/finance/transactions'
@@ -124,7 +116,7 @@ const AgentWalletView = () => {
                     <Typography variant='body2' className='font-black'>Vietcombank - 1018273645</Typography>
                     <Typography variant='caption' className='text-slate-400'>CTK: CONG TY TNHH ESIM MARKET</Typography>
                   </Box>
-                  <IconButton size='small' className='mis-auto'><i className='tabler-copy' /></IconButton>
+                  <IconButton size='small' className='mis-auto' onClick={() => navigator.clipboard.writeText('1018273645')}><i className='tabler-copy' /></IconButton>
                 </Box>
                 
                 <Box className='p-4 bg-slate-50 rounded-xl border border-slate-100 flex items-center gap-4'>
@@ -136,7 +128,7 @@ const AgentWalletView = () => {
                     <Typography variant='body2' className='font-black text-primary uppercase'>{walletData.accountNumber}</Typography>
                     <Typography variant='caption' className='text-slate-400'>Tiền sẽ vào ví tự động sau 1-2 phút</Typography>
                   </Box>
-                  <IconButton size='small' className='mis-auto'><i className='tabler-copy' /></IconButton>
+                  <IconButton size='small' className='mis-auto' onClick={() => navigator.clipboard.writeText(walletData.accountNumber)}><i className='tabler-copy' /></IconButton>
                 </Box>
                 
                 <Box className='p-4 bg-warning/5 rounded-xl border border-warning/10'>
@@ -209,42 +201,6 @@ const AgentWalletView = () => {
           </table>
         </Box>
       </Card>
-
-      {/* Deposit Dialog */}
-      <Dialog open={openDepositDialog} onClose={() => setOpenDepositDialog(false)} maxWidth='xs' fullWidth>
-        <DialogTitle className='font-black'>Nạp tiền vào ví</DialogTitle>
-        <DialogContent dividers className='p-6'>
-          <Stack spacing={6}>
-            <Box>
-              <Typography variant='subtitle2' className='font-black mbe-2'>Bước 1: Nhập số tiền cần nạp</Typography>
-              <TextField 
-                fullWidth 
-                placeholder='0.00' 
-                slotProps={{ input: { endAdornment: <InputAdornment position='end'>USD</InputAdornment> } }}
-              />
-            </Box>
-            
-            <Box>
-              <Typography variant='subtitle2' className='font-black mbe-2'>Bước 2: Quét mã QR thanh toán</Typography>
-              <Box className='bg-slate-100 p-8 rounded-xl flex flex-col items-center justify-center border-2 border-dashed border-slate-200'>
-                <Box className='bg-white p-4 rounded-lg shadow-sm mbe-4'>
-                  <i className='tabler-qrcode text-[160px] text-slate-800' />
-                </Box>
-                <Typography variant='caption' className='text-slate-500 font-bold'>Dùng app ngân hàng để quét mã QR</Typography>
-              </Box>
-            </Box>
-
-            <Box className='p-4 bg-primary/5 rounded-lg border border-primary/10'>
-              <Typography variant='caption' className='text-primary font-black uppercase block mbe-1'>Nội dung chuyển khoản</Typography>
-              <Typography variant='h6' className='font-black'>{walletData.accountNumber}</Typography>
-            </Box>
-          </Stack>
-        </DialogContent>
-        <DialogActions className='p-6 pt-0'>
-          <Button variant='tonal' color='secondary' onClick={() => setOpenDepositDialog(false)} fullWidth>Hủy bỏ</Button>
-          <Button variant='contained' color='primary' fullWidth>Xác nhận đã chuyển</Button>
-        </DialogActions>
-      </Dialog>
     </>
   )
 }

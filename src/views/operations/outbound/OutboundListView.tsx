@@ -39,7 +39,7 @@ const OutboundListView = () => {
             color='primary' 
             className='font-bold' 
             component={Link} 
-            href={`/operations/outbound/${info.getValue()}`}
+            href={`/3m/operations/outbound/${info.getValue()}`}
             
           >
             {info.getValue()}
@@ -78,7 +78,7 @@ const OutboundListView = () => {
                size='small' 
                variant='tonal'
                component={Link}
-               href={`/operations/outbound/picking/${info.row.original.id}`}
+               href={`/3m/operations/outbound/picking/${info.row.original.id}`}
                startIcon={<i className='tabler-hand-finger' />}
              >
                Pick
@@ -87,7 +87,7 @@ const OutboundListView = () => {
                size='small' 
                color='primary'
                component={Link}
-               href={`/operations/outbound/${info.row.original.id}`}
+               href={`/3m/operations/outbound/${info.row.original.id}`}
              >
                <i className='tabler-eye text-[22px]' />
              </IconButton>

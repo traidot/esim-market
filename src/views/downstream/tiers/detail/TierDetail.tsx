@@ -46,7 +46,7 @@ const TierDetail = ({ id }: { id: string }) => {
       <PageHeader
         title={`Cấu hình Cấp bậc: ${tierName}`}
         description="Quản lý chi tiết tỉ lệ nâng giá và điều kiện tài chính cho cấp bậc này."
-        breadcrumbs={[{ label: 'Trang chủ', href: '/' }, { label: 'Phân phối' }, { label: 'Cấp bậc', href: '/downstream/tiers' }, { label: tierName }]}
+        breadcrumbs={[{ label: 'Trang chủ', href: '/' }, { label: 'Phân phối' }, { label: 'Cấp bậc', href: '/3m/downstream/tiers' }, { label: tierName }]}
         actions={
           <Stack direction='row' spacing={2}>
             <Button variant='tonal' color='secondary'>Hủy</Button>
@@ -195,7 +195,7 @@ const TierDetail = ({ id }: { id: string }) => {
 
               return (
               <ListItem key={agent.id} disablePadding className='border-b last:border-0 hover:bg-slate-50/50 transition-colors'>
-                <ListItemButton className='p-4' onClick={() => router.push(`/downstream/agents/${agent.id}`)}>
+                <ListItemButton className='p-4' onClick={() => router.push(`/3m/downstream/agents/${agent.id}`)}>
                   <ListItemAvatar>
                     <Avatar 
                       variant='rounded'
@@ -210,6 +210,8 @@ const TierDetail = ({ id }: { id: string }) => {
                     </Avatar>
                   </ListItemAvatar>
                   <ListItemText 
+                    primaryTypographyProps={{ component: 'div' }}
+                    secondaryTypographyProps={{ component: 'div' }}
                     primary={
                       <Box className='flex items-center gap-2'>
                         <Typography className='font-black text-slate-800'>{agent.name}</Typography>

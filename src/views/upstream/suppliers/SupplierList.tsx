@@ -144,7 +144,7 @@ const SupplierList = () => {
                   }}
                   startIcon={<i className='tabler-layout-dashboard' />}
                   component={Link}
-                  href={`/upstream/suppliers/${supplier.code.toLowerCase()}`}
+                  href={`/3m/upstream/suppliers/${supplier.code.toLowerCase()}`}
                 >
                   Truy cập Dashboard
                 </Button>

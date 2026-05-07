@@ -53,7 +53,7 @@ const UserListView = () => {
                 className='font-bold' 
                 color='primary' 
                 component={Link} 
-                href={`/system/users/${info.row.original.id}`}
+                href={`/3m/system/users/${info.row.original.id}`}
                 
               >
                 {info.getValue()}
@@ -109,7 +109,7 @@ const UserListView = () => {
       <PageHeader
         title='User & Access Control'
         description='Manage system users, roles, and security permissions'
-        breadcrumbs={[{ label: 'Home', href: '/' }, { label: 'System Engine' }, { label: 'Users & Roles', href: '/system/users' }]}
+        breadcrumbs={[{ label: 'Home', href: '/' }, { label: 'System Engine' }, { label: 'Users & Roles', href: '/3m/system/users' }]}
       />
 
       <Card className='mt-6'>

@@ -32,13 +32,13 @@ const AgentApiConfig = ({ id }: { id: string }) => {
         description="Quản lý khóa truy cập API, cấu hình bảo mật IP và nhận thông báo trạng thái đơn hàng (Webhooks) cho đối tác B2B."
         breadcrumbs={[
           { label: 'Trang chủ', href: '/' }, 
-          { label: 'Đại lý', href: '/downstream/agents' }, 
-          { label: agentName, href: `/downstream/agents/${id}` },
+          { label: 'Đại lý', href: '/3m/downstream/agents' }, 
+          { label: agentName, href: `/3m/downstream/agents/${id}` },
           { label: 'API & Webhooks' }
         ]}
         actions={
           <Stack direction='row' spacing={2}>
-            <Button variant='tonal' color='secondary' component={Link} href={`/downstream/agents/${id}`}>Quay lại</Button>
+            <Button variant='tonal' color='secondary' component={Link} href={`/3m/downstream/agents/${id}`}>Quay lại</Button>
             <Button variant='contained' startIcon={<i className='tabler-device-floppy' />}>Lưu Cấu hình</Button>
           </Stack>
         }

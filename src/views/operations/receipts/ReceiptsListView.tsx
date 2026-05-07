@@ -39,7 +39,7 @@ const GoodsReceivingListView = () => {
             color='primary' 
             className='font-bold' 
             component={Link} 
-            href={`/operations/inbound/${info.getValue()}`}
+            href={`/3m/operations/inbound/${info.getValue()}`}
             
           >
             {info.getValue()}
@@ -81,7 +81,7 @@ const GoodsReceivingListView = () => {
             size='small'
             color='primary'
             component={Link}
-            href={`/warehouse/qc?grn=${info.row.original.id}`}
+            href={`/3m/warehouse/qc?grn=${info.row.original.id}`}
           >
             <i className='tabler-clipboard-check text-[22px]' />
           </IconButton>

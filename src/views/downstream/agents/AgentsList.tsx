@@ -16,6 +16,16 @@ import TextField from '@mui/material/TextField'
 import InputAdornment from '@mui/material/InputAdornment'
 import Select from '@mui/material/Select'
 import MenuItem from '@mui/material/MenuItem'
+import Dialog from '@mui/material/Dialog'
+import DialogTitle from '@mui/material/DialogTitle'
+import DialogContent from '@mui/material/DialogContent'
+import DialogActions from '@mui/material/DialogActions'
+import IconButton from '@mui/material/IconButton'
+import FormControl from '@mui/material/FormControl'
+import FormLabel from '@mui/material/FormLabel'
+import RadioGroup from '@mui/material/RadioGroup'
+import FormControlLabel from '@mui/material/FormControlLabel'
+import Radio from '@mui/material/Radio'
 
 import PageHeader from '@/components/layout/shared/PageHeader'
 
@@ -23,6 +33,15 @@ const AgentsList = () => {
   const [searchTerm, setSearchTerm] = useState('')
   const [tierFilter, setTierFilter] = useState('all')
   const [statusFilter, setStatusFilter] = useState('all')
+  const [openAddDialog, setOpenAddDialog] = useState(false)
+  
+  const [newAgent, setNewAgent] = useState({
+    name: '',
+    email: '',
+    tier: 'SILVER',
+    type: 'prepaid',
+    initialAmount: ''
+  })
 
   const agents = [
     { id: 'A001', name: 'TravelConnect Solutions', email: 'contact@travelconnect.vn', tier: 'PLATINUM', balance: '$5,240.00', status: 'Active', orders: 1240, color: 'primary', type: 'postpaid' },
@@ -30,6 +49,17 @@ const AgentsList = () => {
     { id: 'A003', name: 'CheapData Agency', email: 'sales@cheapdata.com', tier: 'SILVER', balance: '$15.00', status: 'Low Balance', orders: 45, color: 'secondary', type: 'prepaid' },
     { id: 'A004', name: 'Nomad Partner', email: 'partner@nomad.com', tier: 'GOLD', balance: '$0.00', status: 'Inactive', orders: 0, color: 'error', type: 'prepaid' }
   ]
+
+  const handleCloseDialog = () => {
+    setOpenAddDialog(false)
+    setNewAgent({
+      name: '',
+      email: '',
+      tier: 'SILVER',
+      type: 'prepaid',
+      initialAmount: ''
+    })
+  }
 
   return (
     <>
@@ -39,7 +69,7 @@ const AgentsList = () => {
         breadcrumbs={[{ label: 'Trang chủ', href: '/' }, { label: 'Phân phối' }, { label: 'Đại lý' }]}
         actions={
           <Stack direction='row' spacing={2}>
-            <Button variant='contained' startIcon={<i className='tabler-plus' />}>Thêm Đại lý</Button>
+            <Button variant='contained' onClick={() => setOpenAddDialog(true)} startIcon={<i className='tabler-plus' />}>Thêm Đại lý</Button>
           </Stack>
         }
         className='mbe-6'
@@ -141,7 +171,7 @@ const AgentsList = () => {
                   className='shadow-none group-hover:shadow-lg transition-all py-2.5'
                   startIcon={<i className='tabler-user-cog' />}
                   component={Link}
-                  href={`/downstream/agents/${agent.id.toLowerCase()}`}
+                  href={`/3m/downstream/agents/${agent.id.toLowerCase()}`}
                 >
                   Chi tiết Đại lý
                 </Button>
@@ -150,6 +180,89 @@ const AgentsList = () => {
           </Grid2>
         ))}
       </Grid2>
+
+      {/* Add Agent Dialog */}
+      <Dialog 
+        open={openAddDialog} 
+        onClose={handleCloseDialog}
+        maxWidth='sm'
+        fullWidth
+      >
+        <DialogTitle component='div' className='flex justify-between items-center border-be'>
+          <Box>
+            <Typography variant='h5' className='font-black'>Thêm Đại lý mới</Typography>
+            <Typography variant='caption' className='text-slate-500 uppercase font-bold tracking-widest'>Đăng ký đối tác phân phối</Typography>
+          </Box>
+          <IconButton onClick={handleCloseDialog} size='small' className='bg-slate-100'>
+            <i className='tabler-x' />
+          </IconButton>
+        </DialogTitle>
+        <DialogContent className='p-6'>
+          <Grid2 container spacing={5} className='mbs-2'>
+            <Grid2 size={{ xs: 12 }}>
+              <TextField 
+                fullWidth 
+                label='Tên Đại lý / Công ty' 
+                placeholder='VD: TravelConnect Solutions'
+                value={newAgent.name}
+                onChange={(e) => setNewAgent({ ...newAgent, name: e.target.value })}
+              />
+            </Grid2>
+            <Grid2 size={{ xs: 12 }}>
+              <TextField 
+                fullWidth 
+                label='Email liên hệ' 
+                placeholder='VD: contact@travel.vn'
+                value={newAgent.email}
+                onChange={(e) => setNewAgent({ ...newAgent, email: e.target.value })}
+              />
+            </Grid2>
+            <Grid2 size={{ xs: 12, sm: 6 }}>
+              <FormControl fullWidth>
+                <Typography variant='caption' className='mbe-1 font-black text-slate-500 uppercase'>Cấp bậc Đại lý</Typography>
+                <Select 
+                  value={newAgent.tier}
+                  onChange={(e) => setNewAgent({ ...newAgent, tier: e.target.value })}
+                >
+                  <MenuItem value='PLATINUM'>Platinum (+5%)</MenuItem>
+                  <MenuItem value='GOLD'>Gold (+10%)</MenuItem>
+                  <MenuItem value='SILVER'>Silver (+15%)</MenuItem>
+                </Select>
+              </FormControl>
+            </Grid2>
+            <Grid2 size={{ xs: 12, sm: 6 }}>
+              <FormControl component="fieldset">
+                <Typography variant='caption' className='mbe-1 font-black text-slate-500 uppercase'>Hình thức Thanh toán</Typography>
+                <RadioGroup 
+                  row 
+                  value={newAgent.type}
+                  onChange={(e) => setNewAgent({ ...newAgent, type: e.target.value })}
+                >
+                  <FormControlLabel value="prepaid" control={<Radio size='small' />} label={<Typography variant='body2'>Trả trước</Typography>} />
+                  <FormControlLabel value="postpaid" control={<Radio size='small' />} label={<Typography variant='body2'>Trả sau</Typography>} />
+                </RadioGroup>
+              </FormControl>
+            </Grid2>
+            <Grid2 size={{ xs: 12 }}>
+              <TextField 
+                fullWidth 
+                label={newAgent.type === 'prepaid' ? 'Số dư nạp ban đầu' : 'Hạn mức công nợ'} 
+                placeholder='0.00'
+                type='number'
+                value={newAgent.initialAmount}
+                onChange={(e) => setNewAgent({ ...newAgent, initialAmount: e.target.value })}
+                InputProps={{
+                  startAdornment: <InputAdornment position='start'>$</InputAdornment>
+                }}
+              />
+            </Grid2>
+          </Grid2>
+        </DialogContent>
+        <DialogActions className='p-6 pt-0 flex gap-3'>
+          <Button fullWidth variant='tonal' color='secondary' onClick={handleCloseDialog} className='font-black'>Hủy bỏ</Button>
+          <Button fullWidth variant='contained' onClick={handleCloseDialog} className='font-black'>Tạo Đại lý</Button>
+        </DialogActions>
+      </Dialog>
     </>
   )
 }

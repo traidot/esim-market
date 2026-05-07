@@ -57,7 +57,7 @@ const PurchaseReturnsView = () => {
                             color='error' 
                             className='font-bold' 
                             component={Link} 
-                            href={`/operations/returns/${rma.id}`}
+                            href={`/3m/operations/returns/${rma.id}`}
                             
                           >
                             {rma.id}
@@ -77,7 +77,7 @@ const PurchaseReturnsView = () => {
                         <td className='p-4'>
                           <Button 
                             component={Link}
-                            href={`/operations/returns/${rma.id}`}
+                            href={`/3m/operations/returns/${rma.id}`}
                             size='small' 
                             variant='tonal' 
                             color='secondary' 

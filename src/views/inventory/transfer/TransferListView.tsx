@@ -43,7 +43,7 @@ const TransferListView = () => {
             color='primary' 
             className='font-bold' 
             component={Link} 
-            href={`/inventory/transfer/${info.getValue()}`}
+            href={`/3m/inventory/transfer/${info.getValue()}`}
             
           >
             {info.getValue()}
@@ -79,7 +79,7 @@ const TransferListView = () => {
          cell: info => (
            <Button 
              component={Link}
-             href={`/inventory/transfer/${info.row.original.id}`}
+             href={`/3m/inventory/transfer/${info.row.original.id}`}
              variant='text' 
              size='small'
            >

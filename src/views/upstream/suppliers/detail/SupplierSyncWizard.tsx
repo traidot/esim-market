@@ -79,8 +79,8 @@ const SupplierSyncWizard = () => {
         description="Thực hiện theo trình tự: Upload file -> Sync API -> Kiểm định dữ liệu"
         breadcrumbs={[
           { label: 'Trang chủ', href: '/' },
-          { label: 'Nhà cung cấp', href: '/upstream/suppliers' },
-          { label: supplierName, href: `/upstream/suppliers/${id}/packages` },
+          { label: 'Nhà cung cấp', href: '/3m/upstream/suppliers' },
+          { label: supplierName, href: `/3m/upstream/suppliers/${id}/packages` },
           { label: 'Luồng Đồng bộ' }
         ]}
         className='mbe-6'
@@ -225,7 +225,7 @@ const SupplierSyncWizard = () => {
                 variant='contained' 
                 size='large' 
                 className='px-12'
-                onClick={() => router.push(`/upstream/suppliers/${id}/packages`)}
+                onClick={() => router.push(`/3m/upstream/suppliers/${id}/packages`)}
               >
                 Về màn hình Quản lý
               </Button>

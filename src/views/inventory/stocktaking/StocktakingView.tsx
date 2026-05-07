@@ -48,7 +48,7 @@ const StocktakingView = () => {
                       color='primary' 
                       className='font-bold' 
                       component={Link} 
-                      href={`/inventory/stocktaking/${session.id}`}
+                      href={`/3m/inventory/stocktaking/${session.id}`}
                       
                     >
                       #{session.id}

@@ -73,7 +73,7 @@ const PRListView = () => {
                       color='primary' 
                       className='font-bold' 
                       component={Link} 
-                      href={`/commercial/pr/${pr.id}`}
+                      href={`/3m/commercial/pr/${pr.id}`}
                     >
                       {pr.id}
                     </Typography>

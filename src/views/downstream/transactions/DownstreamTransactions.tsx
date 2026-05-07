@@ -103,9 +103,9 @@ const DownstreamTransactions = () => {
 
   const getStatusChip = (status: number | null) => {
     if (status === null) return <Chip label="N/A" size="small" variant='tonal' className='font-black' sx={{ opacity: 0.3 }} />
-    if (status >= 200 && status < 300) return <Chip label={status} size="small" color="success" variant='tonal' className='font-black' />
-    if (status >= 400 && status < 500) return <Chip label={status} size="small" color="warning" variant='tonal' className='font-black' />
-    return <Chip label={status} size="small" color="error" variant='tonal' className='font-black' />
+    if (status >= 200 && status < 300) return <Chip label="Thành công" size="small" color="success" variant='tonal' className='font-black' />
+    if (status >= 400 && status < 500) return <Chip label="Thất bại" size="small" color="warning" variant='tonal' className='font-black' />
+    return <Chip label="Thất bại" size="small" color="error" variant='tonal' className='font-black' />
   }
 
   return (
@@ -359,8 +359,8 @@ const DownstreamTransactions = () => {
         maxWidth='md'
         fullWidth
       >
-        <DialogTitle className='flex items-center justify-between border-be'>
-          <Typography variant='h5' className='font-black'>Chi tiết luồng Giao dịch: {selectedLog?.id}</Typography>
+        <DialogTitle component='div' className='flex items-center justify-between border-be'>
+          <Typography variant='h5' component='span' className='font-black'>Chi tiết luồng Giao dịch: {selectedLog?.id}</Typography>
           <IconButton onClick={() => setIsLogOpen(false)} size='small'>
             <i className='tabler-x' />
           </IconButton>

@@ -20,7 +20,7 @@ const verticalMenuData = (dictionary: Awaited<ReturnType<typeof getDictionary>>)
       icon: 'tabler-packages',
       roles: ['admin'],
       children: [
-        { label: 'Danh mục eSIM', icon: 'tabler-list', href: getUrl('/3m/marketplace/products') },
+        { label: 'Danh mục eSIM', icon: 'tabler-e-sim', href: getUrl('/3m/marketplace/products') },
         { label: 'Quản lý Tỉ giá', icon: 'tabler-currency-dollar', href: getUrl('/3m/finance/exchange-rates') },
       ]
     },
@@ -31,7 +31,6 @@ const verticalMenuData = (dictionary: Awaited<ReturnType<typeof getDictionary>>)
       children: [
         { label: 'Nhà cung cấp', icon: 'tabler-world', href: getUrl('/3m/upstream/suppliers'), exactMatch: false },
         { label: 'Quản lý Kho', icon: 'tabler-barcode', href: getUrl('/3m/marketplace/inventory') },
-        { label: 'Danh sách gói', icon: 'tabler-link', href: getUrl('/3m/upstream/supplier-products') },
         { label: 'Lịch sử giao dịch', icon: 'tabler-receipt-2', href: getUrl('/3m/upstream/transactions') }
       ]
     },

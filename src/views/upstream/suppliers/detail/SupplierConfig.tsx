@@ -29,8 +29,8 @@ const SupplierConfig = () => {
         description="Quản lý API Key, Webhook và các thông số bảo mật kết nối"
         breadcrumbs={[
           { label: 'Trang chủ', href: '/' },
-          { label: 'Nguồn cung', href: '/upstream/suppliers' },
-          { label: supplierName, href: `/upstream/suppliers/${id}` },
+          { label: 'Nguồn cung', href: '/3m/upstream/suppliers' },
+          { label: supplierName, href: `/3m/upstream/suppliers/${id}` },
           { label: 'Cấu hình API' }
         ]}
         actions={

@@ -75,7 +75,7 @@ const MaterialMasterView = () => {
               className='font-bold' 
               color='primary' 
               component={Link} 
-              href={`/inventory/materials/${info.row.original.id}`}
+              href={`/3m/inventory/materials/${info.row.original.id}`}
               
             >
               {info.getValue()}

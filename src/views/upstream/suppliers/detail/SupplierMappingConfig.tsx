@@ -63,7 +63,7 @@ const SupplierMappingConfig = ({ id }: { id: string }) => {
         description="Ánh xạ các trường dữ liệu từ Supplier vào hệ thống eSIM Market chuẩn"
         breadcrumbs={[
           { label: 'Trang chủ', href: '/' },
-          { label: 'Nguồn cung', href: '/upstream/suppliers' },
+          { label: 'Nguồn cung', href: '/3m/upstream/suppliers' },
           { label: 'Mapping Config' }
         ]}
         actions={

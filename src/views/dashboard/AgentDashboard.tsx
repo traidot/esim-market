@@ -26,10 +26,10 @@ const AgentDashboard = () => {
       <PageHeader
         title="Bảng điều khiển Đại lý: TravelConnect SG"
         description="Quản lý eSIM khách hàng và duyệt các gói cước kết nối toàn cầu mới nhất"
-        breadcrumbs={[{ label: 'Trang chủ', href: '/' }, { label: 'Đại lý', href: '/dashboard' }, { label: 'Điều khiển' }]}
+        breadcrumbs={[{ label: 'Trang chủ', href: '/' }, { label: 'Đại lý', href: '/agent/dashboard' }, { label: 'Điều khiển' }]}
         actions={
           <Box className='flex gap-2'>
-            <Button variant='contained' color='primary' component={Link} href='/marketplace/products'>Vào cửa hàng</Button>
+            <Button variant='contained' color='primary' component={Link} href='/agent/marketplace/store'>Vào cửa hàng</Button>
           </Box>
         }
         className='mbe-6'
@@ -85,7 +85,7 @@ const AgentDashboard = () => {
             <CardHeader 
               title='Danh sách đơn hàng gần đây' 
               subheader='Theo dõi các lượt kích hoạt eSIM và phân phối cho khách hàng'
-              action={<Button variant='text' size='small' component={Link} href='/orders/list'>Xem tất cả</Button>}
+              action={<Button variant='text' size='small' component={Link} href='/agent/orders/my-orders'>Xem tất cả</Button>}
             />
             <CardContent className='p-0'>
               <table className='w-full text-left border-collapse'>

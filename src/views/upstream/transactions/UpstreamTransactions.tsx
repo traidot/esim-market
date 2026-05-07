@@ -49,7 +49,7 @@ const UpstreamTransactions = () => {
       action: 'Mua', 
       package: { name: 'Japan Premium', data: '10GB', validity: '30 Ngày' }, 
       amount: '$8.50', 
-      status: 'Success', 
+      status: 'Thành công', 
       date: '28/04/2026 01:15',
       esimInfo: {
         iccid: '8984400000000000001',
@@ -58,16 +58,16 @@ const UpstreamTransactions = () => {
         matchingKey: 'AIRALO-JAPAN-001'
       }
     },
-    { id: 'TX-9820', supplier: 'Nomad', action: 'Mua', package: { name: 'USA Fast Connection', data: '20GB', validity: '30 Ngày' }, amount: '$22.00', status: 'Success', date: '28/04/2026 00:45' },
-    { id: 'TX-9819', supplier: 'Airalo', action: 'Mua', package: { name: 'USA Traveler', data: '5GB', validity: '15 Ngày' }, amount: '$12.00', status: 'Failed', date: '27/04/2026 23:30' },
-    { id: 'TX-9818', supplier: 'KeepGo', action: 'Huỷ', package: { name: 'Global Roaming', data: '1GB', validity: '1 Năm' }, amount: '$0.00', status: 'Success', date: '27/04/2026 22:10' },
+    { id: 'TX-9820', supplier: 'Nomad', action: 'Mua', package: { name: 'USA Fast Connection', data: '20GB', validity: '30 Ngày' }, amount: '$22.00', status: 'Thành công', date: '28/04/2026 00:45' },
+    { id: 'TX-9819', supplier: 'Airalo', action: 'Mua', package: { name: 'USA Traveler', data: '5GB', validity: '15 Ngày' }, amount: '$12.00', status: 'Thất bại', date: '27/04/2026 23:30' },
+    { id: 'TX-9818', supplier: 'KeepGo', action: 'Huỷ', package: { name: 'Global Roaming', data: '1GB', validity: '1 Ngày' }, amount: '$0.00', status: 'Thành công', date: '27/04/2026 22:10' },
     { 
       id: 'TX-9817', 
       supplier: 'Nomad', 
       action: 'Mua', 
       package: { name: 'UK Business Pro', data: '50GB', validity: '90 Ngày' }, 
       amount: '$45.00', 
-      status: 'Success', 
+      status: 'Thành công', 
       date: '27/04/2026 21:55',
       esimInfo: {
         iccid: '8984400000000000002',
@@ -247,7 +247,7 @@ const UpstreamTransactions = () => {
                     <Chip 
                       label={tx.status} 
                       size='small' 
-                      color={tx.status === 'Success' ? 'success' : 'error'} 
+                      color={tx.status === 'Thành công' ? 'success' : 'error'} 
                       variant='tonal'
                       className='font-black'
                     />
@@ -281,7 +281,7 @@ const UpstreamTransactions = () => {
         maxWidth='md'
         fullWidth
       >
-        <DialogTitle className='flex items-center justify-between'>
+        <DialogTitle component='div' className='flex items-center justify-between'>
           <Typography variant='h5' component='span' className='font-black'>API Request/Response Log</Typography>
           <IconButton onClick={() => setIsLogOpen(false)} size='small'>
             <i className='tabler-x' />
@@ -301,7 +301,7 @@ const UpstreamTransactions = () => {
                     <Chip 
                       label={selectedLog.status} 
                       size='small' 
-                      color={selectedLog.status === 'Success' ? 'success' : 'error'} 
+                      color={selectedLog.status === 'Thành công' ? 'success' : 'error'} 
                       variant='tonal'
                       className='font-black'
                     />
@@ -328,7 +328,7 @@ Authorization: Bearer ***
               <Typography variant='subtitle2' className='font-black uppercase text-slate-500 mt-2'>Response Body</Typography>
               <Box className='bg-[#1E1E1E] rounded-lg p-4 overflow-x-auto'>
                 <pre className='text-[#D4D4D4] font-mono text-xs m-0'>
-{selectedLog.status === 'Success' ? `{
+{selectedLog.status === 'Thành công' ? `{
   "data": {
     "order_id": "ORD-${Math.floor(Math.random() * 10000)}",
     "status": "completed",
@@ -361,7 +361,7 @@ Authorization: Bearer ***
         maxWidth='sm'
         fullWidth
       >
-        <DialogTitle className='flex items-center justify-between border-b p-5'>
+        <DialogTitle component='div' className='flex items-center justify-between border-b p-5'>
           <Box>
             <Typography variant='h5' className='font-black'>Chi tiết eSIM Upstream</Typography>
             <Typography variant='caption' color='textSecondary'>Cung cấp bởi {selectedEsim?.supplier}</Typography>

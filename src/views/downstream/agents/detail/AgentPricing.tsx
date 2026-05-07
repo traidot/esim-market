@@ -57,13 +57,13 @@ const AgentPricing = ({ id }: { id: string }) => {
         description="Thiết lập các quy tắc Ghi đè (Override) dành riêng cho đại lý này. Lưu ý: Cấu hình tại đây sẽ có độ ưu tiên cao nhất, vượt qua Bảng giá chuẩn hệ thống."
         breadcrumbs={[
           { label: 'Trang chủ', href: '/' }, 
-          { label: 'Đại lý', href: '/downstream/agents' }, 
-          { label: agentName, href: `/downstream/agents/${id}` },
+          { label: 'Đại lý', href: '/3m/downstream/agents' }, 
+          { label: agentName, href: `/3m/downstream/agents/${id}` },
           { label: 'Cấu hình Giá' }
         ]}
         actions={
           <Stack direction='row' spacing={2}>
-            <Button variant='tonal' color='secondary' component={Link} href={`/downstream/agents/${id}`}>Quay lại</Button>
+            <Button variant='tonal' color='secondary' component={Link} href={`/3m/downstream/agents/${id}`}>Quay lại</Button>
             <Button variant='contained' startIcon={<i className='tabler-device-floppy' />}>Lưu Cấu hình</Button>
           </Stack>
         }
