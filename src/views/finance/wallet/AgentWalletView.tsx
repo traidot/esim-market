@@ -57,84 +57,44 @@ const AgentWalletView = () => {
       />
 
       <Grid2 container spacing={6} className='mbe-6'>
-        {/* Main Balance Card */}
-        <Grid2 size={{ xs: 12, md: 7 }}>
+        {/* Main Balance Card - Now Full Width */}
+        <Grid2 size={{ xs: 12 }}>
           <Card className='border-none shadow-sm bg-primary h-full overflow-hidden relative'>
             <Box className='absolute top-0 right-0 p-4 opacity-10'>
               <i className='tabler-wallet text-[180px] -mr-12 -mt-12' />
             </Box>
-            <CardContent className='p-8 relative z-10'>
-              <Stack spacing={6}>
+            <CardContent className='p-10 relative z-10'>
+              <Stack spacing={8}>
                 <Box className='flex justify-between items-start'>
                   <Box>
                     <Typography variant='subtitle2' className='text-white/70 font-bold uppercase tracking-widest'>Số dư hiện dụng</Typography>
-                    <Typography variant='h1' className='text-white font-black mts-2'>{formatCurrency(walletData.balance)}</Typography>
+                    <Typography variant='h1' className='text-white font-black mts-2' sx={{ fontSize: '3.5rem' }}>{formatCurrency(walletData.balance)}</Typography>
                   </Box>
-                  <Chip label="Đang hoạt động" size='small' className='bg-white/20 text-white font-black' />
+                  <Chip label="Đang hoạt động" size='small' className='bg-white/20 text-white font-black px-4' />
                 </Box>
 
-                <Box className='flex gap-4'>
+                <Box className='flex gap-8'>
                   <Box>
-                    <Typography variant='caption' className='text-white/60 block uppercase text-[10px]'>Mã định danh Ví</Typography>
-                    <Typography variant='body2' className='text-white font-mono font-bold'>{walletData.accountNumber}</Typography>
+                    <Typography variant='caption' className='text-white/60 block uppercase text-[11px] font-bold tracking-wider'>Mã định danh Ví</Typography>
+                    <Typography variant='h6' className='text-white font-mono font-bold'>{walletData.accountNumber}</Typography>
                   </Box>
                   <Divider orientation='vertical' flexItem className='border-white/20' />
                   <Box>
-                    <Typography variant='caption' className='text-white/60 block uppercase text-[10px]'>Cập nhật lần cuối</Typography>
-                    <Typography variant='body2' className='text-white font-bold'>{walletData.lastTopup}</Typography>
+                    <Typography variant='caption' className='text-white/60 block uppercase text-[11px] font-bold tracking-wider'>Cập nhật lần cuối</Typography>
+                    <Typography variant='h6' className='text-white font-bold'>{walletData.lastTopup}</Typography>
                   </Box>
                 </Box>
 
                 <Box className='flex gap-4'>
                   <Button 
                     variant='contained' 
-                    className='bg-white text-primary hover:bg-white/90 font-black px-8'
+                    className='bg-white text-primary hover:bg-white/90 font-black px-12 py-3 text-lg'
                     startIcon={<i className='tabler-history' />}
                     component={Link}
                     href='/agent/finance/transactions'
                   >
-                    Sao kê chi tiết
+                    Xem lịch sử Giao dịch
                   </Button>
-                </Box>
-              </Stack>
-            </CardContent>
-          </Card>
-        </Grid2>
-
-        {/* Info Card */}
-        <Grid2 size={{ xs: 12, md: 5 }}>
-          <Card className='border-none shadow-sm h-full'>
-            <CardContent className='p-6'>
-              <Typography variant='h6' className='font-black mbe-4'>Hướng dẫn nạp tiền</Typography>
-              <Stack spacing={4}>
-                <Box className='p-4 bg-slate-50 rounded-xl border border-slate-100 flex items-center gap-4'>
-                  <Avatar variant='rounded' className='bg-primary/10 text-primary'>
-                    <i className='tabler-building-bank' />
-                  </Avatar>
-                  <Box>
-                    <Typography variant='caption' className='text-slate-500 block uppercase font-bold text-[10px]'>Ngân hàng (Auto-topup)</Typography>
-                    <Typography variant='body2' className='font-black'>Vietcombank - 1018273645</Typography>
-                    <Typography variant='caption' className='text-slate-400'>CTK: CONG TY TNHH ESIM MARKET</Typography>
-                  </Box>
-                  <IconButton size='small' className='mis-auto' onClick={() => navigator.clipboard.writeText('1018273645')}><i className='tabler-copy' /></IconButton>
-                </Box>
-                
-                <Box className='p-4 bg-slate-50 rounded-xl border border-slate-100 flex items-center gap-4'>
-                  <Avatar variant='rounded' className='bg-success/10 text-success'>
-                    <i className='tabler-qrcode' />
-                  </Avatar>
-                  <Box>
-                    <Typography variant='caption' className='text-slate-500 block uppercase font-bold text-[10px]'>Nội dung chuyển khoản</Typography>
-                    <Typography variant='body2' className='font-black text-primary uppercase'>{walletData.accountNumber}</Typography>
-                    <Typography variant='caption' className='text-slate-400'>Tiền sẽ vào ví tự động sau 1-2 phút</Typography>
-                  </Box>
-                  <IconButton size='small' className='mis-auto' onClick={() => navigator.clipboard.writeText(walletData.accountNumber)}><i className='tabler-copy' /></IconButton>
-                </Box>
-                
-                <Box className='p-4 bg-warning/5 rounded-xl border border-warning/10'>
-                  <Typography variant='body2' className='text-warning-dark font-medium leading-relaxed'>
-                    Lưu ý: Vui lòng ghi đúng <strong>Nội dung chuyển khoản</strong> để hệ thống tự động nhận diện và cộng tiền vào ví.
-                  </Typography>
                 </Box>
               </Stack>
             </CardContent>
@@ -145,7 +105,7 @@ const AgentWalletView = () => {
       {/* Transaction Table */}
       <Card className='border-none shadow-sm'>
         <Box className='p-6 border-be flex justify-between items-center'>
-          <Typography variant='h6' className='font-black'>Biến động số dư gần đây</Typography>
+          <Typography variant='h6' className='font-black uppercase text-sm text-slate-500 tracking-widest'>Biến động số dư gần đây</Typography>
           <Button 
             variant='text' 
             size='small' 

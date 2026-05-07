@@ -138,41 +138,46 @@ const AdminProductCatalog = () => {
     <>
       <PageHeader
         title="Danh mục eSIM Hệ thống"
-        description="Quản lý toàn bộ danh sách gói cước, định giá MSRP và giám sát nguồn cung Upstream"
+        description="Quản lý toàn bộ danh sách gói cước, định giá MSRP và giám sát nguồn cung Upstream."
         breadcrumbs={[{ label: 'Trang chủ', href: '/' }, { label: 'Quản lý Danh mục' }, { label: 'Danh mục eSIM' }]}
         actions={
-          <Button variant='contained' startIcon={<i className='tabler-plus' />}>Thêm Gói cước</Button>
+          <Stack direction='row' spacing={3}>
+            <Tooltip title="Cập nhật giá từ nguồn cung">
+              <Button variant='tonal' color='secondary' startIcon={<i className='tabler-refresh' />}>Sync Now</Button>
+            </Tooltip>
+            <Button variant='contained' startIcon={<i className='tabler-plus' />}>Thêm Gói cước</Button>
+          </Stack>
         }
         className='mbe-6'
       />
 
       <Card className='border-none shadow-sm mbe-6'>
-        <CardContent>
+        <CardContent className='p-6'>
           <Grid2 container spacing={6}>
-            <Grid2 size={{ xs: 12, md: 4 }}>
-              <Typography variant='subtitle2' className='font-black mbe-2 uppercase text-[11px] text-slate-500'>Tìm kiếm sản phẩm</Typography>
+            <Grid2 size={{ xs: 12, md: 5 }}>
+              <Typography variant='subtitle2' className='font-black mbe-2 uppercase text-[11px] text-slate-500'>Tìm kiếm gói cước / SKU</Typography>
               <TextField
                 fullWidth
                 size='small'
-                placeholder='Tên gói, SKU...'
+                placeholder='Nhập tên gói hoặc SKU...'
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 InputProps={{
-                  startAdornment: <InputAdornment position='start'><i className='tabler-search' /></InputAdornment>
+                  startAdornment: <InputAdornment position='start'><i className='tabler-search text-slate-400' /></InputAdornment>
                 }}
               />
             </Grid2>
-            <Grid2 size={{ xs: 12, md: 3 }}>
-              <Typography variant='subtitle2' className='font-black mbe-2 uppercase text-[11px] text-slate-500'>Nhà cung cấp (Source)</Typography>
+            <Grid2 size={{ xs: 6, md: 2.5 }}>
+              <Typography variant='subtitle2' className='font-black mbe-2 uppercase text-[11px] text-slate-500'>Nhà cung cấp</Typography>
               <Select fullWidth size='small' value={selectedSupplier} onChange={(e) => setSelectedSupplier(e.target.value)}>
-                <MenuItem value='all'>Tất cả nguồn</MenuItem>
+                <MenuItem value='all'>Tất cả nguồn cung</MenuItem>
                 <MenuItem value='Singtel'>Singtel</MenuItem>
                 <MenuItem value='Orange FR'>Orange FR</MenuItem>
                 <MenuItem value='AIS'>AIS</MenuItem>
                 <MenuItem value='T-Mobile'>T-Mobile</MenuItem>
               </Select>
             </Grid2>
-            <Grid2 size={{ xs: 12, md: 3 }}>
+            <Grid2 size={{ xs: 6, md: 2.5 }}>
               <Typography variant='subtitle2' className='font-black mbe-2 uppercase text-[11px] text-slate-500'>Trạng thái kinh doanh</Typography>
               <Select fullWidth size='small' value={selectedStatus} onChange={(e) => setSelectedStatus(e.target.value)}>
                 <MenuItem value='all'>Tất cả trạng thái</MenuItem>
@@ -181,82 +186,125 @@ const AdminProductCatalog = () => {
               </Select>
             </Grid2>
             <Grid2 size={{ xs: 12, md: 2 }}>
-              <Typography variant='subtitle2' className='font-black mbe-2 opacity-0 uppercase text-[11px] hidden md:block'>Reset</Typography>
-              <Button fullWidth variant='tonal' color='secondary' onClick={() => { setSearchTerm(''); setSelectedSupplier('all'); setSelectedStatus('all'); }}>Xóa lọc</Button>
+              <Typography variant='subtitle2' className='font-black mbe-2 opacity-0 hidden md:block'>Reset</Typography>
+              <Button fullWidth variant='tonal' color='secondary' onClick={() => { setSearchTerm(''); setSelectedSupplier('all'); setSelectedStatus('all'); }}>Xóa bộ lọc</Button>
             </Grid2>
           </Grid2>
         </CardContent>
       </Card>
 
       <Card className='border-none shadow-sm overflow-hidden'>
-        <Box className='p-5 border-be bg-slate-50/50 flex justify-between items-center'>
-          <Typography variant='h6' className='font-black'>Danh sách eSIM Marketplace</Typography>
-          <Typography variant='body2' className='text-slate-500'>Tổng cộng: <b>{filteredProducts.length}</b> sản phẩm</Typography>
+        <Box className='p-5 border-be bg-white flex justify-between items-center'>
+          <Box className='flex items-center gap-3'>
+            <Typography variant='h6' className='font-black'>Inventory & Marketplace</Typography>
+            <Chip label={`${filteredProducts.length} items`} size='small' color='primary' variant='tonal' className='font-bold text-[10px]' />
+          </Box>
+          <Box className='flex items-center gap-2'>
+            <Typography variant='caption' className='text-slate-400 italic'>Cập nhật: 2 phút trước</Typography>
+            <IconButton size='small'><i className='tabler-dots-vertical' /></IconButton>
+          </Box>
         </Box>
         <Box className='overflow-x-auto'>
           <table className='w-full text-left border-collapse'>
             <thead>
               <tr className='bg-slate-50 border-be'>
-                <th className='p-4 text-xs font-black text-slate-500 uppercase'>Sản phẩm / SKU</th>
-                <th className='p-4 text-xs font-black text-slate-500 uppercase'>Khu vực</th>
-                <th className='p-4 text-xs font-black text-slate-500 uppercase text-center'>Nguồn (Upstream)</th>
-                <th className='p-4 text-xs font-black text-slate-500 uppercase text-right'>Giá gốc (Cost)</th>
-                <th className='p-4 text-xs font-black text-slate-500 uppercase text-right'>Giá bán (MSRP)</th>
-                <th className='p-4 text-xs font-black text-slate-500 uppercase text-center'>Tồn kho</th>
-                <th className='p-4 text-xs font-black text-slate-500 uppercase text-center'>Trạng thái</th>
-                <th className='p-4 text-xs font-black text-slate-500 uppercase text-right'>Thao tác</th>
+                <th className='p-4 text-[11px] font-black text-slate-500 uppercase tracking-wider'>Sản phẩm / SKU</th>
+                <th className='p-4 text-[11px] font-black text-slate-500 uppercase tracking-wider'>Vùng phủ sóng</th>
+                <th className='p-4 text-[11px] font-black text-slate-500 uppercase tracking-wider text-center'>Nguồn cung</th>
+                <th className='p-4 text-[11px] font-black text-slate-500 uppercase tracking-wider text-right'>Giá Cost</th>
+                <th className='p-4 text-[11px] font-black text-slate-500 uppercase tracking-wider text-right'>Giá MSRP</th>
+                <th className='p-4 text-[11px] font-black text-slate-500 uppercase tracking-wider text-center'>Kho hàng</th>
+                <th className='p-4 text-[11px] font-black text-slate-500 uppercase tracking-wider text-center'>Trạng thái</th>
+                <th className='p-4 text-[11px] font-black text-slate-500 uppercase tracking-wider text-right'>Hành động</th>
               </tr>
             </thead>
             <tbody>
-              {paginatedProducts.map((p) => (
-                <tr key={p.id} className='border-be last:border-0 hover:bg-slate-50/50'>
+              {paginatedProducts.length > 0 ? paginatedProducts.map((p) => (
+                <tr key={p.id} className='border-be last:border-0 hover:bg-slate-50/80 transition-all cursor-default'>
                   <td className='p-4'>
-                    <Box>
-                      <Typography variant='body2' className='font-black text-slate-900'>{p.name}</Typography>
-                      <Typography variant='caption' className='font-mono text-slate-400'>{p.sku}</Typography>
+                    <Box className='flex items-center gap-3'>
+                      <Avatar variant='rounded' className='bg-primary/5 text-primary bs-[38px] is-[38px] border border-primary/10'>
+                        <i className='tabler-wifi text-[20px]' />
+                      </Avatar>
+                      <Box>
+                        <Typography variant='body2' className='font-black text-slate-900'>{p.name}</Typography>
+                        <Typography variant='caption' className='font-mono font-bold text-slate-400 uppercase text-[10px]'>{p.sku}</Typography>
+                      </Box>
                     </Box>
                   </td>
                   <td className='p-4'>
-                    <Box className='flex items-center gap-2'>
-                      <Chip label={p.region} size='small' variant='tonal' color='secondary' sx={{ height: 20, fontSize: '10px', fontWeight: 'bold' }} />
-                      <Typography variant='body2' className='text-slate-600'>{p.country}</Typography>
+                    <Box className='flex flex-col gap-1'>
+                      <Box className='flex items-center gap-1.5'>
+                        <i className='tabler-map-pin text-[14px] text-slate-400' />
+                        <Typography variant='body2' className='font-bold text-slate-700'>{p.country}</Typography>
+                      </Box>
+                      <Box>
+                        <Chip label={p.region} size='small' color='secondary' variant='tonal' sx={{ height: 18, fontSize: '9px', fontWeight: 900, textTransform: 'uppercase' }} />
+                      </Box>
                     </Box>
                   </td>
                   <td className='p-4 text-center'>
-                    <Typography variant='body2' className='font-bold text-primary'>{p.supplier}</Typography>
+                    <Chip 
+                      label={p.supplier} 
+                      size='small' 
+                      className='font-black text-[10px] bg-primary/10 text-primary border border-primary/20'
+                    />
                   </td>
                   <td className='p-4 text-right'>
-                    <Typography variant='body2' className='font-black text-slate-500'>${p.cost.toFixed(2)}</Typography>
+                    <Typography variant='body2' className='font-black text-slate-400'>${p.cost.toFixed(2)}</Typography>
                   </td>
                   <td className='p-4 text-right'>
-                    <Typography variant='body2' className='font-black text-primary'>${p.msrp.toFixed(2)}</Typography>
+                    <Box className='flex flex-col items-end'>
+                      <Typography variant='body2' className='font-black text-primary'>${p.msrp.toFixed(2)}</Typography>
+                      <Typography variant='caption' className='text-success font-black text-[9px]'>+{((p.msrp - p.cost) / p.cost * 100).toFixed(0)}% Margin</Typography>
+                    </Box>
                   </td>
                   <td className='p-4 text-center'>
-                    <Typography variant='body2' className={`font-black ${p.stock < 100 ? 'text-error' : 'text-success'}`}>
-                      {p.stock.toLocaleString()}
-                    </Typography>
+                    <Box className='flex flex-col items-center gap-1'>
+                      <Typography variant='body2' className={`font-black ${p.stock < 100 ? 'text-error' : 'text-slate-700'}`}>
+                        {p.stock.toLocaleString()}
+                      </Typography>
+                      <Box className='is-full bs-1 bg-slate-100 rounded-full overflow-hidden' sx={{ width: 40 }}>
+                        <Box 
+                          className={`bs-full ${p.stock < 100 ? 'bg-error' : 'bg-success'}`} 
+                          sx={{ width: `${Math.min(p.stock / 10, 100)}%` }} 
+                        />
+                      </Box>
+                    </Box>
                   </td>
                   <td className='p-4 text-center'>
                     {getStatusChip(p.status)}
                   </td>
                   <td className='p-4 text-right'>
                     <Stack direction='row' spacing={1} justifyContent='flex-end'>
-                      <Tooltip title='Chỉnh sửa'>
-                        <IconButton size='small' onClick={() => handleOpenDetail(p)}><i className='tabler-edit text-slate-400' /></IconButton>
+                      <Tooltip title='Chỉnh sửa thông tin'>
+                        <IconButton size='small' className='bg-slate-50' onClick={() => handleOpenDetail(p)}><i className='tabler-edit text-slate-500' /></IconButton>
                       </Tooltip>
-                      <Tooltip title='Cài đặt giá'>
-                        <IconButton size='small' color='primary'><i className='tabler-adjustments-horizontal' /></IconButton>
+                      <Tooltip title='Lịch sử tồn kho'>
+                        <IconButton size='small' className='bg-slate-50' color='primary'><i className='tabler-chart-bar' /></IconButton>
                       </Tooltip>
                     </Stack>
                   </td>
                 </tr>
-              ))}
+              )) : (
+                <tr>
+                  <td colSpan={8} className='p-20 text-center'>
+                    <Box className='flex flex-col items-center gap-4 opacity-40'>
+                      <i className='tabler-package-off text-[64px]' />
+                      <Typography variant='h6' className='font-black'>Không tìm thấy sản phẩm nào</Typography>
+                      <Button variant='tonal' size='small' onClick={() => setSearchTerm('')}>Xóa bộ lọc tìm kiếm</Button>
+                    </Box>
+                  </td>
+                </tr>
+              )}
             </tbody>
           </table>
         </Box>
-        <Box className='p-4 flex justify-between items-center'>
-          <Typography variant='caption' className='text-slate-500 italic'>* Giá Cost được cập nhật tự động từ luồng Upstream</Typography>
-          <Pagination count={Math.ceil(filteredProducts.length / pageSize)} page={page} onChange={(_, v) => setPage(v)} color='primary' shape='rounded' />
+        <Box className='p-5 border-ts bg-slate-50/30 flex justify-between items-center'>
+          <Typography variant='caption' className='text-slate-500 font-medium italic'>
+            <i className='tabler-info-circle mis-1 inline-block align-middle' /> Giá gốc được đồng bộ theo thời gian thực từ API Upstream.
+          </Typography>
+          <Pagination count={Math.ceil(filteredProducts.length / pageSize)} page={page} onChange={(_, v) => setPage(v)} color='primary' shape='rounded' size='small' />
         </Box>
       </Card>
 
