@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+
 import Card from '@mui/material/Card'
 import CardContent from '@mui/material/CardContent'
 import Typography from '@mui/material/Typography'
@@ -29,18 +30,21 @@ const AdminProductCatalog = () => {
   const [searchTerm, setSearchTerm] = useState('')
   const [selectedSupplier, setSelectedSupplier] = useState('all')
   const [selectedStatus, setSelectedStatus] = useState('all')
+  const [selectedType, setSelectedType] = useState('all')
+  const [selectedData, setSelectedData] = useState('all')
+  const [selectedValidity, setSelectedValidity] = useState('all')
   const [openDialog, setOpenDialog] = useState(false)
   const [selectedProduct, setSelectedProduct] = useState<any>(null)
-  
+
   const [page, setPage] = useState(1)
   const pageSize = 10
 
   const products = [
-    { 
-      id: 'P001', 
-      sku: 'JP-30D-10GB', 
-      name: 'Nhật Bản Siêu Tốc', 
-      country: 'Nhật Bản', 
+    {
+      id: 'P001',
+      sku: 'JP-30D-10GB',
+      name: 'Nhật Bản Siêu Tốc',
+      country: 'Nhật Bản',
       region: 'Châu Á',
       supplier: 'Singtel',
       cost: 8.50,
@@ -50,11 +54,11 @@ const AdminProductCatalog = () => {
       type: 'Total',
       validity: '30 Ngày'
     },
-    { 
-      id: 'P002', 
-      sku: 'EU-15D-5GB', 
-      name: 'Roaming Châu Âu', 
-      country: 'Châu Âu', 
+    {
+      id: 'P002',
+      sku: 'EU-15D-5GB',
+      name: 'Roaming Châu Âu',
+      country: 'Châu Âu',
       region: 'Châu Âu',
       supplier: 'Orange FR',
       cost: 6.20,
@@ -64,11 +68,11 @@ const AdminProductCatalog = () => {
       type: 'Daily',
       validity: '15 Ngày'
     },
-    { 
-      id: 'P003', 
-      sku: 'US-30D-20GB', 
-      name: 'Mỹ Không giới hạn', 
-      country: 'Hoa Kỳ', 
+    {
+      id: 'P003',
+      sku: 'US-30D-20GB',
+      name: 'Mỹ Không giới hạn',
+      country: 'Hoa Kỳ',
       region: 'Châu Mỹ',
       supplier: 'T-Mobile',
       cost: 15.00,
@@ -78,11 +82,11 @@ const AdminProductCatalog = () => {
       type: 'Total',
       validity: '30 Ngày'
     },
-    { 
-      id: 'P004', 
-      sku: 'TH-07D-UNL', 
-      name: 'Thái Lan Travel', 
-      country: 'Thái Lan', 
+    {
+      id: 'P004',
+      sku: 'TH-07D-UNL',
+      name: 'Thái Lan Travel',
+      country: 'Thái Lan',
       region: 'Châu Á',
       supplier: 'AIS',
       cost: 4.20,
@@ -92,11 +96,11 @@ const AdminProductCatalog = () => {
       type: 'Daily',
       validity: '7 Ngày'
     },
-    { 
-      id: 'P005', 
-      sku: 'VN-30D-20GB', 
-      name: 'Viettel 4G Local', 
-      country: 'Việt Nam', 
+    {
+      id: 'P005',
+      sku: 'VN-30D-20GB',
+      name: 'Viettel 4G Local',
+      country: 'Việt Nam',
       region: 'Châu Á',
       supplier: 'Viettel',
       cost: 3.50,
@@ -112,7 +116,11 @@ const AdminProductCatalog = () => {
     const matchSearch = p.name.toLowerCase().includes(searchTerm.toLowerCase()) || p.sku.toLowerCase().includes(searchTerm.toLowerCase());
     const matchSupplier = selectedSupplier === 'all' || p.supplier === selectedSupplier;
     const matchStatus = selectedStatus === 'all' || p.status === selectedStatus;
-    return matchSearch && matchSupplier && matchStatus;
+    const matchType = selectedType === 'all' || p.type === selectedType;
+    const matchData = selectedData === 'all' || p.sku.includes(selectedData);
+    const matchValidity = selectedValidity === 'all' || p.validity.includes(selectedValidity);
+
+    return matchSearch && matchSupplier && matchStatus && matchType && matchData && matchValidity;
   })
 
   const paginatedProducts = filteredProducts.slice((page - 1) * pageSize, page * pageSize)
@@ -124,10 +132,10 @@ const AdminProductCatalog = () => {
 
   const getStatusChip = (status: string) => {
     return (
-      <Chip 
-        label={status === 'Active' ? 'Hoạt động' : 'Tạm dừng'} 
-        size='small' 
-        color={status === 'Active' ? 'success' : 'default'} 
+      <Chip
+        label={status === 'Active' ? 'Hoạt động' : 'Tạm dừng'}
+        size='small'
+        color={status === 'Active' ? 'success' : 'default'}
         variant='tonal'
         className='font-black uppercase text-[10px]'
       />
@@ -141,12 +149,9 @@ const AdminProductCatalog = () => {
         description="Quản lý toàn bộ danh sách gói cước, định giá MSRP và giám sát nguồn cung Upstream."
         breadcrumbs={[{ label: 'Trang chủ', href: '/' }, { label: 'Quản lý Danh mục' }, { label: 'Danh mục eSIM' }]}
         actions={
-          <Stack direction='row' spacing={3}>
-            <Tooltip title="Cập nhật giá từ nguồn cung">
-              <Button variant='tonal' color='secondary' startIcon={<i className='tabler-refresh' />}>Sync Now</Button>
-            </Tooltip>
-            <Button variant='contained' startIcon={<i className='tabler-plus' />}>Thêm Gói cước</Button>
-          </Stack>
+          <Button variant='tonal' color='secondary' startIcon={<i className='tabler-file-spreadsheet' />}>
+            Xuất Excel
+          </Button>
         }
         className='mbe-6'
       />
@@ -154,7 +159,7 @@ const AdminProductCatalog = () => {
       <Card className='border-none shadow-sm mbe-6'>
         <CardContent className='p-6'>
           <Grid2 container spacing={6}>
-            <Grid2 size={{ xs: 12, md: 5 }}>
+            <Grid2 size={{ xs: 12, md: 4 }}>
               <Typography variant='subtitle2' className='font-black mbe-2 uppercase text-[11px] text-slate-500'>Tìm kiếm gói cước / SKU</Typography>
               <TextField
                 fullWidth
@@ -167,7 +172,7 @@ const AdminProductCatalog = () => {
                 }}
               />
             </Grid2>
-            <Grid2 size={{ xs: 6, md: 2.5 }}>
+            <Grid2 size={{ xs: 12, md: 2.66 }}>
               <Typography variant='subtitle2' className='font-black mbe-2 uppercase text-[11px] text-slate-500'>Nhà cung cấp</Typography>
               <Select fullWidth size='small' value={selectedSupplier} onChange={(e) => setSelectedSupplier(e.target.value)}>
                 <MenuItem value='all'>Tất cả nguồn cung</MenuItem>
@@ -177,17 +182,59 @@ const AdminProductCatalog = () => {
                 <MenuItem value='T-Mobile'>T-Mobile</MenuItem>
               </Select>
             </Grid2>
-            <Grid2 size={{ xs: 6, md: 2.5 }}>
-              <Typography variant='subtitle2' className='font-black mbe-2 uppercase text-[11px] text-slate-500'>Trạng thái kinh doanh</Typography>
+            <Grid2 size={{ xs: 12, md: 2.66 }}>
+              <Typography variant='subtitle2' className='font-black mbe-2 uppercase text-[11px] text-slate-500'>Loại eSIM</Typography>
+              <Select fullWidth size='small' value={selectedType} onChange={(e) => setSelectedType(e.target.value)}>
+                <MenuItem value='all'>Tất cả loại</MenuItem>
+                <MenuItem value='Daily'>Gói Daily (Ngày)</MenuItem>
+                <MenuItem value='Total'>Gói Total (Tổng)</MenuItem>
+              </Select>
+            </Grid2>
+            <Grid2 size={{ xs: 12, md: 2.66 }}>
+              <Typography variant='subtitle2' className='font-black mbe-2 uppercase text-[11px] text-slate-500'>Trạng thái</Typography>
               <Select fullWidth size='small' value={selectedStatus} onChange={(e) => setSelectedStatus(e.target.value)}>
                 <MenuItem value='all'>Tất cả trạng thái</MenuItem>
                 <MenuItem value='Active'>Đang kinh doanh</MenuItem>
                 <MenuItem value='Inactive'>Ngừng kinh doanh</MenuItem>
               </Select>
             </Grid2>
-            <Grid2 size={{ xs: 12, md: 2 }}>
-              <Typography variant='subtitle2' className='font-black mbe-2 opacity-0 hidden md:block'>Reset</Typography>
-              <Button fullWidth variant='tonal' color='secondary' onClick={() => { setSearchTerm(''); setSelectedSupplier('all'); setSelectedStatus('all'); }}>Xóa bộ lọc</Button>
+
+            <Grid2 size={{ xs: 12, md: 4 }}>
+              <Typography variant='subtitle2' className='font-black mbe-2 uppercase text-[11px] text-slate-500'>Dung lượng</Typography>
+              <Select fullWidth size='small' value={selectedData} onChange={(e) => setSelectedData(e.target.value)}>
+                <MenuItem value='all'>Tất cả dung lượng</MenuItem>
+                <MenuItem value='5GB'>5GB</MenuItem>
+                <MenuItem value='10GB'>10GB</MenuItem>
+                <MenuItem value='20GB'>20GB</MenuItem>
+                <MenuItem value='UNL'>Không giới hạn</MenuItem>
+              </Select>
+            </Grid2>
+            <Grid2 size={{ xs: 12, md: 4 }}>
+              <Typography variant='subtitle2' className='font-black mbe-2 uppercase text-[11px] text-slate-500'>Số ngày sử dụng</Typography>
+              <Select fullWidth size='small' value={selectedValidity} onChange={(e) => setSelectedValidity(e.target.value)}>
+                <MenuItem value='all'>Tất cả thời hạn</MenuItem>
+                <MenuItem value='7'>7 Ngày</MenuItem>
+                <MenuItem value='15'>15 Ngày</MenuItem>
+                <MenuItem value='30'>30 Ngày</MenuItem>
+              </Select>
+            </Grid2>
+            <Grid2 size={{ xs: 12, md: 4 }} className='flex items-end'>
+              <Button
+                fullWidth
+                variant='tonal'
+                color='secondary'
+                onClick={() => {
+                  setSearchTerm('');
+                  setSelectedSupplier('all');
+                  setSelectedStatus('all');
+                  setSelectedType('all');
+                  setSelectedData('all');
+                  setSelectedValidity('all');
+                }}
+                startIcon={<i className='tabler-filter-off' />}
+              >
+                Xóa bộ lọc
+              </Button>
             </Grid2>
           </Grid2>
         </CardContent>
@@ -208,12 +255,13 @@ const AdminProductCatalog = () => {
           <table className='w-full text-left border-collapse'>
             <thead>
               <tr className='bg-slate-50 border-be'>
-                <th className='p-4 text-[11px] font-black text-slate-500 uppercase tracking-wider'>Sản phẩm / SKU</th>
-                <th className='p-4 text-[11px] font-black text-slate-500 uppercase tracking-wider'>Vùng phủ sóng</th>
-                <th className='p-4 text-[11px] font-black text-slate-500 uppercase tracking-wider text-center'>Nguồn cung</th>
-                <th className='p-4 text-[11px] font-black text-slate-500 uppercase tracking-wider text-right'>Giá Cost</th>
-                <th className='p-4 text-[11px] font-black text-slate-500 uppercase tracking-wider text-right'>Giá MSRP</th>
-                <th className='p-4 text-[11px] font-black text-slate-500 uppercase tracking-wider text-center'>Kho hàng</th>
+                <th className='p-4 text-[11px] font-black text-slate-500 uppercase tracking-wider'>Quốc gia</th>
+                <th className='p-4 text-[11px] font-black text-slate-500 uppercase tracking-wider'>Nguồn cung</th>
+                <th className='p-4 text-[11px] font-black text-slate-500 uppercase tracking-wider'>Sản phẩm</th>
+                <th className='p-4 text-[11px] font-black text-slate-500 uppercase tracking-wider text-center'>Loại</th>
+                <th className='p-4 text-[11px] font-black text-slate-500 uppercase tracking-wider text-center'>Dung lượng</th>
+                <th className='p-4 text-[11px] font-black text-slate-500 uppercase tracking-wider text-center'>Số ngày</th>
+                <th className='p-4 text-[11px] font-black text-slate-500 uppercase tracking-wider text-right'>Giá (Cost/MSRP)</th>
                 <th className='p-4 text-[11px] font-black text-slate-500 uppercase tracking-wider text-center'>Trạng thái</th>
                 <th className='p-4 text-[11px] font-black text-slate-500 uppercase tracking-wider text-right'>Hành động</th>
               </tr>
@@ -222,73 +270,58 @@ const AdminProductCatalog = () => {
               {paginatedProducts.length > 0 ? paginatedProducts.map((p) => (
                 <tr key={p.id} className='border-be last:border-0 hover:bg-slate-50/80 transition-all cursor-default'>
                   <td className='p-4'>
-                    <Box className='flex items-center gap-3'>
-                      <Avatar variant='rounded' className='bg-primary/5 text-primary bs-[38px] is-[38px] border border-primary/10'>
-                        <i className='tabler-wifi text-[20px]' />
-                      </Avatar>
-                      <Box>
-                        <Typography variant='body2' className='font-black text-slate-900'>{p.name}</Typography>
-                        <Typography variant='caption' className='font-mono font-bold text-slate-400 uppercase text-[10px]'>{p.sku}</Typography>
-                      </Box>
+                    <Box className='flex items-center gap-2'>
+                      <i className='tabler-map-pin text-[16px] text-primary' />
+                      <Typography variant='body2' className='font-black text-slate-700'>{p.country}</Typography>
                     </Box>
                   </td>
                   <td className='p-4'>
-                    <Box className='flex flex-col gap-1'>
-                      <Box className='flex items-center gap-1.5'>
-                        <i className='tabler-map-pin text-[14px] text-slate-400' />
-                        <Typography variant='body2' className='font-bold text-slate-700'>{p.country}</Typography>
-                      </Box>
-                      <Box>
-                        <Chip label={p.region} size='small' color='secondary' variant='tonal' sx={{ height: 18, fontSize: '9px', fontWeight: 900, textTransform: 'uppercase' }} />
-                      </Box>
+                    <Chip
+                      label={p.supplier}
+                      size='small'
+                      variant='tonal'
+                      className='font-black text-[10px] bg-slate-100 text-slate-600 border-none'
+                    />
+                  </td>
+                  <td className='p-4'>
+                    <Box>
+                      <Typography variant='body2' className='font-black text-slate-900'>{p.name}</Typography>
+                      <Typography variant='caption' className='font-mono font-bold text-slate-400 uppercase text-[10px]'>{p.sku}</Typography>
                     </Box>
                   </td>
                   <td className='p-4 text-center'>
-                    <Chip 
-                      label={p.supplier} 
-                      size='small' 
-                      className='font-black text-[10px] bg-primary/10 text-primary border border-primary/20'
-                    />
+                    <Typography variant='caption' className='font-black uppercase text-slate-500 bg-slate-50 px-2 py-1 rounded border border-slate-100'>{p.type}</Typography>
                   </td>
-                  <td className='p-4 text-right'>
-                    <Typography variant='body2' className='font-black text-slate-400'>${p.cost.toFixed(2)}</Typography>
+                  <td className='p-4 text-center'>
+                    <Typography variant='body2' className='font-black text-slate-700'>{p.sku.includes('UNL') || p.name.includes('giới hạn') ? 'Unlimited' : p.sku.split('-').pop()}</Typography>
+                  </td>
+                  <td className='p-4 text-center'>
+                    <Typography variant='body2' className='font-black text-slate-700'>{p.validity}</Typography>
                   </td>
                   <td className='p-4 text-right'>
                     <Box className='flex flex-col items-end'>
                       <Typography variant='body2' className='font-black text-primary'>${p.msrp.toFixed(2)}</Typography>
-                      <Typography variant='caption' className='text-success font-black text-[9px]'>+{((p.msrp - p.cost) / p.cost * 100).toFixed(0)}% Margin</Typography>
-                    </Box>
-                  </td>
-                  <td className='p-4 text-center'>
-                    <Box className='flex flex-col items-center gap-1'>
-                      <Typography variant='body2' className={`font-black ${p.stock < 100 ? 'text-error' : 'text-slate-700'}`}>
-                        {p.stock.toLocaleString()}
-                      </Typography>
-                      <Box className='is-full bs-1 bg-slate-100 rounded-full overflow-hidden' sx={{ width: 40 }}>
-                        <Box 
-                          className={`bs-full ${p.stock < 100 ? 'bg-error' : 'bg-success'}`} 
-                          sx={{ width: `${Math.min(p.stock / 10, 100)}%` }} 
-                        />
-                      </Box>
+                      <Typography variant='caption' className='text-slate-400 font-bold text-[10px]'>Cost: ${p.cost.toFixed(2)}</Typography>
                     </Box>
                   </td>
                   <td className='p-4 text-center'>
                     {getStatusChip(p.status)}
                   </td>
                   <td className='p-4 text-right'>
-                    <Stack direction='row' spacing={1} justifyContent='flex-end'>
-                      <Tooltip title='Chỉnh sửa thông tin'>
-                        <IconButton size='small' className='bg-slate-50' onClick={() => handleOpenDetail(p)}><i className='tabler-edit text-slate-500' /></IconButton>
-                      </Tooltip>
-                      <Tooltip title='Lịch sử tồn kho'>
-                        <IconButton size='small' className='bg-slate-50' color='primary'><i className='tabler-chart-bar' /></IconButton>
-                      </Tooltip>
-                    </Stack>
+                    <Button 
+                      size='small' 
+                      variant='tonal' 
+                      color='primary' 
+                      className='font-black text-[11px]'
+                      onClick={() => handleOpenDetail(p)}
+                    >
+                      Show
+                    </Button>
                   </td>
                 </tr>
               )) : (
                 <tr>
-                  <td colSpan={8} className='p-20 text-center'>
+                  <td colSpan={9} className='p-20 text-center'>
                     <Box className='flex flex-col items-center gap-4 opacity-40'>
                       <i className='tabler-package-off text-[64px]' />
                       <Typography variant='h6' className='font-black'>Không tìm thấy sản phẩm nào</Typography>
@@ -309,56 +342,126 @@ const AdminProductCatalog = () => {
       </Card>
 
       <Dialog open={openDialog} onClose={() => setOpenDialog(false)} maxWidth='md' fullWidth>
-        <DialogTitle component='div' className='flex justify-between items-center border-be'>
-          <Typography variant='h5' className='font-black'>Cấu hình Gói cước: {selectedProduct?.sku}</Typography>
-          <IconButton onClick={() => setOpenDialog(false)} size='small'><i className='tabler-x' /></IconButton>
+        <DialogTitle component='div' className='flex justify-between items-center border-be p-6'>
+          <Box>
+            <Typography variant='h5' className='font-black'>Chi tiết Gói cước: {selectedProduct?.name}</Typography>
+            <Typography variant='caption' className='text-slate-400 uppercase font-bold tracking-widest'>Thông tin cấu hình hệ thống & Quản trị</Typography>
+          </Box>
+          <IconButton onClick={() => setOpenDialog(false)} size='small' className='bg-slate-100'><i className='tabler-x' /></IconButton>
         </DialogTitle>
         <DialogContent className='p-6'>
           {selectedProduct && (
-            <Grid2 container spacing={6} className='mbs-2'>
-              <Grid2 size={{ xs: 12, md: 6 }}>
-                <Typography variant='subtitle2' className='font-black mbe-4 uppercase text-[11px] text-slate-500 tracking-widest'>Thông tin cơ bản</Typography>
-                <Stack spacing={4}>
-                  <TextField fullWidth size='small' label='Tên gói cước' defaultValue={selectedProduct.name} />
-                  <TextField fullWidth size='small' label='SKU Hệ thống' defaultValue={selectedProduct.sku} disabled />
-                  <Stack direction='row' spacing={4}>
-                    <TextField fullWidth size='small' label='Dung lượng' defaultValue={selectedProduct.data} />
-                    <TextField fullWidth size='small' label='Thời hạn' defaultValue={selectedProduct.validity} />
-                  </Stack>
-                </Stack>
-              </Grid2>
-              <Grid2 size={{ xs: 12, md: 6 }}>
-                <Typography variant='subtitle2' className='font-black mbe-4 uppercase text-[11px] text-slate-500 tracking-widest'>Định giá \u0026 Nguồn cung</Typography>
-                <Stack spacing={4}>
-                  <Box className='p-4 bg-slate-50 rounded-lg border border-dashed border-slate-200'>
-                    <Typography variant='caption' className='text-slate-500 font-bold uppercase'>Giá Cost hiện tại ({selectedProduct.supplier})</Typography>
-                    <Typography variant='h4' className='font-black text-slate-400'>${selectedProduct.cost.toFixed(2)}</Typography>
-                  </Box>
-                  <TextField 
-                    fullWidth 
-                    size='small' 
-                    label='Giá niêm yết (MSRP)' 
-                    defaultValue={selectedProduct.msrp}
-                    InputProps={{ startAdornment: <InputAdornment position='start'>$</InputAdornment> }}
-                  />
+            <Stack spacing={6} className='mbs-2'>
+              {/* Header Info Block */}
+              <Box className='p-6 bg-slate-900 rounded-2xl text-white relative overflow-hidden'>
+                <Box className='relative z-10 flex justify-between items-center'>
                   <Box>
-                    <Typography variant='caption' className='text-success font-black'>Lợi nhuận gộp: ${(selectedProduct.msrp - selectedProduct.cost).toFixed(2)} ({((selectedProduct.msrp - selectedProduct.cost) / selectedProduct.cost * 100).toFixed(1)}%)</Typography>
+                    <Box className='flex items-center gap-2 mbe-1'>
+                      <i className='tabler-map-pin text-primary' />
+                      <Typography variant='subtitle1' className='text-white font-black'>{selectedProduct.country}</Typography>
+                    </Box>
+                    <Typography variant='h4' className='text-white font-black mbe-2'>{selectedProduct.name}</Typography>
+                    <Chip label={selectedProduct.sku} size='small' className='bg-white/20 text-white font-mono border-none font-bold' />
                   </Box>
-                </Stack>
-              </Grid2>
-              <Grid2 size={{ xs: 12 }}>
-                <Divider className='border-dashed' />
-                <Box className='mts-4'>
-                  <Typography variant='subtitle2' className='font-black mbe-2'>Mô tả hiển thị cho Đại lý</Typography>
-                  <TextField fullWidth multiline rows={3} placeholder='Nhập mô tả gói cước...' defaultValue={`Gói cước tốc độ cao tại ${selectedProduct.country}, hỗ trợ roaming và hotspot.`} />
+                  <Box className='text-right'>
+                    <Typography variant='caption' className='text-slate-400 font-bold uppercase block'>Trạng thái hiện tại</Typography>
+                    <Chip 
+                      label={selectedProduct.status === 'Active' ? 'Đang kinh doanh' : 'Ngừng kinh doanh'} 
+                      color={selectedProduct.status === 'Active' ? 'success' : 'default'}
+                      size='small'
+                      className='font-black'
+                    />
+                  </Box>
                 </Box>
+                <i className='tabler-world absolute -right-6 -bottom-6 text-9xl text-white/5 rotate-12' />
+              </Box>
+
+              <Grid2 container spacing={6}>
+                {/* Technical Section */}
+                <Grid2 size={{ xs: 12, md: 6 }}>
+                  <Typography variant='subtitle2' className='font-black mbe-4 uppercase text-[11px] text-slate-500 tracking-widest'>Thông số Kỹ thuật</Typography>
+                  <Grid2 container spacing={4}>
+                    <Grid2 size={{ xs: 4 }}>
+                      <Box className='p-3 rounded-xl bg-slate-50 border border-slate-100 text-center'>
+                        <i className='tabler-signal-4g text-primary text-xl mbe-1' />
+                        <Typography variant='caption' className='block text-slate-400 uppercase font-bold text-[9px]'>Loại</Typography>
+                        <Typography variant='body2' className='font-black'>{selectedProduct.type}</Typography>
+                      </Box>
+                    </Grid2>
+                    <Grid2 size={{ xs: 4 }}>
+                      <Box className='p-3 rounded-xl bg-slate-50 border border-slate-100 text-center'>
+                        <i className='tabler-database text-primary text-xl mbe-1' />
+                        <Typography variant='caption' className='block text-slate-400 uppercase font-bold text-[9px]'>Dung lượng</Typography>
+                        <Typography variant='body2' className='font-black'>{selectedProduct.sku.includes('UNL') ? 'Unlimited' : selectedProduct.sku.split('-').pop()}</Typography>
+                      </Box>
+                    </Grid2>
+                    <Grid2 size={{ xs: 4 }}>
+                      <Box className='p-3 rounded-xl bg-slate-50 border border-slate-100 text-center'>
+                        <i className='tabler-calendar text-primary text-xl mbe-1' />
+                        <Typography variant='caption' className='block text-slate-400 uppercase font-bold text-[9px]'>Thời hạn</Typography>
+                        <Typography variant='body2' className='font-black'>{selectedProduct.validity}</Typography>
+                      </Box>
+                    </Grid2>
+                  </Grid2>
+                  
+                  <Box className='mts-6'>
+                    <Typography variant='subtitle2' className='font-black mbe-3'>Mô tả hiển thị (Agent View)</Typography>
+                    <TextField 
+                      fullWidth 
+                      multiline 
+                      rows={4} 
+                      defaultValue={`Gói cước eSIM cao cấp tại ${selectedProduct.country}. Hỗ trợ hạ tầng mạng ${selectedProduct.supplier} tốc độ cao, hỗ trợ Hotspot và Roaming ổn định.`}
+                      placeholder='Nhập mô tả cho đại lý...'
+                    />
+                  </Box>
+                </Grid2>
+
+                {/* Financial Section */}
+                <Grid2 size={{ xs: 12, md: 6 }}>
+                  <Typography variant='subtitle2' className='font-black mbe-4 uppercase text-[11px] text-slate-500 tracking-widest'>Thông tin Nguồn cung</Typography>
+                  <Stack spacing={4}>
+                    <Box className='p-4 rounded-xl bg-slate-50 border border-slate-100 flex justify-between items-center'>
+                      <Box>
+                        <Typography variant='caption' className='block text-slate-400 font-bold uppercase text-[9px]'>Nhà cung cấp (NCC)</Typography>
+                        <Typography variant='body1' className='font-black'>{selectedProduct.supplier}</Typography>
+                      </Box>
+                      <Box className='text-right'>
+                        <Typography variant='caption' className='block text-slate-400 font-bold uppercase text-[9px]'>Giá Cost (Nhập)</Typography>
+                        <Typography variant='h5' className='font-black text-slate-400'>${selectedProduct.cost.toFixed(2)}</Typography>
+                      </Box>
+                    </Box>
+
+                    <Box className='p-4 bg-slate-50 rounded-xl border border-slate-100 flex justify-between items-center'>
+                      <Box>
+                        <Typography variant='caption' className='block text-slate-400 font-bold uppercase text-[9px]'>Tồn kho khả dụng</Typography>
+                        <Typography variant='body1' className='font-black'>{selectedProduct.stock.toLocaleString()} units</Typography>
+                      </Box>
+                      <i className='tabler-barcode text-slate-300 text-2xl' />
+                    </Box>
+
+                    <Box className='p-4 rounded-xl bg-primary/5 border border-dashed border-primary/20 flex items-center gap-3'>
+                      <i className='tabler-info-circle text-primary text-xl' />
+                      <Typography variant='caption' className='text-slate-600 font-medium'>
+                        Thông tin giá gốc được đồng bộ trực tiếp từ hệ thống của <strong>{selectedProduct.supplier}</strong>.
+                      </Typography>
+                    </Box>
+                  </Stack>
+                </Grid2>
               </Grid2>
-            </Grid2>
+
+              <Box className='p-5 bg-slate-50 rounded-xl border border-slate-100'>
+                <Typography variant='subtitle2' className='font-black mbe-2 uppercase text-[10px] text-slate-500 tracking-widest'>Mô tả hiển thị (Agent Store)</Typography>
+                <Typography variant='body2' className='text-slate-600 leading-relaxed italic'>
+                  "Gói cước eSIM cao cấp tại {selectedProduct.country}. Hỗ trợ hạ tầng mạng {selectedProduct.supplier} tốc độ cao, hỗ trợ Hotspot và Roaming ổn định."
+                </Typography>
+              </Box>
+            </Stack>
           )}
         </DialogContent>
         <DialogActions className='p-6 pt-0'>
-          <Button variant='tonal' color='secondary' onClick={() => setOpenDialog(false)}>Hủy bỏ</Button>
-          <Button variant='contained' onClick={() => { setOpenDialog(false); }}>Lưu thay đổi</Button>
+          <Button fullWidth variant='tonal' color='secondary' onClick={() => setOpenDialog(false)} className='font-black'>
+            Đóng
+          </Button>
         </DialogActions>
       </Dialog>
     </>

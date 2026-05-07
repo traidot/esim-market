@@ -114,6 +114,11 @@ const DownstreamTransactions = () => {
         title="Lịch sử giao dịch"
         description="Theo dõi luồng giao dịch từ Đại lý (Downstream) qua Hệ thống đến Nhà cung cấp (Upstream)."
         breadcrumbs={[{ label: 'Trang chủ', href: '/' }, { label: 'Phân phối' }, { label: 'Giao dịch' }]}
+        actions={
+          <Button variant='tonal' color='secondary' startIcon={<i className='tabler-file-spreadsheet' />}>
+            Xuất Excel
+          </Button>
+        }
         className='mbe-6'
       />
 

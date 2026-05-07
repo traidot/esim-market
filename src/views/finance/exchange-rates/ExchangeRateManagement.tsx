@@ -202,9 +202,6 @@ const ExchangeRateManagement = () => {
             <CardHeader 
               title='Lịch sử thay đổi tỉ giá' 
               subheader='Nhật ký thiết lập tỉ giá cho các loại ngoại tệ'
-              action={
-                <Button variant='contained' color='success' size='small' startIcon={<i className='tabler-file-download' />}>Xuất Excel</Button>
-              }
             />
             <TableContainer>
               <Table>
