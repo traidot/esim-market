@@ -26,11 +26,11 @@ const AgentTransactions = ({ id }: { id: string }) => {
   const agentName = id.toUpperCase() === 'A001' ? 'TravelConnect Solutions' : 'Global eSIM Hub'
 
   const transactions = [
-    { id: 'ORD-99812', date: '2026-04-28 09:15', type: 'Mua hàng', method: 'API', amount: 45.50, debtAfter: 6240.00, status: 'Success' },
-    { id: 'ORD-99810', date: '2026-04-27 18:20', type: 'Mua hàng', method: 'Portal', amount: 15.00, debtAfter: 6194.50, status: 'Success' },
-    { id: 'CNL-00012', date: '2026-04-24 11:30', type: 'Hủy đơn', method: 'System', amount: -15.00, debtAfter: 6179.50, status: 'Success' },
-    { id: 'ORD-99700', date: '2026-04-24 08:45', type: 'Mua hàng', method: 'API', amount: 120.00, debtAfter: 6194.50, status: 'Success' },
-    { id: 'ORD-99699', date: '2026-04-23 14:00', type: 'Mua hàng', method: 'API', amount: 10.00, debtAfter: 6074.50, status: 'Success' },
+    { id: 'ORD-99812', date: '2026-04-28 09:15', type: 'Mua hàng', method: 'API', product: '10GB 7 Ngày', sku: 'JP-10GB-7D', qty: 1, amount: 45.50, debtAfter: 6240.00, status: 'Success' },
+    { id: 'ORD-99810', date: '2026-04-27 18:20', type: 'Mua hàng', method: 'Portal', product: 'Không Giới Hạn 15 Ngày', sku: 'JP-UNL-15D', qty: 2, amount: 15.00, debtAfter: 6194.50, status: 'Success' },
+    { id: 'CNL-00012', date: '2026-04-24 11:30', type: 'Hủy đơn', method: 'System', product: '5GB 10 Ngày', sku: 'US-5GB-10D', qty: 1, amount: -15.00, debtAfter: 6179.50, status: 'Success' },
+    { id: 'ORD-99700', date: '2026-04-24 08:45', type: 'Mua hàng', method: 'API', product: '50GB 10 Ngày', sku: 'TH-50GB-10D', qty: 5, amount: 120.00, debtAfter: 6194.50, status: 'Success' },
+    { id: 'ORD-99699', date: '2026-04-23 14:00', type: 'Mua hàng', method: 'API', product: '10GB 30 Ngày', sku: 'EU-10GB-30D', qty: 1, amount: 10.00, debtAfter: 6074.50, status: 'Success' },
   ]
 
   return (
@@ -113,8 +113,9 @@ const AgentTransactions = ({ id }: { id: string }) => {
           <Table>
             <TableHead>
               <TableRow>
-                <TableCell className='font-black uppercase text-[11px]'>Mã GD</TableCell>
-                <TableCell className='font-black uppercase text-[11px]'>Thời gian</TableCell>
+                <TableCell className='font-black uppercase text-[11px]'>Mã GD / Thời gian</TableCell>
+                <TableCell className='font-black uppercase text-[11px]'>Sản phẩm (eSIM)</TableCell>
+                <TableCell className='font-black uppercase text-[11px] text-center'>SL</TableCell>
                 <TableCell className='font-black uppercase text-[11px]'>Loại GD</TableCell>
                 <TableCell className='font-black uppercase text-[11px] text-right'>Phát sinh</TableCell>
                 <TableCell className='font-black uppercase text-[11px] text-right'>Công nợ cuối</TableCell>
@@ -126,9 +127,14 @@ const AgentTransactions = ({ id }: { id: string }) => {
                 <TableRow key={tx.id} hover>
                   <TableCell>
                     <Typography variant='body2' className='font-bold text-primary'>{tx.id}</Typography>
+                    <Typography variant='caption' className='text-slate-400'>{tx.date}</Typography>
                   </TableCell>
                   <TableCell>
-                    <Typography variant='body2'>{tx.date}</Typography>
+                    <Typography variant='body2' className='font-black'>{tx.product}</Typography>
+                    <Typography variant='caption' className='text-slate-500'>{tx.sku}</Typography>
+                  </TableCell>
+                  <TableCell className='text-center'>
+                    <Typography variant='body2' className='font-black'>{tx.qty}</Typography>
                   </TableCell>
                   <TableCell>
                     <Box className='flex flex-col'>
@@ -145,7 +151,7 @@ const AgentTransactions = ({ id }: { id: string }) => {
                     <Typography variant='body2' className='font-bold'>{tx.debtAfter.toLocaleString('en-US', { style: 'currency', currency: 'USD' })}</Typography>
                   </TableCell>
                   <TableCell className='text-center'>
-                    <Chip label={tx.status} color='success' size='small' variant='tonal' />
+                    <Chip label={tx.status} color='success' size='small' variant='tonal' className='font-bold' />
                   </TableCell>
                 </TableRow>
               ))}

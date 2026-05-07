@@ -34,6 +34,8 @@ import Box from '@mui/material/Box'
 import ToggleButtonGroup from '@mui/material/ToggleButtonGroup'
 import ToggleButton from '@mui/material/ToggleButton'
 
+import { useRouter } from 'next/navigation'
+
 type Props = {
   dictionary: Awaited<ReturnType<typeof getDictionary>>
   mode: Mode
@@ -60,6 +62,7 @@ const Navigation = (props: Props) => {
   const { dictionary, mode } = props
 
   // Hooks
+  const router = useRouter()
   const verticalNavOptions = useVerticalNav()
   const { updateSettings, settings } = useSettings()
   const { mode: muiMode, systemMode: muiSystemMode } = useColorScheme()
@@ -160,7 +163,12 @@ const Navigation = (props: Props) => {
             color="primary"
             value={role}
             exclusive
-            onChange={(_, newRole) => newRole && setRole(newRole)}
+            onChange={(_, newRole) => {
+              if (newRole) {
+                setRole(newRole)
+                router.push(newRole === 'admin' ? '/3m/dashboard' : '/agent/dashboard')
+              }
+            }}
             size="small"
             fullWidth
           >

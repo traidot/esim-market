@@ -46,7 +46,7 @@ const UpstreamTransactions = () => {
     { 
       id: 'TX-9821', 
       supplier: 'Airalo', 
-      action: 'Mua eSIM', 
+      action: 'Mua', 
       package: { name: 'Japan Premium', data: '10GB', validity: '30 Ngày' }, 
       amount: '$8.50', 
       status: 'Success', 
@@ -58,13 +58,13 @@ const UpstreamTransactions = () => {
         matchingKey: 'AIRALO-JAPAN-001'
       }
     },
-    { id: 'TX-9820', supplier: 'Nomad', action: 'Gia hạn gói', package: { name: 'USA Fast Connection', data: '20GB', validity: '30 Ngày' }, amount: '$22.00', status: 'Success', date: '28/04/2026 00:45' },
-    { id: 'TX-9819', supplier: 'Airalo', action: 'Mua eSIM', package: { name: 'USA Traveler', data: '5GB', validity: '15 Ngày' }, amount: '$12.00', status: 'Failed', date: '27/04/2026 23:30' },
-    { id: 'TX-9818', supplier: 'KeepGo', action: 'Check Status', package: { name: 'Global Roaming', data: '1GB', validity: '1 Năm' }, amount: '$0.00', status: 'Success', date: '27/04/2026 22:10' },
+    { id: 'TX-9820', supplier: 'Nomad', action: 'Mua', package: { name: 'USA Fast Connection', data: '20GB', validity: '30 Ngày' }, amount: '$22.00', status: 'Success', date: '28/04/2026 00:45' },
+    { id: 'TX-9819', supplier: 'Airalo', action: 'Mua', package: { name: 'USA Traveler', data: '5GB', validity: '15 Ngày' }, amount: '$12.00', status: 'Failed', date: '27/04/2026 23:30' },
+    { id: 'TX-9818', supplier: 'KeepGo', action: 'Huỷ', package: { name: 'Global Roaming', data: '1GB', validity: '1 Năm' }, amount: '$0.00', status: 'Success', date: '27/04/2026 22:10' },
     { 
       id: 'TX-9817', 
       supplier: 'Nomad', 
-      action: 'Mua eSIM', 
+      action: 'Mua', 
       package: { name: 'UK Business Pro', data: '50GB', validity: '90 Ngày' }, 
       amount: '$45.00', 
       status: 'Success', 

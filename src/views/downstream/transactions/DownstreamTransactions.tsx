@@ -19,77 +19,209 @@ import TextField from '@mui/material/TextField'
 import InputAdornment from '@mui/material/InputAdornment'
 import Avatar from '@mui/material/Avatar'
 import Grid2 from '@mui/material/Grid2'
+import Select from '@mui/material/Select'
 import MenuItem from '@mui/material/MenuItem'
 import Tooltip from '@mui/material/Tooltip'
-import Select from '@mui/material/Select'
 import Dialog from '@mui/material/Dialog'
 import DialogTitle from '@mui/material/DialogTitle'
 import DialogContent from '@mui/material/DialogContent'
 import DialogActions from '@mui/material/DialogActions'
+import Timeline from '@mui/lab/Timeline'
+import TimelineItem from '@mui/lab/TimelineItem'
+import TimelineSeparator from '@mui/lab/TimelineSeparator'
+import TimelineConnector from '@mui/lab/TimelineConnector'
+import TimelineContent from '@mui/lab/TimelineContent'
+import TimelineDot from '@mui/lab/TimelineDot'
 
 import PageHeader from '@/components/layout/shared/PageHeader'
 
 const DownstreamTransactions = () => {
   const [isLogOpen, setIsLogOpen] = useState(false)
   const [selectedLog, setSelectedLog] = useState<any>(null)
+
+  // Filter States
+  const [agent, setAgent] = useState('all')
+  const [supplier, setSupplier] = useState('all')
+  const [pkgType, setPkgType] = useState('all')
+  const [dataLimit, setDataLimit] = useState('all')
+  const [validity, setValidity] = useState('all')
   
   const transactions = [
-    { id: 'DTX-5091', agent: 'TravelConnect', action: 'CREATE_ORDER', package: 'Japan 10GB', amount: '$12.50', status: 'Success', date: '28/04/2026 01:15', latency: '320ms' },
-    { id: 'DTX-5090', agent: 'Global eSIM Hub', action: 'TOPUP_BALANCE', package: '-', amount: '$500.00', status: 'Success', date: '28/04/2026 00:45', latency: '150ms' },
-    { id: 'DTX-5089', agent: 'CheapData Agency', action: 'CREATE_ORDER', package: 'USA 5GB', amount: '$14.00', status: 'Failed', date: '27/04/2026 23:30', latency: '410ms' },
-    { id: 'DTX-5088', agent: 'TravelConnect', action: 'CHECK_BALANCE', package: '-', amount: '$0.00', status: 'Success', date: '27/04/2026 22:10', latency: '85ms' },
-    { id: 'DTX-5087', agent: 'Nomad Partner', action: 'CREATE_ORDER', package: 'UK Pro', amount: '$45.00', status: 'Success', date: '27/04/2026 21:55', latency: '290ms' },
+    { 
+      id: 'ORD-7729-10A', 
+      agent: 'Global eSIM Hub', 
+      supplier: 'Singtel',
+      package: 'Singapore 10GB (30D)',
+      action: 'Mua',
+      price: 12.50,
+      cost: 9.80,
+      downstreamStatus: 201, 
+      upstreamStatus: 200,
+      latency: '450ms',
+      date: '2026-04-28 14:15:22' 
+    },
+    { 
+      id: 'ORD-7729-10B', 
+      agent: 'TravelConnect', 
+      supplier: 'AIS Thailand',
+      package: 'Thailand Unlimited (7D)',
+      action: 'Mua',
+      price: 8.00,
+      cost: 6.20,
+      downstreamStatus: 201, 
+      upstreamStatus: 200,
+      latency: '320ms',
+      date: '2026-04-28 14:12:05' 
+    },
+    { 
+      id: 'ORD-7729-10C', 
+      agent: 'Nomad Partner', 
+      supplier: 'Orange FR',
+      package: 'Europe Pro 20GB',
+      action: 'Huỷ',
+      price: 25.00,
+      cost: 18.50,
+      downstreamStatus: 400, 
+      upstreamStatus: null,
+      latency: '110ms',
+      date: '2026-04-28 13:55:10' 
+    },
+    { 
+      id: 'ORD-7729-10D', 
+      agent: 'TravelConnect', 
+      supplier: 'KDDI Japan',
+      package: 'Japan 5GB (15D)',
+      action: 'Mua',
+      price: 14.50,
+      cost: 11.20,
+      downstreamStatus: 201, 
+      upstreamStatus: 500,
+      latency: '820ms',
+      date: '2026-04-28 13:45:00' 
+    }
   ]
+
+  const getStatusChip = (status: number | null) => {
+    if (status === null) return <Chip label="N/A" size="small" variant='tonal' className='font-black' sx={{ opacity: 0.3 }} />
+    if (status >= 200 && status < 300) return <Chip label={status} size="small" color="success" variant='tonal' className='font-black' />
+    if (status >= 400 && status < 500) return <Chip label={status} size="small" color="warning" variant='tonal' className='font-black' />
+    return <Chip label={status} size="small" color="error" variant='tonal' className='font-black' />
+  }
 
   return (
     <>
       <PageHeader
-        title="Lịch sử giao dịch Downstream (API Logs)"
-        description="Nhật ký chi tiết các lệnh gọi API từ hệ thống của Đại lý vào hệ thống của chúng ta."
-        breadcrumbs={[{ label: 'Trang chủ', href: '/' }, { label: 'Phân phối' }, { label: 'Giao dịch Đại lý' }]}
+        title="Lịch sử giao dịch"
+        description="Theo dõi luồng giao dịch từ Đại lý (Downstream) qua Hệ thống đến Nhà cung cấp (Upstream)."
+        breadcrumbs={[{ label: 'Trang chủ', href: '/' }, { label: 'Phân phối' }, { label: 'Giao dịch' }]}
         className='mbe-6'
       />
 
+      <Grid2 container spacing={6} className='mbe-6'>
+        <Grid2 size={{ xs: 12, md: 4 }}>
+          <Card className='border-none shadow-sm'>
+            <CardContent className='flex items-center gap-4 p-6'>
+              <Avatar variant='rounded' sx={{ bgcolor: 'primary.main', width: 48, height: 48 }}>
+                <i className='tabler-shopping-cart text-2xl' />
+              </Avatar>
+              <Box>
+                <Typography variant='caption' className='font-black uppercase text-slate-500'>Đơn hàng (24h)</Typography>
+                <Typography variant='h4' className='font-black'>852</Typography>
+              </Box>
+            </CardContent>
+          </Card>
+        </Grid2>
+        <Grid2 size={{ xs: 12, md: 4 }}>
+          <Card className='border-none shadow-sm'>
+            <CardContent className='flex items-center gap-4 p-6'>
+              <Avatar variant='rounded' sx={{ bgcolor: 'success.main', width: 48, height: 48 }}>
+                <i className='tabler-check text-2xl' />
+              </Avatar>
+              <Box>
+                <Typography variant='caption' className='font-black uppercase text-slate-500'>Thành công</Typography>
+                <Typography variant='h4' className='font-black text-success'>98.2%</Typography>
+              </Box>
+            </CardContent>
+          </Card>
+        </Grid2>
+        <Grid2 size={{ xs: 12, md: 4 }}>
+          <Card className='border-none shadow-sm'>
+            <CardContent className='flex items-center gap-4 p-6'>
+              <Avatar variant='rounded' sx={{ bgcolor: 'error.main', width: 48, height: 48 }}>
+                <i className='tabler-x text-2xl' />
+              </Avatar>
+              <Box>
+                <Typography variant='caption' className='font-black uppercase text-slate-500'>Thất bại</Typography>
+                <Typography variant='h4' className='font-black text-error'>1.8%</Typography>
+              </Box>
+            </CardContent>
+          </Card>
+        </Grid2>
+      </Grid2>
+
       <Card className='border-none shadow-sm mbe-6'>
         <CardContent>
-          <Grid2 container spacing={4} className='items-end'>
+          <Grid2 container spacing={4}>
+            {/* Filter Group 1: Entities */}
             <Grid2 size={{ xs: 12, md: 3 }}>
-              <Typography variant='subtitle2' className='font-black mbe-2 uppercase text-[11px] text-slate-500'>Đại lý (Agent)</Typography>
-              <Select fullWidth size='small' defaultValue='all'>
-                <MenuItem value='all'>Tất cả Đại lý</MenuItem>
-                <MenuItem value='travelconnect'>TravelConnect</MenuItem>
-                <MenuItem value='globalhub'>Global eSIM Hub</MenuItem>
-                <MenuItem value='cheapdata'>CheapData Agency</MenuItem>
+              <Typography variant='subtitle2' className='font-black mbe-2 uppercase text-[11px] text-slate-500'>Đại lý (Downstream)</Typography>
+              <Select fullWidth size='small' value={agent} onChange={(e) => setAgent(e.target.value)}>
+                <MenuItem value='all'>Tất cả đại lý</MenuItem>
+                <MenuItem value='global'>Global eSIM Hub</MenuItem>
+                <MenuItem value='travel'>TravelConnect</MenuItem>
+                <MenuItem value='nomad'>Nomad Partner</MenuItem>
+              </Select>
+            </Grid2>
+            <Grid2 size={{ xs: 12, md: 3 }}>
+              <Typography variant='subtitle2' className='font-black mbe-2 uppercase text-[11px] text-slate-500'>Nhà cung cấp (Upstream)</Typography>
+              <Select fullWidth size='small' value={supplier} onChange={(e) => setSupplier(e.target.value)}>
+                <MenuItem value='all'>Tất cả NCC</MenuItem>
+                <MenuItem value='singtel'>Singtel</MenuItem>
+                <MenuItem value='ais'>AIS Thailand</MenuItem>
+                <MenuItem value='orange'>Orange FR</MenuItem>
               </Select>
             </Grid2>
             <Grid2 size={{ xs: 12, md: 4 }}>
-              <Typography variant='subtitle2' className='font-black mbe-2 uppercase text-[11px] text-slate-500'>Khoảng thời gian</Typography>
+              <Typography variant='subtitle2' className='font-black mbe-2 uppercase text-[11px] text-slate-500'>Thời gian giao dịch (From - To)</Typography>
               <Stack direction='row' spacing={2}>
                 <TextField fullWidth size='small' type='date' defaultValue='2026-04-01' />
                 <TextField fullWidth size='small' type='date' defaultValue='2026-04-28' />
               </Stack>
             </Grid2>
             <Grid2 size={{ xs: 12, md: 2 }}>
-              <Typography variant='subtitle2' className='font-black mbe-2 uppercase text-[11px] text-slate-500'>Loại Action (API)</Typography>
-              <Select fullWidth size='small' defaultValue='all'>
-                <MenuItem value='all'>Tất cả</MenuItem>
-                <MenuItem value='create'>CREATE_ORDER</MenuItem>
-                <MenuItem value='balance'>CHECK_BALANCE</MenuItem>
-                <MenuItem value='topup'>TOPUP_BALANCE</MenuItem>
-              </Select>
-            </Grid2>
-            <Grid2 size={{ xs: 12, md: 2 }}>
-              <Typography variant='subtitle2' className='font-black mbe-2 uppercase text-[11px] text-slate-500'>Trạng thái</Typography>
-              <Select fullWidth size='small' defaultValue='all'>
-                <MenuItem value='all'>Tất cả</MenuItem>
-                <MenuItem value='success'>200 OK</MenuItem>
-                <MenuItem value='failed'>4xx / 5xx Error</MenuItem>
-              </Select>
-            </Grid2>
-            <Grid2 size={{ xs: 12, md: 1 }}>
-              <Button variant='tonal' color='primary' fullWidth className='min-bs-[38px]'>
-                <i className='tabler-search' />
+              <Typography variant='subtitle2' className='font-black mbe-2 opacity-0 uppercase text-[11px] hidden md:block'>Tìm kiếm</Typography>
+              <Button variant='contained' color='primary' fullWidth className='min-bs-[38px]' startIcon={<i className='tabler-search' />}>
+                Lọc kết quả
               </Button>
+            </Grid2>
+
+            {/* Filter Group 2: Product Specs */}
+            <Grid2 size={{ xs: 12, sm: 4, md: 4 }}>
+              <Typography variant='subtitle2' className='font-black mbe-2 uppercase text-[11px] text-slate-500'>Loại gói eSIM</Typography>
+              <Select fullWidth size='small' value={pkgType} onChange={(e) => setPkgType(e.target.value)}>
+                <MenuItem value='all'>Tất cả loại</MenuItem>
+                <MenuItem value='Daily'>Daily (Theo ngày)</MenuItem>
+                <MenuItem value='Total'>Total (Tổng dung lượng)</MenuItem>
+              </Select>
+            </Grid2>
+            <Grid2 size={{ xs: 12, sm: 4, md: 4 }}>
+              <Typography variant='subtitle2' className='font-black mbe-2 uppercase text-[11px] text-slate-500'>Dung lượng</Typography>
+              <Select fullWidth size='small' value={dataLimit} onChange={(e) => setDataLimit(e.target.value)}>
+                <MenuItem value='all'>Tất cả dung lượng</MenuItem>
+                <MenuItem value='1GB'>1GB</MenuItem>
+                <MenuItem value='5GB'>5GB</MenuItem>
+                <MenuItem value='10GB'>10GB</MenuItem>
+                <MenuItem value='Unlimited'>Không giới hạn</MenuItem>
+              </Select>
+            </Grid2>
+            <Grid2 size={{ xs: 12, sm: 4, md: 4 }}>
+              <Typography variant='subtitle2' className='font-black mbe-2 uppercase text-[11px] text-slate-500'>Số ngày (Thời hạn)</Typography>
+              <Select fullWidth size='small' value={validity} onChange={(e) => setValidity(e.target.value)}>
+                <MenuItem value='all'>Tất cả thời hạn</MenuItem>
+                <MenuItem value='1 Ngày'>1 Ngày</MenuItem>
+                <MenuItem value='7 Ngày'>7 Ngày</MenuItem>
+                <MenuItem value='30 Ngày'>30 Ngày</MenuItem>
+              </Select>
             </Grid2>
           </Grid2>
         </CardContent>
@@ -97,89 +229,125 @@ const DownstreamTransactions = () => {
 
       <Card className='border-none shadow-sm overflow-hidden'>
         <Box className='p-5 border-be bg-slate-50/50 flex justify-between items-center gap-4 flex-wrap'>
-          <Stack direction='row' spacing={4}>
-            <Box>
-              <Typography variant='caption' className='font-black uppercase text-slate-400'>Tổng API Calls (24h)</Typography>
-              <Typography variant='h5' className='font-black text-primary'>14,208</Typography>
-            </Box>
-            <Box className='border-is ps-4'>
-              <Typography variant='caption' className='font-black uppercase text-slate-400'>Tỷ lệ lỗi (Error Rate)</Typography>
-              <Typography variant='h5' className='font-black text-error'>0.8%</Typography>
-            </Box>
-            <Box className='border-is ps-4'>
-              <Typography variant='caption' className='font-black uppercase text-slate-400'>Avg Latency</Typography>
-              <Typography variant='h5' className='font-black text-success'>240ms</Typography>
-            </Box>
+          <Typography variant='h6' className='font-black'>Danh sách Đơn hàng API</Typography>
+          
+          <Stack direction='row' spacing={4} className='items-center flex-wrap'>
+            <TextField select size='small' defaultValue='all' label='Trạng thái luồng' className='min-is-[200px] bg-white'>
+              <MenuItem value='all'>Tất cả trạng thái</MenuItem>
+              <MenuItem value='success'>Thành công toàn bộ</MenuItem>
+              <MenuItem value='failed_upstream'>Lỗi Nhà cung cấp</MenuItem>
+              <MenuItem value='failed_downstream'>Lỗi đầu vào Đại lý</MenuItem>
+            </TextField>
+            <TextField 
+              size='small' 
+              placeholder='Tìm Order ID / Agent...' 
+              className='min-is-[300px] bg-white'
+              InputProps={{
+                startAdornment: <InputAdornment position='start'><i className='tabler-search' /></InputAdornment>
+              }}
+            />
           </Stack>
-          <TextField 
-            size='small' 
-            placeholder='Tìm Req ID / Trx ID...' 
-            className='min-is-[300px] bg-white'
-            InputProps={{
-              startAdornment: <InputAdornment position='start'><i className='tabler-search' /></InputAdornment>
-            }}
-          />
         </Box>
         <TableContainer>
           <Table>
             <TableHead className='bg-slate-50'>
               <TableRow>
-                <TableCell className='font-black uppercase text-[11px]'>Mã GD (Req ID)</TableCell>
-                <TableCell className='font-black uppercase text-[11px]'>Đại lý gọi API</TableCell>
-                <TableCell className='font-black uppercase text-[11px]'>Action</TableCell>
-                <TableCell className='font-black uppercase text-[11px]'>Tham số (Payload)</TableCell>
-                <TableCell className='font-black uppercase text-[11px] text-right'>Ghi nhận ($)</TableCell>
-                <TableCell className='font-black uppercase text-[11px] text-center'>Trạng thái</TableCell>
+                <TableCell className='font-black uppercase text-[11px]'>Mã đơn hàng</TableCell>
+                <TableCell className='font-black uppercase text-[11px]'>Đại lý (Downstream)</TableCell>
+                <TableCell className='font-black uppercase text-[11px] text-center'>Hành động</TableCell>
+                <TableCell className='font-black uppercase text-[11px]'>Sản phẩm / Chi tiết</TableCell>
+                <TableCell className='font-black uppercase text-[11px]'>NCC (Upstream)</TableCell>
+                <TableCell className='font-black uppercase text-[11px] text-center'>Đại lý → Chợ</TableCell>
+                <TableCell className='font-black uppercase text-[11px] text-center'>Chợ → NCC</TableCell>
+                <TableCell className='font-black uppercase text-[11px] text-right'>Giá bán</TableCell>
+                <TableCell className='font-black uppercase text-[11px] text-right'>Giá gốc (Cost)</TableCell>
                 <TableCell className='font-black uppercase text-[11px] text-right'>Thời gian</TableCell>
-                <TableCell className='font-black uppercase text-[11px] text-center'>Payload</TableCell>
+                <TableCell className='font-black uppercase text-[11px] text-center'>Luồng</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
-              {transactions.map((tx) => (
+              {transactions.map((tx) => {
+                const agentColor = tx.agent === 'Global eSIM Hub' ? '#7367F0' : tx.agent === 'TravelConnect' ? '#00BAD1' : '#FF9F43';
+                const supplierColor = tx.supplier === 'Singtel' ? '#EA5455' : tx.supplier === 'AIS Thailand' ? '#28C76F' : tx.supplier === 'Orange FR' ? '#FF9F43' : '#00BAD1';
+                const rate = 25450; // Mock rate
+
+                return (
                 <TableRow key={tx.id} hover>
-                  <TableCell className='font-mono text-xs font-bold text-slate-600'>{tx.id}</TableCell>
                   <TableCell>
-                    <Typography variant='body2' className='font-bold'>{tx.agent}</Typography>
+                    <Typography variant='body2' className='font-black text-primary'>{tx.id}</Typography>
                   </TableCell>
                   <TableCell>
-                    <Chip 
-                      label={tx.action} 
-                      size='small' 
-                      color='secondary' 
-                      variant='tonal'
-                      className='font-mono text-[10px] font-black'
-                    />
-                  </TableCell>
-                  <TableCell>
-                    <Typography variant='body2' className='text-slate-500'>{tx.package}</Typography>
-                  </TableCell>
-                  <TableCell className='text-right font-black text-primary'>
-                    {tx.amount !== '$0.00' ? tx.amount : '-'}
+                    <Box className='flex items-center gap-2'>
+                      <Avatar 
+                        variant='rounded' 
+                        sx={{ 
+                          backgroundColor: `${agentColor}15`, 
+                          color: agentColor,
+                          width: 28, 
+                          height: 28,
+                          fontSize: '10px',
+                          fontWeight: '900'
+                        }}
+                      >
+                        {tx.agent[0]}
+                      </Avatar>
+                      <Typography variant='body2' className='font-bold' sx={{ color: agentColor }}>{tx.agent}</Typography>
+                    </Box>
                   </TableCell>
                   <TableCell className='text-center'>
-                    <Stack direction='row' alignItems='center' justifyContent='center' spacing={1}>
-                      <Chip 
-                        label={tx.status} 
-                        size='small' 
-                        color={tx.status === 'Success' ? 'success' : 'error'} 
-                        variant='tonal'
-                        className='font-black'
-                      />
-                      <Typography variant='caption' className='text-slate-400 font-mono'>{tx.latency}</Typography>
-                    </Stack>
+                    <Typography variant='body2' className='font-bold text-slate-500'>{tx.action}</Typography>
+                  </TableCell>
+                  <TableCell>
+                    <Box>
+                      <Typography variant='body2' className='font-bold mbe-1 text-slate-800'>{tx.package.split(' (')[0]}</Typography>
+                      <Stack direction='row' spacing={2}>
+                        <Chip label={tx.package.match(/\d+GB|\d+MB|Unlimited/)?.[0] || 'Data'} size='small' color='primary' variant='tonal' className='font-black text-[10px] h-[20px]' />
+                        <Chip label={tx.package.match(/\d+D/)?.[0]?.replace('D', ' Ngày') || 'Bền vững'} size='small' color='secondary' variant='tonal' className='font-black text-[10px] h-[20px]' />
+                      </Stack>
+                    </Box>
+                  </TableCell>
+                  <TableCell>
+                    <Box className='flex items-center gap-2'>
+                      <Avatar 
+                        variant='rounded' 
+                        sx={{ 
+                          backgroundColor: `${supplierColor}15`, 
+                          color: supplierColor,
+                          width: 28, 
+                          height: 28,
+                          fontSize: '10px',
+                          fontWeight: '900'
+                        }}
+                      >
+                        {tx.supplier[0]}
+                      </Avatar>
+                      <Typography variant='body2' className='font-bold text-slate-500' sx={{ color: supplierColor }}>{tx.supplier}</Typography>
+                    </Box>
+                  </TableCell>
+                  <TableCell className='text-center'>
+                    {getStatusChip(tx.downstreamStatus)}
+                  </TableCell>
+                  <TableCell className='text-center'>
+                    {getStatusChip(tx.upstreamStatus)}
                   </TableCell>
                   <TableCell className='text-right'>
-                    <Typography variant='caption' className='font-bold text-slate-500'>{tx.date}</Typography>
+                    <Typography variant='body2' className='font-black text-primary'>${tx.price.toFixed(2)}</Typography>
+                    <Typography variant='caption' className='font-bold text-slate-400'>{(tx.price * rate).toLocaleString()}đ</Typography>
+                  </TableCell>
+                  <TableCell className='text-right'>
+                    <Typography variant='body2' className='font-black text-slate-600'>${tx.cost.toFixed(2)}</Typography>
+                    <Typography variant='caption' className='font-bold text-slate-400'>{(tx.cost * rate).toLocaleString()}đ</Typography>
+                  </TableCell>
+                  <TableCell className='text-right'>
+                    <Typography variant='caption' className='font-bold text-slate-400'>{tx.date}</Typography>
                   </TableCell>
                   <TableCell className='text-center'>
-                    <Tooltip title="Xem JSON Request/Response">
-                      <IconButton size='small' onClick={() => { setSelectedLog(tx); setIsLogOpen(true); }}>
-                        <i className='tabler-code text-[18px]' />
-                      </IconButton>
-                    </Tooltip>
+                    <IconButton size='small' color='primary' onClick={() => { setSelectedLog(tx); setIsLogOpen(true); }}>
+                      <i className='tabler-route text-xl' />
+                    </IconButton>
                   </TableCell>
                 </TableRow>
-              ))}
+              )})}
             </TableBody>
           </Table>
         </TableContainer>
@@ -191,84 +359,87 @@ const DownstreamTransactions = () => {
         maxWidth='md'
         fullWidth
       >
-        <DialogTitle className='flex items-center justify-between'>
-          <Typography variant='h5' component='span' className='font-black'>Downstream API Log (Agent Request)</Typography>
+        <DialogTitle className='flex items-center justify-between border-be'>
+          <Typography variant='h5' className='font-black'>Chi tiết luồng Giao dịch: {selectedLog?.id}</Typography>
           <IconButton onClick={() => setIsLogOpen(false)} size='small'>
             <i className='tabler-x' />
           </IconButton>
         </DialogTitle>
-        <DialogContent>
+        <DialogContent className='p-6'>
           {selectedLog && (
-            <Box className='flex flex-col gap-4 m-bs-2'>
-              <Box className='flex justify-between items-center bg-slate-50 p-4 rounded-lg'>
-                <Box>
-                  <Typography variant='caption' className='text-slate-500'>Mã GD / Req ID</Typography>
-                  <Typography variant='body1' className='font-mono font-bold'>{selectedLog.id}</Typography>
-                </Box>
-                <Box>
-                  <Typography variant='caption' className='text-slate-500'>Đại lý</Typography>
-                  <Typography variant='body1' className='font-bold'>{selectedLog.agent}</Typography>
-                </Box>
-                <Box>
-                  <Typography variant='caption' className='text-slate-500'>Trạng thái</Typography>
-                  <Box>
-                    <Chip 
-                      label={selectedLog.status} 
-                      size='small' 
-                      color={selectedLog.status === 'Success' ? 'success' : 'error'} 
-                      variant='tonal'
-                      className='font-black'
-                    />
+            <Timeline position="right" sx={{ p: 0 }}>
+              {/* STEP 1: DOWNSTREAM REQUEST */}
+              <TimelineItem>
+                <TimelineSeparator>
+                  <TimelineDot color={selectedLog.downstreamStatus < 400 ? 'success' : 'error'}>
+                    <i className='tabler-arrow-down-left text-white text-[14px]' />
+                  </TimelineDot>
+                  <TimelineConnector />
+                </TimelineSeparator>
+                <TimelineContent className='pb-8'>
+                  <Box className='flex justify-between items-start mbe-2'>
+                    <Box>
+                      <Typography variant='subtitle2' className='font-black uppercase text-primary'>Downstream: Agent → Market</Typography>
+                      <Typography variant='caption' className='text-slate-500'>Đại lý gửi yêu cầu mua hàng</Typography>
+                    </Box>
+                    <Stack direction='row' spacing={2} alignItems='center'>
+                      <Typography variant='caption' className='font-mono'>Latency: 25ms</Typography>
+                      {getStatusChip(selectedLog.downstreamStatus)}
+                    </Stack>
                   </Box>
-                </Box>
-              </Box>
-
-              <Typography variant='subtitle2' className='font-black uppercase text-slate-500 mt-2'>Incoming Request (From Agent)</Typography>
-              <Box className='bg-[#1E1E1E] rounded-lg p-4 overflow-x-auto'>
-                <pre className='text-[#D4D4D4] font-mono text-xs m-0'>
+                  <Box className='bg-[#1E1E1E] p-4 rounded-lg'>
+                    <pre className='text-[#9CDCFE] font-mono text-xs m-0 overflow-x-auto'>
 {`POST /api/v1/orders
-User-Agent: Downstream-Client/1.0
-X-Agent-Key: AGENT_***
-Content-Type: application/json
-
-{
-  "action": "${selectedLog.action}",
-  "sku": "${selectedLog.package}",
-  "ref_id": "${selectedLog.id}",
-  "timestamp": "${selectedLog.date}"
+From: ${selectedLog.agent}
+Payload: {
+  "sku": "PKG-SING-10G",
+  "agent_ref": "AG-REQ-991"
 }`}
-                </pre>
-              </Box>
+                    </pre>
+                  </Box>
+                </TimelineContent>
+              </TimelineItem>
 
-              <Typography variant='subtitle2' className='font-black uppercase text-slate-500 mt-2'>Outgoing Response (Our System)</Typography>
-              <Box className='bg-[#1E1E1E] rounded-lg p-4 overflow-x-auto'>
-                <pre className='text-[#D4D4D4] font-mono text-xs m-0'>
-{selectedLog.status === 'Success' ? `{
-  "status": "200 OK",
-  "data": {
-    "transaction_id": "${selectedLog.id}",
-    "status": "PROCESSED",
-    "amount": "${selectedLog.amount}",
-    "details": {
-      "package": "${selectedLog.package}",
-      "processed_at": "${new Date().toISOString()}"
-    }
-  }
-}` : `{
-  "status": "400 Bad Request",
-  "error": {
-    "code": "INVALID_PACKAGE",
-    "message": "The requested package SKU is currently unavailable or inactive."
-  }
+              {/* STEP 2: UPSTREAM REQUEST */}
+              <TimelineItem>
+                <TimelineSeparator>
+                  <TimelineDot color={selectedLog.upstreamStatus === null ? 'grey' : (selectedLog.upstreamStatus < 400 ? 'success' : 'error')}>
+                    <i className='tabler-arrow-up-right text-white text-[14px]' />
+                  </TimelineDot>
+                </TimelineSeparator>
+                <TimelineContent>
+                  <Box className='flex justify-between items-start mbe-2'>
+                    <Box>
+                      <Typography variant='subtitle2' className='font-black uppercase text-secondary'>Upstream: Market → Supplier ({selectedLog.supplier})</Typography>
+                      <Typography variant='caption' className='text-slate-500'>Hệ thống call API Nhà cung cấp để lấy mã eSIM</Typography>
+                    </Box>
+                    <Stack direction='row' spacing={2} alignItems='center'>
+                      <Typography variant='caption' className='font-mono'>Latency: {selectedLog.latency}</Typography>
+                      {getStatusChip(selectedLog.upstreamStatus)}
+                    </Stack>
+                  </Box>
+                  {selectedLog.upstreamStatus ? (
+                    <Box className='bg-[#1E1E1E] p-4 rounded-lg border-is-4' sx={{ borderLeftColor: `${selectedLog.upstreamStatus < 400 ? 'success' : 'error'}.main` }}>
+                      <pre className='text-[#CE9178] font-mono text-xs m-0 overflow-x-auto'>
+{`POST /vendor/api/activate
+To: ${selectedLog.supplier}
+Response: {
+  "status": "${selectedLog.upstreamStatus}",
+  "esim_code": "${selectedLog.upstreamStatus < 400 ? 'ESIM-XYZ-123' : 'ERROR_VENDOR_BUSY'}",
+  "cost": ${selectedLog.cost}
 }`}
-                </pre>
-              </Box>
-            </Box>
+                      </pre>
+                    </Box>
+                  ) : (
+                    <Box className='p-4 border-2 border-dashed rounded-lg border-slate-200 text-center'>
+                      <Typography variant='caption' className='italic text-slate-400'>Luồng bị ngắt tại Downstream - Không gọi Upstream</Typography>
+                    </Box>
+                  )}
+                </TimelineContent>
+              </TimelineItem>
+            </Timeline>
           )}
         </DialogContent>
-        <DialogActions className='p-6 pt-0'>
-          <Button variant='contained' color='primary' onClick={() => setIsLogOpen(false)}>Đóng</Button>
-        </DialogActions>
       </Dialog>
     </>
   )

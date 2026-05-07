@@ -11,21 +11,15 @@ import Chip from '@mui/material/Chip'
 import TextField from '@mui/material/TextField'
 import InputAdornment from '@mui/material/InputAdornment'
 import Grid2 from '@mui/material/Grid2'
-import Tabs from '@mui/material/Tabs'
-import Tab from '@mui/material/Tab'
-import Avatar from '@mui/material/Avatar'
 import Dialog from '@mui/material/Dialog'
 import DialogTitle from '@mui/material/DialogTitle'
 import DialogContent from '@mui/material/DialogContent'
 import DialogActions from '@mui/material/DialogActions'
 import IconButton from '@mui/material/IconButton'
-import Divider from '@mui/material/Divider'
 import MenuItem from '@mui/material/MenuItem'
-import ToggleButton from '@mui/material/ToggleButton'
-import ToggleButtonGroup from '@mui/material/ToggleButtonGroup'
 import Autocomplete from '@mui/material/Autocomplete'
-import Stack from '@mui/material/Stack'
 import Checkbox from '@mui/material/Checkbox'
+import Pagination from '@mui/material/Pagination'
 
 import { toast } from 'react-toastify'
 import PageHeader from '@/components/layout/shared/PageHeader'
@@ -46,8 +40,9 @@ const AgentProductCatalog = () => {
   const [sortBy, setSortBy] = useState('none')
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc')
   
-  // Dev toggle to demonstrate different agent types
-  const [agentType, setAgentType] = useState<'prepaid' | 'postpaid'>('postpaid')
+  // Pagination States
+  const [page, setPage] = useState(1)
+  const [pageSize, setPageSize] = useState(10)
 
   const handleOpenDialog = (product: any) => {
     setSelectedProduct(product)
@@ -57,11 +52,6 @@ const AgentProductCatalog = () => {
   const handleCloseDialog = () => {
     setOpenDialog(false)
     setTimeout(() => setSelectedProduct(null), 300)
-  }
-
-  const handleConfirmPurchase = () => {
-    toast.success(`Đã đặt mua gói ${selectedProduct?.name} thành công!`)
-    handleCloseDialog()
   }
 
   const countries = [
@@ -129,6 +119,8 @@ const AgentProductCatalog = () => {
     return 0;
   })
 
+  const paginatedProducts = filteredProducts.slice((page - 1) * pageSize, page * pageSize)
+
   const resetFilters = () => {
     setFilterData('all')
     setFilterValidity('all')
@@ -137,6 +129,7 @@ const AgentProductCatalog = () => {
     setSelectedCountries([])
     setSearchTerm('')
     setSortBy('none')
+    setPage(1)
   }
 
   return (
@@ -167,7 +160,7 @@ const AgentProductCatalog = () => {
                 size='small' 
                 label='Khu vực (Châu lục)' 
                 value={selectedContinent}
-                onChange={(e) => setSelectedContinent(e.target.value)}
+                onChange={(e) => { setSelectedContinent(e.target.value); setPage(1); }}
               >
                 <MenuItem value='all'>Tất cả khu vực</MenuItem>
                 <MenuItem value='Châu Á'>Châu Á</MenuItem>
@@ -183,7 +176,7 @@ const AgentProductCatalog = () => {
                 options={countries}
                 getOptionLabel={(option) => option.name}
                 value={selectedCountries}
-                onChange={(_, newValue) => setSelectedCountries(newValue)}
+                onChange={(_, newValue) => { setSelectedCountries(newValue); setPage(1); }}
                 disableCloseOnSelect
                 renderInput={(params) => (
                   <TextField {...params} label='Chọn Quốc gia' placeholder='Tìm quốc gia...' />
@@ -218,7 +211,7 @@ const AgentProductCatalog = () => {
                 size='small'
                 placeholder='Tìm theo tên gói cước...'
                 value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
+                onChange={(e) => { setSearchTerm(e.target.value); setPage(1); }}
                 InputProps={{
                   startAdornment: (
                     <InputAdornment position='start'>
@@ -261,7 +254,7 @@ const AgentProductCatalog = () => {
                 size='small' 
                 label='Dung lượng' 
                 value={filterData}
-                onChange={(e) => setFilterData(e.target.value)}
+                onChange={(e) => { setFilterData(e.target.value); setPage(1); }}
               >
                 <MenuItem value='all'>Tất cả dung lượng</MenuItem>
                 <MenuItem value='5GB'>5GB</MenuItem>
@@ -280,7 +273,7 @@ const AgentProductCatalog = () => {
                 size='small' 
                 label='Thời hạn' 
                 value={filterValidity}
-                onChange={(e) => setFilterValidity(e.target.value)}
+                onChange={(e) => { setFilterValidity(e.target.value); setPage(1); }}
               >
                 <MenuItem value='all'>Tất cả thời hạn</MenuItem>
                 <MenuItem value='5 Ngày'>5 Ngày</MenuItem>
@@ -298,7 +291,7 @@ const AgentProductCatalog = () => {
                 size='small' 
                 label='Loại sim' 
                 value={filterSimType}
-                onChange={(e) => setFilterSimType(e.target.value)}
+                onChange={(e) => { setFilterSimType(e.target.value); setPage(1); }}
               >
                 <MenuItem value='all'>Tất cả loại</MenuItem>
                 <MenuItem value='Daily'>Gói Daily (Theo ngày)</MenuItem>
@@ -329,10 +322,11 @@ const AgentProductCatalog = () => {
                   <th className='p-4 text-xs font-black text-slate-500 uppercase'>Dung lượng</th>
                   <th className='p-4 text-xs font-black text-slate-500 uppercase'>Thời hạn</th>
                   <th className='p-4 text-xs font-black text-slate-500 uppercase'>Giá</th>
+                  <th className='p-4 text-xs font-black text-slate-500 uppercase text-right'>Thao tác</th>
                 </tr>
               </thead>
               <tbody>
-                {filteredProducts.map((p) => (
+                {paginatedProducts.map((p) => (
                   <tr key={p.id} className='border-be last:border-0 hover:bg-slate-50/50'>
                     <td className='p-4'>
                       <Box>
@@ -358,31 +352,117 @@ const AgentProductCatalog = () => {
                     <td className='p-4'><Typography variant='body2' className='font-bold'>{p.data}</Typography></td>
                     <td className='p-4'><Typography variant='body2'>{p.validity}</Typography></td>
                     <td className='p-4'><Typography variant='body2' className='font-black text-primary'>{p.price}</Typography></td>
+                    <td className='p-4 text-right'>
+                      <Button 
+                        size='small' 
+                        variant='tonal' 
+                        color='primary' 
+                        onClick={() => handleOpenDialog(p)}
+                        startIcon={<i className='tabler-info-circle' />}
+                        className='font-black'
+                      >
+                        Chi tiết
+                      </Button>
+                    </td>
                   </tr>
                 ))}
               </tbody>
             </table>
           </Box>
+          <Box className='flex justify-between items-center mts-6'>
+            <Typography variant='body2' className='text-slate-500'>
+              Hiển thị {(page - 1) * pageSize + 1} - {Math.min(page * pageSize, filteredProducts.length)} trên tổng số {filteredProducts.length} kết quả
+            </Typography>
+            <Pagination 
+              count={Math.ceil(filteredProducts.length / pageSize)} 
+              page={page} 
+              onChange={(_, value) => setPage(value)} 
+              color='primary' 
+              shape='rounded'
+            />
+          </Box>
         </CardContent>
       </Card>
 
       <Dialog open={openDialog} onClose={handleCloseDialog} fullWidth maxWidth='sm'>
-        <DialogTitle className='flex items-center justify-between'>
-          <Typography variant='h5' component='span' className='font-black'>Thông tin Tích hợp API</Typography>
-          <IconButton onClick={handleCloseDialog} size='small'>
+        <DialogTitle className='flex items-center justify-between p-6'>
+          <Box>
+            <Typography variant='h5' className='font-black'>Chi tiết Gói cước</Typography>
+            <Typography variant='caption' className='text-slate-400 uppercase font-bold tracking-widest'>Thông tin kỹ thuật & Tích hợp</Typography>
+          </Box>
+          <IconButton onClick={handleCloseDialog} size='small' className='bg-slate-100'>
             <i className='tabler-x' />
           </IconButton>
         </DialogTitle>
-        <DialogContent>
-          <Box className='p-4 bg-primary/5 rounded-xl border border-primary/10 mbe-6 m-bs-2'>
-            <Typography variant='caption' className='font-bold text-primary uppercase block mbe-1'>Sản phẩm (Package SKU)</Typography>
-            <Typography variant='h6' className='font-black'>{selectedProduct?.code}</Typography>
-            <Typography variant='body2' className='text-slate-500'>{selectedProduct?.name} - {selectedProduct?.price}</Typography>
+        <DialogContent className='p-6 pt-0'>
+          <Box className='p-6 bg-primary rounded-2xl text-white mbe-6 relative overflow-hidden'>
+            <Box className='relative z-10 flex justify-between items-start'>
+              <Box>
+                <Typography variant='h4' className='text-white font-black mbe-1'>{selectedProduct?.name}</Typography>
+                <Chip 
+                  label={selectedProduct?.code} 
+                  size='small' 
+                  className='bg-white/20 text-white font-mono border-none' 
+                  onClick={() => {
+                    navigator.clipboard.writeText(selectedProduct?.code);
+                    toast.success('Đã sao chép SKU vào bộ nhớ tạm!');
+                  }}
+                />
+              </Box>
+              <Typography variant='h3' className='text-white font-black'>{selectedProduct?.price}</Typography>
+            </Box>
+            <i className='tabler-world absolute -right-4 -bottom-4 text-8xl text-white/10 rotate-12' />
           </Box>
 
-          <Typography variant='subtitle2' className='font-black mbe-2 uppercase text-[11px] text-slate-500'>Mẫu lệnh gọi API (cURL)</Typography>
-          <Box className='p-4 bg-slate-900 rounded-lg overflow-x-auto mbe-4'>
-            <pre className='text-xs text-success m-0 font-mono'>
+          <Typography variant='subtitle2' className='font-black mbe-4 uppercase text-[11px] text-slate-500 tracking-widest'>Thông số Gói cước</Typography>
+          <Grid2 container spacing={4} className='mbe-8'>
+            <Grid2 size={{ xs: 6, sm: 3 }}>
+              <Box className='p-3 rounded-xl bg-slate-50 border border-slate-100 text-center'>
+                <i className='tabler-database text-primary text-xl mbe-1' />
+                <Typography variant='caption' className='block text-slate-400 uppercase font-bold text-[9px]'>Dung lượng</Typography>
+                <Typography variant='body2' className='font-black'>{selectedProduct?.data}</Typography>
+              </Box>
+            </Grid2>
+            <Grid2 size={{ xs: 6, sm: 3 }}>
+              <Box className='p-3 rounded-xl bg-slate-50 border border-slate-100 text-center'>
+                <i className='tabler-calendar-stats text-primary text-xl mbe-1' />
+                <Typography variant='caption' className='block text-slate-400 uppercase font-bold text-[9px]'>Thời hạn</Typography>
+                <Typography variant='body2' className='font-black'>{selectedProduct?.validity}</Typography>
+              </Box>
+            </Grid2>
+            <Grid2 size={{ xs: 6, sm: 3 }}>
+              <Box className='p-3 rounded-xl bg-slate-50 border border-slate-100 text-center'>
+                <i className='tabler-signal-4g text-primary text-xl mbe-1' />
+                <Typography variant='caption' className='block text-slate-400 uppercase font-bold text-[9px]'>Loại Sim</Typography>
+                <Typography variant='body2' className='font-black'>{selectedProduct?.type}</Typography>
+              </Box>
+            </Grid2>
+            <Grid2 size={{ xs: 6, sm: 3 }}>
+              <Box className='p-3 rounded-xl bg-slate-50 border border-slate-100 text-center'>
+                <i className='tabler-map-pin text-primary text-xl mbe-1' />
+                <Typography variant='caption' className='block text-slate-400 uppercase font-bold text-[9px]'>Quốc gia</Typography>
+                <Typography variant='body2' className='font-black'>{selectedProduct?.country}</Typography>
+              </Box>
+            </Grid2>
+          </Grid2>
+
+          <Box className='flex items-center justify-between mbe-2'>
+            <Typography variant='subtitle2' className='font-black uppercase text-[11px] text-slate-500 tracking-widest'>Mẫu lệnh gọi API (cURL)</Typography>
+            <Button size='small' variant='text' color='primary' className='font-black' onClick={() => {
+              const code = `curl -X POST "https://api.esimmarket.com/v1/orders" \\
+  -H "Authorization: Bearer YOUR_API_KEY" \\
+  -H "Content-Type: application/json" \\
+  -d '{
+    "sku": "${selectedProduct?.code}",
+    "quantity": 1,
+    "agent_reference": "YOUR_ORDER_ID"
+  }'`;
+              navigator.clipboard.writeText(code);
+              toast.success('Đã sao chép mã cURL!');
+            }}>Sao chép mã</Button>
+          </Box>
+          <Box className='p-4 bg-slate-900 rounded-xl overflow-x-auto mbe-6'>
+            <pre className='text-[10px] text-success m-0 font-mono leading-relaxed'>
               {`curl -X POST "https://api.esimmarket.com/v1/orders" \\
   -H "Authorization: Bearer YOUR_API_KEY" \\
   -H "Content-Type: application/json" \\
@@ -394,15 +474,19 @@ const AgentProductCatalog = () => {
             </pre>
           </Box>
 
-
-          <Typography variant='body2' className='text-slate-600 italic'>
-            * Lưu ý: Hệ thống ESIM Market chỉ hỗ trợ mua sỉ qua API. Vui lòng đảm bảo số dư ví hoặc hạn mức công nợ để giao dịch thành công.
-          </Typography>
+          <Box className='p-4 rounded-xl bg-warning/5 border border-warning/10'>
+            <Typography variant='caption' className='text-warning font-bold flex items-center gap-2 uppercase'>
+              <i className='tabler-alert-circle' /> Lưu ý quan trọng
+            </Typography>
+            <Typography variant='body2' className='text-slate-600 mts-1 text-[12px]'>
+              Gói cước này chỉ hỗ trợ mua sỉ thông qua API. Vui lòng kiểm tra số dư ví hoặc hạn mức công nợ trước khi thực hiện giao dịch để tránh lỗi gián đoạn.
+            </Typography>
+          </Box>
         </DialogContent>
-        <DialogActions className='p-6 pt-0'>
-          <Button onClick={handleCloseDialog} color='secondary' variant='tonal'>Đóng</Button>
-          <Button variant='contained' href='/system/api' component={Link} startIcon={<i className='tabler-file-description' />}>
-            Xem Tài liệu API
+        <DialogActions className='p-6 pt-0 flex gap-3'>
+          <Button fullWidth onClick={handleCloseDialog} color='secondary' variant='tonal' className='font-black'>Đóng</Button>
+          <Button fullWidth variant='contained' href='/agent/system/api' component={Link} startIcon={<i className='tabler-file-description' />} className='font-black'>
+            Tài liệu API
           </Button>
         </DialogActions>
       </Dialog>

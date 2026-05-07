@@ -59,11 +59,25 @@ const VerticalMenu = ({ dictionary, scrollMenu, menuData: customMenuData }: Prop
 
   const ScrollWrapper = isBreakpointReached ? 'div' : PerfectScrollbar
 
-  // Filter menu data based on role
-  const filteredMenuData = (customMenuData || menuData(dictionary)).filter((item: any) => {
-    if (!item.roles) return true
-    return item.roles.includes(role)
-  })
+  // Recursive filter function for menu data based on role
+  const filterMenuDataByRole = (data: any[], currentRole: string) => {
+    return data
+      .filter((item: any) => {
+        if (!item.roles) return true
+        return item.roles.includes(currentRole)
+      })
+      .map((item: any) => {
+        if (item.children) {
+          return {
+            ...item,
+            children: filterMenuDataByRole(item.children, currentRole)
+          }
+        }
+        return item
+      })
+  }
+
+  const filteredMenuData = filterMenuDataByRole(customMenuData || menuData(dictionary), role)
 
   return (
     // eslint-disable-next-line lines-around-comment

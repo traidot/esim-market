@@ -72,55 +72,9 @@ const MyDebtList = () => {
           { label: 'Kênh Đại lý' }, 
           { label: 'Công nợ của tôi' }
         ]}
-        actions={
-          <Stack direction='row' spacing={2}>
-            <Button variant='tonal' color='primary' startIcon={<i className='tabler-info-circle' />} onClick={() => setOpenPaymentDialog(true)}>Thông tin chuyển khoản</Button>
-          </Stack>
-        }
         className='mbe-6'
       />
 
-      <Grid2 container spacing={6} className='mbe-6'>
-        <Grid2 size={{ xs: 12, md: 4 }}>
-          <Card className='border-none shadow-sm bg-error/5 border-error/20 h-full'>
-            <CardContent className='p-6 flex flex-col justify-between h-full'>
-              <Box>
-                <Typography variant='caption' className='font-bold text-error uppercase'>Tổng Công Nợ Phải Trả</Typography>
-                <Typography variant='h3' className='font-black text-error'>
-                  {currentDebt.toLocaleString('en-US', { style: 'currency', currency: 'USD' })}
-                </Typography>
-              </Box>
-              <Typography variant='caption' className='text-slate-600 font-bold mt-2'>Thanh toán trước ngày 15/05/2026</Typography>
-            </CardContent>
-          </Card>
-        </Grid2>
-        <Grid2 size={{ xs: 12, md: 8 }}>
-          <Card className='border-none shadow-sm h-full'>
-            <CardContent className='p-6'>
-              <Box className='flex justify-between items-end mbe-2'>
-                <Box>
-                  <Typography variant='caption' className='font-bold text-slate-500 uppercase'>Hạn mức tín dụng (Credit Limit)</Typography>
-                  <Typography variant='h4' className='font-black text-primary'>
-                    {creditLimit.toLocaleString('en-US', { style: 'currency', currency: 'USD' })}
-                  </Typography>
-                </Box>
-                <Typography variant='subtitle2' className='font-bold text-slate-500'>
-                  Đã dùng {usageRatio.toFixed(1)}%
-                </Typography>
-              </Box>
-              <LinearProgress 
-                variant='determinate' 
-                value={usageRatio} 
-                color={usageRatio > 80 ? 'error' : 'primary'} 
-                className='bs-3 rounded-full mbe-2' 
-              />
-              <Typography variant='caption' className='text-slate-400'>
-                Hạn mức khả dụng còn lại: {(creditLimit - currentDebt).toLocaleString('en-US', { style: 'currency', currency: 'USD' })}. Hệ thống sẽ tự động chặn xuất eSIM nếu công nợ vượt hạn mức.
-              </Typography>
-            </CardContent>
-          </Card>
-        </Grid2>
-      </Grid2>
 
       <Card className='border-none shadow-sm'>
         <Box className='p-6 border-be flex justify-between items-center'>
@@ -196,7 +150,7 @@ const MyDebtList = () => {
                   <TableCell className='text-right'>
                     <Stack direction='row' spacing={1} justifyContent='flex-end'>
                       <Button size='small' variant='outlined' color='secondary' startIcon={<i className='tabler-file-download' />}>Tải Invoice</Button>
-                      <Button component={Link} href='/finance/transactions' size='small' variant='tonal' color='primary'>Lịch sử Giao dịch</Button>
+                      <Button component={Link} href='/agent/finance/transactions' size='small' variant='tonal' color='primary'>Lịch sử Giao dịch</Button>
                     </Stack>
                   </TableCell>
                 </TableRow>

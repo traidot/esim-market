@@ -11,7 +11,8 @@ const verticalMenuData = (dictionary: Awaited<ReturnType<typeof getDictionary>>)
       isSection: true,
       roles: ['admin', 'agent'],
       children: [
-        { label: 'Bảng điều khiển', icon: 'tabler-smart-home', href: getUrl('/dashboard') }
+        { label: 'Bảng điều khiển', icon: 'tabler-smart-home', href: getUrl('/3m/dashboard'), roles: ['admin'] },
+        { label: 'Bảng điều khiển', icon: 'tabler-smart-home', href: getUrl('/agent/dashboard'), roles: ['agent'] }
       ]
     },
     {
@@ -19,8 +20,8 @@ const verticalMenuData = (dictionary: Awaited<ReturnType<typeof getDictionary>>)
       icon: 'tabler-packages',
       roles: ['admin'],
       children: [
-        { label: 'Danh mục eSIM', icon: 'tabler-list', href: getUrl('/marketplace/products') },
-        { label: 'Quản lý Tỉ giá', icon: 'tabler-currency-dollar', href: getUrl('/finance/exchange-rates') }
+        { label: 'Danh mục eSIM', icon: 'tabler-list', href: getUrl('/3m/marketplace/products') },
+        { label: 'Quản lý Tỉ giá', icon: 'tabler-currency-dollar', href: getUrl('/3m/finance/exchange-rates') },
       ]
     },
     {
@@ -28,10 +29,10 @@ const verticalMenuData = (dictionary: Awaited<ReturnType<typeof getDictionary>>)
       icon: 'tabler-cloud-download',
       roles: ['admin'],
       children: [
-        { label: 'Nhà cung cấp', icon: 'tabler-world', href: getUrl('/upstream/suppliers'), exactMatch: false },
-        { label: 'Quản lý Kho', icon: 'tabler-barcode', href: getUrl('/marketplace/inventory') },
-        { label: 'Danh sách gói', icon: 'tabler-link', href: getUrl('/upstream/supplier-products') },
-        { label: 'Lịch sử giao dịch', icon: 'tabler-receipt-2', href: getUrl('/upstream/transactions') }
+        { label: 'Nhà cung cấp', icon: 'tabler-world', href: getUrl('/3m/upstream/suppliers'), exactMatch: false },
+        { label: 'Quản lý Kho', icon: 'tabler-barcode', href: getUrl('/3m/marketplace/inventory') },
+        { label: 'Danh sách gói', icon: 'tabler-link', href: getUrl('/3m/upstream/supplier-products') },
+        { label: 'Lịch sử giao dịch', icon: 'tabler-receipt-2', href: getUrl('/3m/upstream/transactions') }
       ]
     },
     {
@@ -39,10 +40,9 @@ const verticalMenuData = (dictionary: Awaited<ReturnType<typeof getDictionary>>)
       icon: 'tabler-users-group',
       roles: ['admin'],
       children: [
-        { label: 'Đại lý & Đối tác', icon: 'tabler-users', href: getUrl('/downstream/agents'), exactMatch: false },
-        { label: 'Nhóm Cấp bậc (Tiers)', icon: 'tabler-hierarchy-2', href: getUrl('/downstream/tiers'), exactMatch: false },
-        { label: 'Giao dịch (API Logs)', icon: 'tabler-api', href: getUrl('/downstream/transactions') },
-        { label: 'Cổng API (Gateway)', icon: 'tabler-key', href: getUrl('/downstream/api-keys') }
+        { label: 'Nhóm đại lý', icon: 'tabler-hierarchy-2', href: getUrl('/3m/downstream/tiers'), exactMatch: false },
+        { label: 'Đại lý & Đối tác', icon: 'tabler-users', href: getUrl('/3m/downstream/agents'), exactMatch: false },
+        { label: 'Lịch sử giao dịch', icon: 'tabler-api', href: getUrl('/3m/downstream/transactions') },
       ]
     },
     {
@@ -50,19 +50,10 @@ const verticalMenuData = (dictionary: Awaited<ReturnType<typeof getDictionary>>)
       icon: 'tabler-wallet',
       roles: ['admin'],
       children: [
-        { label: 'Phải thu (Đại lý)', icon: 'tabler-file-invoice', href: getUrl('/finance/agent-debts') },
-        { label: 'Phải trả (NCC)', icon: 'tabler-file-analytics', href: getUrl('/finance/supplier-debts') },
-        { label: 'Lịch sử Giao dịch', icon: 'tabler-receipt-2', href: getUrl('/finance/transactions') },
-        { label: 'Đối soát (Reconciliation)', icon: 'tabler-file-analytics', href: getUrl('/finance/reconciliation') }
-      ]
-    },
-    {
-      label: 'Quản lý đơn hàng',
-      icon: 'tabler-shopping-cart',
-      roles: ['admin'],
-      children: [
-        { label: 'Tất cả đơn hàng', icon: 'tabler-list-details', href: getUrl('/orders/list') },
-        { label: 'Nhật ký Kích hoạt', icon: 'tabler-qrcode', href: getUrl('/orders/activation-logs') }
+        { label: 'Phải thu (Đại lý)', icon: 'tabler-file-invoice', href: getUrl('/3m/finance/agent-debts') },
+        { label: 'Phải trả (NCC)', icon: 'tabler-file-analytics', href: getUrl('/3m/finance/supplier-debts') },
+        { label: 'Lịch sử Giao dịch', icon: 'tabler-receipt-2', href: getUrl('/3m/finance/transactions') },
+        { label: 'Đối soát (Reconciliation)', icon: 'tabler-file-analytics', href: getUrl('/3m/finance/reconciliation') }
       ]
     },
     {
@@ -70,8 +61,9 @@ const verticalMenuData = (dictionary: Awaited<ReturnType<typeof getDictionary>>)
       icon: 'tabler-settings-cog',
       roles: ['admin'],
       children: [
-        { label: 'Người dùng Nội bộ', icon: 'tabler-user-shield', href: getUrl('/system/users') },
-        { label: 'Cấu hình Hệ thống', icon: 'tabler-settings', href: getUrl('/system/settings') }
+        { label: 'Người dùng Nội bộ', icon: 'tabler-user-shield', href: getUrl('/3m/system/users') },
+        { label: 'Cấu hình Hệ thống', icon: 'tabler-settings', href: getUrl('/3m/system/settings') },
+        { label: 'Cổng API (Gateway)', icon: 'tabler-key', href: getUrl('/3m/downstream/api-keys') }
       ]
     },
     {
@@ -79,11 +71,12 @@ const verticalMenuData = (dictionary: Awaited<ReturnType<typeof getDictionary>>)
       isSection: true,
       roles: ['agent'],
       children: [
-        { label: 'Tìm kiếm eSIM', icon: 'tabler-shopping-bag', href: getUrl('/marketplace/store') },
-        { label: 'Đơn hàng của tôi', icon: 'tabler-list-details', href: getUrl('/orders/my-orders') },
-        { label: 'Lịch sử Giao dịch', icon: 'tabler-receipt-2', href: getUrl('finance/transactions') },
-        { label: 'Quản lý công nợ', icon: 'tabler-file-invoice', href: getUrl('finance/my-debt') },
-        { label: 'Cấu hình API', icon: 'tabler-api', href: getUrl('/system/api') }
+        { label: 'Tìm kiếm eSIM', icon: 'tabler-shopping-bag', href: getUrl('/agent/marketplace/store') },
+        { label: 'Lịch sử mua eSIM', icon: 'tabler-history', href: getUrl('/agent/orders/my-orders') },
+        { label: 'Ví của tôi (Dùng cho đại lý dùng ví)', icon: 'tabler-wallet', href: getUrl('/agent/finance/wallet') },
+        { label: 'Quản lý công nợ (Dùng cho đại lý dùng nợ)', icon: 'tabler-file-invoice', href: getUrl('/agent/finance/my-debt') },
+        { label: 'Lịch sử Giao dịch', icon: 'tabler-receipt-2', href: getUrl('/agent/finance/transactions') },
+        { label: 'Cấu hình API', icon: 'tabler-api', href: getUrl('/agent/system/api') }
       ]
     }
   ]
