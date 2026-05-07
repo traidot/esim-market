@@ -31,6 +31,8 @@ import PageHeader from '@/components/layout/shared/PageHeader'
 const UpstreamTransactions = () => {
   const [isLogOpen, setIsLogOpen] = useState(false)
   const [selectedLog, setSelectedLog] = useState<any>(null)
+  const [isEsimOpen, setIsEsimOpen] = useState(false)
+  const [selectedEsim, setSelectedEsim] = useState<any>(null)
 
   // Filter States
   const [supplier, setSupplier] = useState('all')
@@ -41,11 +43,39 @@ const UpstreamTransactions = () => {
   const [validity, setValidity] = useState('all')
 
   const transactions = [
-    { id: 'TX-9821', supplier: 'Airalo', action: 'Mua eSIM', package: 'Japan 10GB', amount: '$8.50', status: 'Success', date: '28/04/2026 01:15' },
-    { id: 'TX-9820', supplier: 'Nomad', action: 'Gia hạn gói', package: 'USA 20GB', amount: '$22.00', status: 'Success', date: '28/04/2026 00:45' },
-    { id: 'TX-9819', supplier: 'Airalo', action: 'Mua eSIM', package: 'USA 5GB', amount: '$12.00', status: 'Failed', date: '27/04/2026 23:30' },
-    { id: 'TX-9818', supplier: 'KeepGo', action: 'Check Status', package: 'Global 1GB', amount: '$0.00', status: 'Success', date: '27/04/2026 22:10' },
-    { id: 'TX-9817', supplier: 'Nomad', action: 'Mua eSIM', package: 'UK Pro', amount: '$45.00', status: 'Success', date: '27/04/2026 21:55' },
+    { 
+      id: 'TX-9821', 
+      supplier: 'Airalo', 
+      action: 'Mua eSIM', 
+      package: { name: 'Japan Premium', data: '10GB', validity: '30 Ngày' }, 
+      amount: '$8.50', 
+      status: 'Success', 
+      date: '28/04/2026 01:15',
+      esimInfo: {
+        iccid: '8984400000000000001',
+        qrCode: 'LPA:1$smdp.plus$AIRALO-JAPAN-001',
+        server: 'smdp.plus',
+        matchingKey: 'AIRALO-JAPAN-001'
+      }
+    },
+    { id: 'TX-9820', supplier: 'Nomad', action: 'Gia hạn gói', package: { name: 'USA Fast Connection', data: '20GB', validity: '30 Ngày' }, amount: '$22.00', status: 'Success', date: '28/04/2026 00:45' },
+    { id: 'TX-9819', supplier: 'Airalo', action: 'Mua eSIM', package: { name: 'USA Traveler', data: '5GB', validity: '15 Ngày' }, amount: '$12.00', status: 'Failed', date: '27/04/2026 23:30' },
+    { id: 'TX-9818', supplier: 'KeepGo', action: 'Check Status', package: { name: 'Global Roaming', data: '1GB', validity: '1 Năm' }, amount: '$0.00', status: 'Success', date: '27/04/2026 22:10' },
+    { 
+      id: 'TX-9817', 
+      supplier: 'Nomad', 
+      action: 'Mua eSIM', 
+      package: { name: 'UK Business Pro', data: '50GB', validity: '90 Ngày' }, 
+      amount: '$45.00', 
+      status: 'Success', 
+      date: '27/04/2026 21:55',
+      esimInfo: {
+        iccid: '8984400000000000002',
+        qrCode: 'LPA:1$rsp.truphone.com$NOMAD-UK-PRO',
+        server: 'rsp.truphone.com',
+        matchingKey: 'NOMAD-UK-PRO'
+      }
+    },
   ]
 
   return (
@@ -55,7 +85,7 @@ const UpstreamTransactions = () => {
         description="Nhật ký chi tiết các lệnh gọi API, mua hàng và biến động số dư với Nhà cung cấp"
         breadcrumbs={[{ label: 'Trang chủ', href: '/' }, { label: 'Nguồn cung' }, { label: 'Lịch sử giao dịch' }]}
         actions={
-          <Button variant='contained' color='success' startIcon={<i className='tabler-file-spreadsheet' />}>
+          <Button variant='contained' color='success' size='small' startIcon={<i className='tabler-file-download' />}>
             Xuất Excel
           </Button>
         }
@@ -170,26 +200,45 @@ const UpstreamTransactions = () => {
                 <TableCell className='font-black uppercase text-[11px] text-right'>Số tiền</TableCell>
                 <TableCell className='font-black uppercase text-[11px] text-center'>Trạng thái</TableCell>
                 <TableCell className='font-black uppercase text-[11px] text-right'>Thời gian</TableCell>
-                <TableCell className='font-black uppercase text-[11px] text-center'>Log</TableCell>
+                <TableCell className='font-black uppercase text-[11px] text-center'>Log / eSIM</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
-              {transactions.map((tx) => (
+              {transactions.map((tx) => {
+                const supplierColor = tx.supplier === 'Airalo' ? '#7367F0' : tx.supplier === 'Nomad' ? '#00BAD1' : '#EA5455';
+
+                return (
                 <TableRow key={tx.id} hover>
                   <TableCell className='font-mono text-xs font-bold text-slate-600'>{tx.id}</TableCell>
                   <TableCell>
                     <Box className='flex items-center gap-2'>
-                      <Avatar variant='rounded' className='w-7 h-7 bg-primary/10 text-primary text-[10px] font-black'>
+                      <Avatar 
+                        variant='rounded' 
+                        sx={{ 
+                          backgroundColor: `${supplierColor}15`, 
+                          color: supplierColor,
+                          width: 28, 
+                          height: 28,
+                          fontSize: '10px',
+                          fontWeight: '900'
+                        }}
+                      >
                         {tx.supplier[0]}
                       </Avatar>
-                      <Typography variant='body2' className='font-bold'>{tx.supplier}</Typography>
+                      <Typography variant='body2' className='font-bold' sx={{ color: supplierColor }}>{tx.supplier}</Typography>
                     </Box>
                   </TableCell>
                   <TableCell>
                     <Typography variant='body2' className='font-black'>{tx.action}</Typography>
                   </TableCell>
                   <TableCell>
-                    <Typography variant='body2' className='text-slate-500'>{tx.package}</Typography>
+                    <Box>
+                      <Typography variant='body2' className='font-black text-slate-700'>{tx.package.name}</Typography>
+                      <Box className='flex items-center gap-1 mbs-0.5'>
+                        <Chip label={tx.package.data} size='small' variant='tonal' color='info' sx={{ height: 16, fontSize: '9px', fontWeight: 'bold' }} />
+                        <Chip label={tx.package.validity} size='small' variant='tonal' color='secondary' sx={{ height: 16, fontSize: '9px', fontWeight: 'bold' }} />
+                      </Box>
+                    </Box>
                   </TableCell>
                   <TableCell className='text-right font-black text-primary'>
                     {tx.amount}
@@ -207,17 +256,25 @@ const UpstreamTransactions = () => {
                     <Typography variant='caption' className='font-bold text-slate-500'>{tx.date}</Typography>
                   </TableCell>
                   <TableCell className='text-center'>
-                    <IconButton size='small' onClick={() => { setSelectedLog(tx); setIsLogOpen(true); }}>
-                      <i className='tabler-code text-[18px]' />
-                    </IconButton>
+                    <Stack direction='row' spacing={1} justifyContent='center'>
+                      <IconButton size='small' onClick={() => { setSelectedLog(tx); setIsLogOpen(true); }}>
+                        <i className='tabler-code text-[18px]' />
+                      </IconButton>
+                      {tx.esimInfo && (
+                        <IconButton size='small' color='primary' onClick={() => { setSelectedEsim(tx); setIsEsimOpen(true); }}>
+                          <i className='tabler-qrcode text-[18px]' />
+                        </IconButton>
+                      )}
+                    </Stack>
                   </TableCell>
                 </TableRow>
-              ))}
+              )})}
             </TableBody>
           </Table>
         </TableContainer>
       </Card>
 
+      {/* Log Dialog */}
       <Dialog 
         open={isLogOpen} 
         onClose={() => setIsLogOpen(false)}
@@ -261,7 +318,7 @@ Content-Type: application/json
 Authorization: Bearer ***
 
 {
-  "package_id": "${selectedLog.package}",
+  "package_id": "${selectedLog.package.name}",
   "quantity": 1,
   "reference_id": "${selectedLog.id}"
 }`}
@@ -275,7 +332,7 @@ Authorization: Bearer ***
   "data": {
     "order_id": "ORD-${Math.floor(Math.random() * 10000)}",
     "status": "completed",
-    "iccid": "8984400000000000000",
+    "iccid": "${selectedLog.esimInfo?.iccid || '8984400000000000000'}",
     "amount": "${selectedLog.amount}"
   },
   "meta": {
@@ -294,6 +351,87 @@ Authorization: Bearer ***
         </DialogContent>
         <DialogActions className='p-6 pt-0'>
           <Button variant='contained' color='primary' onClick={() => setIsLogOpen(false)}>Đóng</Button>
+        </DialogActions>
+      </Dialog>
+
+      {/* eSIM Details Dialog */}
+      <Dialog 
+        open={isEsimOpen} 
+        onClose={() => setIsEsimOpen(false)}
+        maxWidth='sm'
+        fullWidth
+      >
+        <DialogTitle className='flex items-center justify-between border-b p-5'>
+          <Box>
+            <Typography variant='h5' className='font-black'>Chi tiết eSIM Upstream</Typography>
+            <Typography variant='caption' color='textSecondary'>Cung cấp bởi {selectedEsim?.supplier}</Typography>
+          </Box>
+          <IconButton onClick={() => setIsEsimOpen(false)} size='small'>
+            <i className='tabler-x' />
+          </IconButton>
+        </DialogTitle>
+        <DialogContent className='p-6'>
+          {selectedEsim?.esimInfo && (
+            <Box className='flex flex-col items-center gap-6'>
+              {/* QR Code Placeholder */}
+              <Box 
+                className='w-48 h-48 bg-slate-50 border-2 border-dashed border-slate-200 rounded-2xl flex items-center justify-center relative overflow-hidden group hover:border-primary transition-colors cursor-pointer'
+                onClick={() => {}}
+              >
+                <i className='tabler-qrcode text-slate-300 text-6xl group-hover:text-primary transition-colors' />
+                <Box className='absolute bottom-2 left-0 right-0 text-center'>
+                  <Typography variant='caption' className='text-[8px] font-mono text-slate-400'>{selectedEsim.esimInfo.qrCode}</Typography>
+                </Box>
+              </Box>
+
+              <Box className='w-full space-y-4'>
+                <Box className='p-4 bg-slate-50 rounded-xl border border-slate-100'>
+                  <Typography variant='caption' className='font-black uppercase text-slate-400 block mbe-1'>Mã ICCID</Typography>
+                  <Box className='flex items-center justify-between'>
+                    <Typography variant='body1' className='font-mono font-black text-primary'>{selectedEsim.esimInfo.iccid}</Typography>
+                    <IconButton size='small'><i className='tabler-copy text-sm' /></IconButton>
+                  </Box>
+                </Box>
+
+                <Grid2 container spacing={4}>
+                  <Grid2 size={{ xs: 6 }}>
+                    <Box className='p-3 bg-slate-50 rounded-lg border border-slate-100'>
+                      <Typography variant='caption' className='font-black uppercase text-slate-400 block mbe-1'>SM-DP+ Address</Typography>
+                      <Typography variant='body2' className='font-mono font-bold truncate'>{selectedEsim.esimInfo.server}</Typography>
+                    </Box>
+                  </Grid2>
+                  <Grid2 size={{ xs: 6 }}>
+                    <Box className='p-3 bg-slate-50 rounded-lg border border-slate-100'>
+                      <Typography variant='caption' className='font-black uppercase text-slate-400 block mbe-1'>Matching Key</Typography>
+                      <Typography variant='body2' className='font-mono font-bold truncate'>{selectedEsim.esimInfo.matchingKey}</Typography>
+                    </Box>
+                  </Grid2>
+                </Grid2>
+
+                <Box>
+                  <Typography variant='subtitle2' className='font-black mbe-2'>Hướng dẫn kích hoạt</Typography>
+                  <Stack spacing={2}>
+                    <Box className='flex gap-3'>
+                      <Avatar sx={{ width: 20, height: 20, fontSize: 10, bgcolor: 'primary.main' }}>1</Avatar>
+                      <Typography variant='body2'>Vào <b>Cài đặt {'>'} Di động {'>'} Thêm eSIM</b></Typography>
+                    </Box>
+                    <Box className='flex gap-3'>
+                      <Avatar sx={{ width: 20, height: 20, fontSize: 10, bgcolor: 'primary.main' }}>2</Avatar>
+                      <Typography variant='body2'>Quét mã QR ở trên hoặc nhập thủ công SM-DP+ và Matching Key</Typography>
+                    </Box>
+                    <Box className='flex gap-3'>
+                      <Avatar sx={{ width: 20, height: 20, fontSize: 10, bgcolor: 'primary.main' }}>3</Avatar>
+                      <Typography variant='body2'>Đợi hệ thống kích hoạt (khoảng 30-60 giây)</Typography>
+                    </Box>
+                  </Stack>
+                </Box>
+              </Box>
+            </Box>
+          )}
+        </DialogContent>
+        <DialogActions className='p-6 pt-0'>
+          <Button variant='tonal' color='secondary' onClick={() => setIsEsimOpen(false)}>Đóng</Button>
+          <Button variant='contained' color='success' startIcon={<i className='tabler-file-spreadsheet' />}>Xuất Excel</Button>
         </DialogActions>
       </Dialog>
     </>

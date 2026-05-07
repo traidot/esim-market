@@ -460,7 +460,7 @@ const MappingTable = () => {
                           <IconButton size='small' onClick={() => { setSelectedPkg(pkg); setIsDetailOpen(true); }}><i className='tabler-eye text-[18px]' /></IconButton>
                         </TableCell>
                       </TableRow>
-                    );
+                    )
                   })
                   ) : (
                     <TableRow>

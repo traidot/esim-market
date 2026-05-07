@@ -14,7 +14,15 @@ const verticalMenuData = (dictionary: Awaited<ReturnType<typeof getDictionary>>)
         { label: 'Bảng điều khiển', icon: 'tabler-smart-home', href: getUrl('/dashboard') }
       ]
     },
-    { label: 'Quản lý Danh mục', icon: 'tabler-packages', href: getUrl('/marketplace/products'), roles: ['admin'] },
+    {
+      label: 'Quản lý Danh mục',
+      icon: 'tabler-packages',
+      roles: ['admin'],
+      children: [
+        { label: 'Danh mục eSIM', icon: 'tabler-list', href: getUrl('/marketplace/products') },
+        { label: 'Quản lý Tỉ giá', icon: 'tabler-currency-dollar', href: getUrl('/finance/exchange-rates') }
+      ]
+    },
     {
       label: 'Nguồn cung (Upstream)',
       icon: 'tabler-cloud-download',

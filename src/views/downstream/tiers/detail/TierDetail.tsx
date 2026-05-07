@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import { useRouter } from 'next/navigation'
 import Grid2 from '@mui/material/Grid2'
 import Card from '@mui/material/Card'
 import CardContent from '@mui/material/CardContent'
@@ -10,29 +11,44 @@ import Button from '@mui/material/Button'
 import Stack from '@mui/material/Stack'
 import TextField from '@mui/material/TextField'
 import InputAdornment from '@mui/material/InputAdornment'
-import Divider from '@mui/material/Divider'
 import Avatar from '@mui/material/Avatar'
-import Chip from '@mui/material/Chip'
+import Dialog from '@mui/material/Dialog'
+import DialogTitle from '@mui/material/DialogTitle'
+import DialogContent from '@mui/material/DialogContent'
+import List from '@mui/material/List'
+import ListItem from '@mui/material/ListItem'
+import ListItemButton from '@mui/material/ListItemButton'
+import ListItemText from '@mui/material/ListItemText'
+import ListItemAvatar from '@mui/material/ListItemAvatar'
 
 import PageHeader from '@/components/layout/shared/PageHeader'
 
 const TierDetail = ({ id }: { id: string }) => {
+  const router = useRouter()
   const tierName = id.toUpperCase()
+  const [isDialogOpen, setIsDialogOpen] = useState(false)
   
   let color = 'primary'
   if (tierName === 'GOLD') color = 'warning'
   if (tierName === 'SILVER') color = 'secondary'
 
+  const mockAgents = [
+    { id: 'a001', name: 'Đại lý Toàn Cầu', email: 'global@example.com' },
+    { id: 'a002', name: 'E-sim Việt Nam', email: 'vn@example.com' },
+    { id: 'a003', name: 'Phụ kiện Số', email: 'pk@example.com' },
+    { id: 'a004', name: 'Travel Sim Store', email: 'store@example.com' }
+  ]
+
   return (
     <>
       <PageHeader
         title={`Cấu hình Cấp bậc: ${tierName}`}
-        description="Quản lý chi tiết quyền lợi, chiết khấu và điều kiện áp dụng cho cấp bậc này."
+        description="Quản lý chi tiết tỉ lệ nâng giá và điều kiện tài chính cho cấp bậc này."
         breadcrumbs={[{ label: 'Trang chủ', href: '/' }, { label: 'Phân phối' }, { label: 'Cấp bậc', href: '/downstream/tiers' }, { label: tierName }]}
         actions={
           <Stack direction='row' spacing={2}>
-            <Button variant='tonal' color='secondary'>Hủy thay đổi</Button>
-            <Button variant='contained' startIcon={<i className='tabler-device-floppy' />}>Lưu Cấu hình</Button>
+            <Button variant='tonal' color='secondary'>Hủy</Button>
+            <Button variant='contained' startIcon={<i className='tabler-device-floppy' />}>Lưu thay đổi</Button>
           </Stack>
         }
         className='mbe-6'
@@ -40,129 +56,98 @@ const TierDetail = ({ id }: { id: string }) => {
 
       <Grid2 container spacing={6}>
         <Grid2 size={{ xs: 12, md: 8 }}>
-          <Card className='border-none shadow-sm mbe-6'>
-            <CardContent className='p-6'>
-              <Typography variant='h5' className='font-black mbe-4'>1. Thông tin chung</Typography>
-              <Grid2 container spacing={4}>
-                <Grid2 size={{ xs: 12, sm: 6 }}>
-                  <TextField 
-                    fullWidth 
-                    label='Tên cấp bậc' 
-                    defaultValue={tierName} 
-                    InputProps={{ readOnly: true }}
-                    variant='filled'
-                  />
+          <Stack spacing={6}>
+            {/* Essential Configuration */}
+            <Card className='border-none shadow-sm'>
+              <CardContent className='p-6'>
+                <Typography variant='h6' className='font-black mbe-6'>Cấu hình Nâng giá & Hạn mức</Typography>
+                <Grid2 container spacing={6}>
+                  <Grid2 size={{ xs: 12, sm: 6 }}>
+                    <Typography variant='subtitle2' className='font-black mbe-2 uppercase text-[11px] text-slate-500'>Tỉ lệ nâng giá (%)</Typography>
+                    <TextField 
+                      fullWidth 
+                      defaultValue={tierName === 'PLATINUM' ? 5 : tierName === 'GOLD' ? 10 : 15} 
+                      InputProps={{
+                        endAdornment: <InputAdornment position='end'>%</InputAdornment>,
+                        className: 'font-black text-lg'
+                      }}
+                      helperText="Phần trăm cộng thêm vào giá gốc (Upstream Cost)."
+                    />
+                  </Grid2>
+                  <Grid2 size={{ xs: 12, sm: 6 }}>
+                    <Typography variant='subtitle2' className='font-black mbe-2 uppercase text-[11px] text-slate-500'>Hạn mức nợ (Credit Limit)</Typography>
+                    <TextField 
+                      fullWidth 
+                      defaultValue={tierName === 'PLATINUM' ? 50000 : tierName === 'GOLD' ? 10000 : 0} 
+                      InputProps={{
+                        startAdornment: <InputAdornment position='start'>$</InputAdornment>,
+                        className: 'font-black text-lg'
+                      }}
+                      helperText="Số nợ tối đa đại lý được phép giữ."
+                    />
+                  </Grid2>
+                  <Grid2 size={{ xs: 12, sm: 6 }}>
+                    <Typography variant='subtitle2' className='font-black mbe-2 uppercase text-[11px] text-slate-500'>Ký quỹ tối thiểu</Typography>
+                    <TextField 
+                      fullWidth 
+                      defaultValue={tierName === 'PLATINUM' ? 5000 : tierName === 'GOLD' ? 1000 : 100} 
+                      InputProps={{
+                        startAdornment: <InputAdornment position='start'>$</InputAdornment>
+                      }}
+                    />
+                  </Grid2>
+                  <Grid2 size={{ xs: 12, sm: 6 }}>
+                    <Typography variant='subtitle2' className='font-black mbe-2 uppercase text-[11px] text-slate-500'>Doanh số yêu cầu/Tháng</Typography>
+                    <TextField 
+                      fullWidth 
+                      defaultValue={tierName === 'PLATINUM' ? 10000 : tierName === 'GOLD' ? 3000 : 0} 
+                      InputProps={{
+                        startAdornment: <InputAdornment position='start'>$</InputAdornment>
+                      }}
+                    />
+                  </Grid2>
                 </Grid2>
-                <Grid2 size={{ xs: 12, sm: 6 }}>
-                  <TextField 
-                    fullWidth 
-                    label='Mã Cấp bậc (Code)' 
-                    defaultValue={tierName} 
-                    InputProps={{ readOnly: true }}
-                    variant='filled'
-                  />
-                </Grid2>
-                <Grid2 size={{ xs: 12 }}>
-                  <TextField 
-                    fullWidth 
-                    multiline 
-                    rows={3} 
-                    label='Mô tả (Dành cho Đại lý xem)' 
-                    defaultValue={`Cấp bậc ${tierName} với nhiều quyền lợi hấp dẫn.`} 
-                  />
-                </Grid2>
-              </Grid2>
-            </CardContent>
-          </Card>
+              </CardContent>
+            </Card>
 
-          <Card className='border-none shadow-sm'>
-            <CardContent className='p-6'>
-              <Typography variant='h5' className='font-black mbe-4'>2. Cấu hình Chiết khấu & Tài chính</Typography>
-              <Grid2 container spacing={4}>
-                <Grid2 size={{ xs: 12, sm: 6 }}>
-                  <TextField 
-                    fullWidth 
-                    label='Mức chiết khấu (Discount off Markup)' 
-                    defaultValue={tierName === 'PLATINUM' ? 70 : tierName === 'GOLD' ? 40 : 0} 
-                    InputProps={{
-                      endAdornment: <InputAdornment position='end'>%</InputAdornment>
-                    }}
-                    helperText="Phần trăm giảm giá dựa trên lợi nhuận gộp (Markup) của hệ thống."
-                  />
-                </Grid2>
-                <Grid2 size={{ xs: 12, sm: 6 }}>
-                  <TextField 
-                    fullWidth 
-                    label='Hạn mức nợ tối đa (Credit Limit)' 
-                    defaultValue={tierName === 'PLATINUM' ? 50000 : tierName === 'GOLD' ? 10000 : 0} 
-                    InputProps={{
-                      startAdornment: <InputAdornment position='start'>$</InputAdornment>
-                    }}
-                    helperText="Số tiền nợ tối đa đại lý được phép giữ trước khi bị khóa mua hàng."
-                  />
-                </Grid2>
-                <Grid2 size={{ xs: 12, sm: 6 }}>
-                  <TextField 
-                    fullWidth 
-                    label='Yêu cầu Ký quỹ tối thiểu' 
-                    defaultValue={tierName === 'PLATINUM' ? 5000 : tierName === 'GOLD' ? 1000 : 100} 
-                    InputProps={{
-                      startAdornment: <InputAdornment position='start'>$</InputAdornment>
-                    }}
-                  />
-                </Grid2>
-                <Grid2 size={{ xs: 12, sm: 6 }}>
-                  <TextField 
-                    fullWidth 
-                    label='Doanh số yêu cầu (Hàng tháng)' 
-                    defaultValue={tierName === 'PLATINUM' ? 10000 : tierName === 'GOLD' ? 3000 : 0} 
-                    InputProps={{
-                      startAdornment: <InputAdornment position='start'>$</InputAdornment>
-                    }}
-                  />
-                </Grid2>
-              </Grid2>
-            </CardContent>
-          </Card>
+            <Card className='border-none shadow-sm'>
+              <CardContent className='p-6'>
+                <Typography variant='h6' className='font-black mbe-4'>Mô tả & Ghi chú</Typography>
+                <TextField 
+                  fullWidth 
+                  multiline 
+                  rows={2} 
+                  placeholder='Mô tả ngắn gọn về đặc quyền của cấp bậc này...'
+                  defaultValue={`Cấp bậc ${tierName} dành cho đối tác chiến lược.`} 
+                />
+              </CardContent>
+            </Card>
+          </Stack>
         </Grid2>
 
         <Grid2 size={{ xs: 12, md: 4 }}>
-          <Card className='border-none shadow-sm mbe-6 bg-slate-50'>
-            <CardContent className='flex flex-col items-center text-center p-8'>
-              <Avatar 
-                variant='rounded' 
-                className={`bg-${color}/10 text-${color} w-[64px] h-[64px] mbe-4`}
-              >
-                <i className='tabler-trophy text-3xl' />
-              </Avatar>
-              <Typography variant='h4' className='font-black mbe-2'>{tierName}</Typography>
-              <Typography variant='body2' className='text-slate-500 mbe-6'>Cấp bậc hiện đang áp dụng cho 45 Đại lý trong hệ thống.</Typography>
-              <Button fullWidth variant='outlined' startIcon={<i className='tabler-users' />}>Xem danh sách Đại lý</Button>
-            </CardContent>
-          </Card>
-          
-          <Card className='border-none shadow-sm'>
-            <CardContent>
-              <Typography variant='subtitle2' className='font-black uppercase mbe-4 text-slate-500'>Tính năng nâng cao</Typography>
-              <Stack spacing={4}>
-                <Box className='flex justify-between items-center'>
-                  <Box>
-                    <Typography variant='body1' className='font-bold'>API Access</Typography>
-                    <Typography variant='caption' className='text-slate-500'>Cấp quyền sử dụng API B2B</Typography>
-                  </Box>
-                  <Chip label={tierName === 'SILVER' ? 'Khóa' : 'Cho phép'} color={tierName === 'SILVER' ? 'secondary' : 'success'} size='small' variant='tonal' />
-                </Box>
-                <Divider />
-                <Box className='flex justify-between items-center'>
-                  <Box>
-                    <Typography variant='body1' className='font-bold'>White-label Portal</Typography>
-                    <Typography variant='caption' className='text-slate-500'>Trang bán hàng thương hiệu riêng</Typography>
-                  </Box>
-                  <Chip label={tierName === 'PLATINUM' ? 'Cho phép' : 'Khóa'} color={tierName === 'PLATINUM' ? 'success' : 'secondary'} size='small' variant='tonal' />
-                </Box>
-              </Stack>
-            </CardContent>
-          </Card>
+          <Stack spacing={6}>
+            <Card className='border-none shadow-sm bg-slate-50 border-is-[5px]' sx={{ borderLeftColor: `${color}.main` }}>
+              <CardContent className='flex flex-col items-center text-center p-8'>
+                <Avatar 
+                  variant='rounded' 
+                  sx={{ width: 64, height: 64, bgcolor: `${color}.main`, color: 'white', mbe: 4 }}
+                >
+                  <i className='tabler-trophy text-3xl' />
+                </Avatar>
+                <Typography variant='h4' className='font-black mbe-2'>{tierName}</Typography>
+                <Typography variant='body2' className='text-slate-500 mbe-6 font-bold'>45 Đại lý đang áp dụng</Typography>
+                <Button 
+                  fullWidth 
+                  variant='outlined' 
+                  startIcon={<i className='tabler-users' />}
+                  onClick={() => setIsDialogOpen(true)}
+                >
+                  Xem danh sách
+                </Button>
+              </CardContent>
+            </Card>
+          </Stack>
         </Grid2>
       </Grid2>
     </>
