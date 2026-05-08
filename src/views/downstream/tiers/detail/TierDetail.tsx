@@ -45,7 +45,7 @@ const TierDetail = ({ id }: { id: string }) => {
     <>
       <PageHeader
         title={`Cấu hình Cấp bậc: ${tierName}`}
-        description="Quản lý chi tiết tỉ lệ nâng giá và điều kiện tài chính cho cấp bậc này."
+        description="Quản lý chi tiết tỉ lệ nâng giá cho cấp bậc này."
         breadcrumbs={[{ label: 'Trang chủ', href: '/' }, { label: 'Phân phối' }, { label: 'Cấp bậc', href: '/3m/downstream/tiers' }, { label: tierName }]}
         actions={
           <Stack direction='row' spacing={2}>
@@ -62,9 +62,9 @@ const TierDetail = ({ id }: { id: string }) => {
             {/* Essential Configuration */}
             <Card className='border-none shadow-sm'>
               <CardContent className='p-6'>
-                <Typography variant='h6' className='font-black mbe-6'>Cấu hình Nâng giá & Hạn mức</Typography>
+                <Typography variant='h6' className='font-black mbe-6'>Cấu hình Nâng giá</Typography>
                 <Grid2 container spacing={6}>
-                  <Grid2 size={{ xs: 12, sm: 6 }}>
+                  <Grid2 size={{ xs: 12 }}>
                     <Typography variant='subtitle2' className='font-black mbe-2 uppercase text-[11px] text-slate-500'>Tỉ lệ nâng giá (%)</Typography>
                     <TextField 
                       fullWidth 
@@ -74,38 +74,6 @@ const TierDetail = ({ id }: { id: string }) => {
                         className: 'font-black text-lg'
                       }}
                       helperText="Phần trăm cộng thêm vào giá gốc (Upstream Cost)."
-                    />
-                  </Grid2>
-                  <Grid2 size={{ xs: 12, sm: 6 }}>
-                    <Typography variant='subtitle2' className='font-black mbe-2 uppercase text-[11px] text-slate-500'>Hạn mức nợ (Credit Limit)</Typography>
-                    <TextField 
-                      fullWidth 
-                      defaultValue={tierName === 'PLATINUM' ? 50000 : tierName === 'GOLD' ? 10000 : 0} 
-                      InputProps={{
-                        startAdornment: <InputAdornment position='start'>$</InputAdornment>,
-                        className: 'font-black text-lg'
-                      }}
-                      helperText="Số nợ tối đa đại lý được phép giữ."
-                    />
-                  </Grid2>
-                  <Grid2 size={{ xs: 12, sm: 6 }}>
-                    <Typography variant='subtitle2' className='font-black mbe-2 uppercase text-[11px] text-slate-500'>Ký quỹ tối thiểu</Typography>
-                    <TextField 
-                      fullWidth 
-                      defaultValue={tierName === 'PLATINUM' ? 5000 : tierName === 'GOLD' ? 1000 : 100} 
-                      InputProps={{
-                        startAdornment: <InputAdornment position='start'>$</InputAdornment>
-                      }}
-                    />
-                  </Grid2>
-                  <Grid2 size={{ xs: 12, sm: 6 }}>
-                    <Typography variant='subtitle2' className='font-black mbe-2 uppercase text-[11px] text-slate-500'>Doanh số yêu cầu/Tháng</Typography>
-                    <TextField 
-                      fullWidth 
-                      defaultValue={tierName === 'PLATINUM' ? 10000 : tierName === 'GOLD' ? 3000 : 0} 
-                      InputProps={{
-                        startAdornment: <InputAdornment position='start'>$</InputAdornment>
-                      }}
                     />
                   </Grid2>
                 </Grid2>

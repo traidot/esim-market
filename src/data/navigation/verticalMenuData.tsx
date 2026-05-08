@@ -16,12 +16,12 @@ const verticalMenuData = (dictionary: Awaited<ReturnType<typeof getDictionary>>)
       ]
     },
     {
-      label: 'Quản lý Danh mục',
+      label: 'Quản lý danh mục eSIM',
       icon: 'tabler-packages',
       roles: ['admin'],
       children: [
         { label: 'Danh mục eSIM', icon: 'tabler-e-sim', href: getUrl('/3m/marketplace/products') },
-        { label: 'Quản lý Tỉ giá', icon: 'tabler-currency-dollar', href: getUrl('/3m/finance/exchange-rates') },
+        { label: 'Quản lý Tỉ giá', icon: 'tabler-currency-dollar', href: getUrl('/3m/finance/exchange-rates') }
       ]
     },
     {
@@ -30,7 +30,6 @@ const verticalMenuData = (dictionary: Awaited<ReturnType<typeof getDictionary>>)
       roles: ['admin'],
       children: [
         { label: 'Nhà cung cấp', icon: 'tabler-world', href: getUrl('/3m/upstream/suppliers'), exactMatch: false },
-        { label: 'Quản lý Kho', icon: 'tabler-barcode', href: getUrl('/3m/marketplace/inventory') },
         { label: 'Lịch sử giao dịch', icon: 'tabler-receipt-2', href: getUrl('/3m/upstream/transactions') }
       ]
     },
@@ -41,7 +40,7 @@ const verticalMenuData = (dictionary: Awaited<ReturnType<typeof getDictionary>>)
       children: [
         { label: 'Nhóm đại lý', icon: 'tabler-hierarchy-2', href: getUrl('/3m/downstream/tiers'), exactMatch: false },
         { label: 'Đại lý & Đối tác', icon: 'tabler-users', href: getUrl('/3m/downstream/agents'), exactMatch: false },
-        { label: 'Lịch sử giao dịch', icon: 'tabler-api', href: getUrl('/3m/downstream/transactions') },
+        { label: 'Lịch sử giao dịch', icon: 'tabler-api', href: getUrl('/3m/downstream/transactions') }
       ]
     },
     {
@@ -52,7 +51,11 @@ const verticalMenuData = (dictionary: Awaited<ReturnType<typeof getDictionary>>)
         { label: 'Phải thu (Đại lý)', icon: 'tabler-file-invoice', href: getUrl('/3m/finance/agent-debts') },
         { label: 'Phải trả (NCC)', icon: 'tabler-file-analytics', href: getUrl('/3m/finance/supplier-debts') },
         { label: 'Lịch sử Giao dịch', icon: 'tabler-receipt-2', href: getUrl('/3m/finance/transactions') },
-        { label: 'Đối soát (Reconciliation)', icon: 'tabler-file-analytics', href: getUrl('/3m/finance/reconciliation') }
+        {
+          label: 'Đối soát (Reconciliation)',
+          icon: 'tabler-file-analytics',
+          href: getUrl('/3m/finance/reconciliation')
+        }
       ]
     },
     {
@@ -62,6 +65,7 @@ const verticalMenuData = (dictionary: Awaited<ReturnType<typeof getDictionary>>)
       children: [
         { label: 'Người dùng Nội bộ', icon: 'tabler-user-shield', href: getUrl('/3m/system/users') },
         { label: 'Cấu hình Hệ thống', icon: 'tabler-settings', href: getUrl('/3m/system/settings') },
+        { label: 'Quản lý log', icon: 'tabler-history-toggle', href: getUrl('/3m/system/audit-logs') },
         { label: 'Cổng API (Gateway)', icon: 'tabler-key', href: getUrl('/3m/downstream/api-keys') }
       ]
     },

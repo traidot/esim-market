@@ -32,7 +32,12 @@ import PageHeader from '@/components/layout/shared/PageHeader'
 const MyDebtList = () => {
   const [openPaymentDialog, setOpenPaymentDialog] = useState(false)
   const currentDebt = 5240.00
-  const [paymentAmount, setPaymentAmount] = useState(currentDebt)
+  const [paymentAmount, setPaymentAmount] = useState(currentDebt.toLocaleString('en-US', { minimumFractionDigits: 2 }))
+  const [depositorName, setDepositorName] = useState('Asia Travel Hub')
+  const [depositorBank, setDepositorBank] = useState('')
+  const [transferReference, setTransferReference] = useState('')
+  const [paymentNote, setPaymentNote] = useState('')
+  const [paymentProofNames, setPaymentProofNames] = useState<string[]>([])
   const creditLimit = 50000.00
   const usageRatio = (currentDebt / creditLimit) * 100
 
@@ -53,13 +58,32 @@ const MyDebtList = () => {
   }
 
   const handlePaymentSubmit = () => {
-    toast.success('Yêu cầu thanh toán đã được gửi thành công. Vui lòng chờ kế toán duyệt!')
+    toast.success('Yêu cầu thanh toán công nợ đã được gửi. Kế toán sẽ kiểm tra chứng từ và cập nhật công nợ!')
     setOpenPaymentDialog(false)
   }
 
   const handleOpenPayment = (amount: number) => {
-    setPaymentAmount(amount)
+    setPaymentAmount(amount.toLocaleString('en-US', { minimumFractionDigits: 2 }))
     setOpenPaymentDialog(true)
+  }
+
+  const handlePaymentAmountChange = (value: string) => {
+    const normalizedValue = value.replace(/[^\d.]/g, '')
+    const [integerPart, decimalPart] = normalizedValue.split('.')
+    const formattedInteger = Number(integerPart || 0).toLocaleString('en-US')
+    const formattedValue = decimalPart === undefined ? formattedInteger : `${formattedInteger}.${decimalPart.slice(0, 2)}`
+
+    setPaymentAmount(formattedValue)
+  }
+
+  const handlePaymentFileChange = (fileList: FileList | null) => {
+    if (!fileList || fileList.length === 0) {
+      setPaymentProofNames([])
+
+      return
+    }
+
+    setPaymentProofNames(Array.from(fileList).map(file => file.name))
   }
 
   return (
@@ -72,6 +96,11 @@ const MyDebtList = () => {
           { label: 'Kênh Đại lý' }, 
           { label: 'Công nợ của tôi' }
         ]}
+        actions={
+          <Button variant='contained' startIcon={<i className='tabler-cash-banknote' />} onClick={() => handleOpenPayment(currentDebt)}>
+            Thanh toán công nợ
+          </Button>
+        }
         className='mbe-6'
       />
 
@@ -150,6 +179,11 @@ const MyDebtList = () => {
                   <TableCell className='text-right'>
                     <Stack direction='row' spacing={1} justifyContent='flex-end'>
                       <Button size='small' variant='outlined' color='secondary' startIcon={<i className='tabler-file-download' />}>Tải Invoice</Button>
+                      {stmt.closing > 0 && (
+                        <Button size='small' variant='contained' color='primary' onClick={() => handleOpenPayment(stmt.closing)}>
+                          Thanh toán
+                        </Button>
+                      )}
                       <Button component={Link} href='/agent/finance/transactions' size='small' variant='tonal' color='primary'>Lịch sử Giao dịch</Button>
                     </Stack>
                   </TableCell>
@@ -161,11 +195,92 @@ const MyDebtList = () => {
       </Card>
 
       <Dialog open={openPaymentDialog} onClose={() => setOpenPaymentDialog(false)} maxWidth='sm' fullWidth>
-        <DialogTitle className='font-black'>Hướng dẫn thanh toán công nợ</DialogTitle>
+        <DialogTitle className='font-black'>Thanh toán công nợ</DialogTitle>
         <DialogContent className='flex flex-col gap-4 p-6 pt-2'>
           <Typography variant='body2' className='text-slate-500 mbe-2'>
-            Hệ thống không thực hiện thanh toán trực tiếp. Vui lòng chuyển khoản theo thông tin dưới đây, sau đó bộ phận vận hành của Market sẽ đối soát và cập nhật trạng thái cho bạn.
+            Nhập thông tin nộp tiền và đính kèm ảnh chứng từ để kế toán đối soát công nợ.
           </Typography>
+
+          <TextField
+            fullWidth
+            label='Số tiền thanh toán'
+            value={paymentAmount}
+            onChange={event => handlePaymentAmountChange(event.target.value)}
+            InputProps={{
+              startAdornment: <InputAdornment position='start'>$</InputAdornment>
+            }}
+          />
+
+          <Box>
+            <Typography variant='subtitle2' className='font-black mbe-2'>
+              Thông tin nộp tiền
+            </Typography>
+            <Stack spacing={4}>
+              <TextField
+                fullWidth
+                label='Người nộp / Tên đại lý'
+                value={depositorName}
+                onChange={event => setDepositorName(event.target.value)}
+              />
+              <TextField
+                fullWidth
+                label='Ngân hàng / Tài khoản chuyển'
+                placeholder='VD: VCB - 0987654321'
+                value={depositorBank}
+                onChange={event => setDepositorBank(event.target.value)}
+              />
+              <TextField
+                fullWidth
+                label='Mã giao dịch / Nội dung chuyển khoản'
+                placeholder='VD: TTCD-ASIA-08052026'
+                value={transferReference}
+                onChange={event => setTransferReference(event.target.value)}
+              />
+              <TextField
+                fullWidth
+                multiline
+                minRows={3}
+                label='Ghi chú'
+                placeholder='Thông tin bổ sung cho kế toán'
+                value={paymentNote}
+                onChange={event => setPaymentNote(event.target.value)}
+              />
+            </Stack>
+          </Box>
+
+          <Box className='rounded-lg border border-dashed border-primary/40 bg-primary/5 p-4'>
+            <Stack direction={{ xs: 'column', sm: 'row' }} spacing={3} alignItems={{ xs: 'stretch', sm: 'center' }} justifyContent='space-between'>
+              <Box className='min-w-0'>
+                <Typography variant='subtitle2' className='font-black'>
+                  Ảnh chứng từ
+                </Typography>
+                {paymentProofNames.length === 0 ? (
+                  <Typography variant='caption' className='text-slate-500'>
+                    Chưa chọn file ảnh
+                  </Typography>
+                ) : (
+                  <>
+                    <Typography variant='caption' className='text-slate-500 block'>
+                      Đã chọn {paymentProofNames.length} file
+                    </Typography>
+                    <Typography variant='caption' className='text-slate-500 block truncate'>
+                      {paymentProofNames.join(', ')}
+                    </Typography>
+                  </>
+                )}
+              </Box>
+              <Button component='label' variant='outlined' startIcon={<i className='tabler-paperclip' />}>
+                Đính kèm ảnh
+                <input
+                  hidden
+                  multiple
+                  type='file'
+                  accept='image/*'
+                  onChange={event => handlePaymentFileChange(event.target.files)}
+                />
+              </Button>
+            </Stack>
+          </Box>
           
           <Box className='p-6 bg-primary/5 rounded-lg border border-primary/20 mt-2'>
             <Typography variant='subtitle2' className='font-black text-primary mbe-2 text-lg'>Thông tin chuyển khoản:</Typography>
@@ -181,11 +296,15 @@ const MyDebtList = () => {
           </Box>
         </DialogContent>
         <DialogActions className='p-6 pt-0'>
-          <Button variant='contained' color='primary' fullWidth onClick={() => setOpenPaymentDialog(false)}>
-            Tôi đã hiểu
+          <Button variant='outlined' color='secondary' onClick={() => setOpenPaymentDialog(false)}>
+            Hủy
+          </Button>
+          <Button variant='contained' color='primary' onClick={handlePaymentSubmit} startIcon={<i className='tabler-send' />}>
+            Gửi yêu cầu thanh toán
           </Button>
         </DialogActions>
       </Dialog>
+
     </>
   )
 }

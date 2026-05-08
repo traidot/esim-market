@@ -267,7 +267,7 @@ const AgentDetail = ({ id }: { id: string }) => {
                   </Box>
                   <Box className='flex justify-between items-center'>
                     <Typography variant='caption' className='font-bold text-slate-500'>Hình thức thanh toán</Typography>
-                    <Typography variant='caption' className='font-black uppercase'>{agent.type === 'postpaid' ? 'Trả sau' : 'Trả trước'}</Typography>
+                    <Typography variant='caption' className='font-black uppercase'>{agent.type === 'postpaid' ? 'Công nợ' : 'Ví'}</Typography>
                   </Box>
                   <Box className='flex justify-between items-center'>
                     <Typography variant='caption' className='font-bold text-slate-500'>Liên hệ</Typography>
@@ -303,9 +303,9 @@ const AgentDetail = ({ id }: { id: string }) => {
               </TextField>
             </Grid2>
             <Grid2 size={{ xs: 12, sm: 6 }}>
-              <TextField select fullWidth label='Loại hình' defaultValue={agent.type}>
-                <MenuItem value='postpaid'>Trả sau (Công nợ)</MenuItem>
-                <MenuItem value='prepaid'>Trả trước (Ví)</MenuItem>
+              <TextField select fullWidth label='Hình thức thanh toán' defaultValue={agent.type}>
+                <MenuItem value='postpaid'>Công nợ</MenuItem>
+                <MenuItem value='prepaid'>Ví</MenuItem>
               </TextField>
             </Grid2>
             <Grid2 size={{ xs: 12 }}>

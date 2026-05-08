@@ -38,13 +38,6 @@ const data: SearchData[] = [
     section: 'Procurement Ops'
   },
   {
-    id: '5',
-    name: 'Materials Master',
-    url: '/inventory/materials',
-    icon: 'tabler-package',
-    section: 'Inventory & Assets'
-  },
-  {
     id: '6',
     name: 'Vendor Directory',
     url: '/partners',

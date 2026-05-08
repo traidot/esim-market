@@ -19,9 +19,8 @@ _Dành cho quản trị viên điều hành toàn bộ hệ sinh thái._
 
 ### 🛒 Nhóm Chợ eSIM (Marketplace Core)
 
-- `/marketplace/products` - **Quản lý Danh mục**: Danh mục gói cước tập trung của sàn.
+- `/marketplace/products` - **Quản lý danh mục eSIM**: Danh mục gói cước tập trung của sàn.
 - `/marketplace/pricing` - **Công cụ Định giá**: Cấu hình quy tắc Markup tự động cho đại lý.
-- `/marketplace/inventory` - **Quản lý Kho**: Theo dõi mã eSIM và hạn mức API.
 
 ### 🏢 Nhóm Nguồn cung (Upstream Layer)
 

@@ -29,6 +29,7 @@ const MyOrdersView = () => {
   const [openDetailDialog, setOpenDetailDialog] = useState(false)
   const [selectedOrder, setSelectedOrder] = useState<any>(null)
   const [showFilters, setShowFilters] = useState(false)
+  const [activeTab, setActiveTab] = useState(0)
 
   const handleOpenDetail = (order: any) => {
     setSelectedOrder(order)
@@ -58,7 +59,15 @@ const MyOrdersView = () => {
     const qty = (i % 3) + 1
     const statuses = ['Success', 'Success', 'Success', 'Pending', 'Failed']
     const status = statuses[i % 5]
-    
+
+    const iccids = status === 'Success'
+      ? Array.from({ length: qty }).map((__, k) => {
+          const seed = (i + 1) * 1000003 + k * 7919
+
+          return `898401${seed.toString().padStart(13, '0').slice(-13)}`
+        })
+      : []
+
     return {
       id: `TXN-${8240 - i}`,
       product: base.product,
@@ -66,7 +75,8 @@ const MyOrdersView = () => {
       validity: base.validity,
       qty,
       amount: `$${(base.price * qty).toFixed(2)}`,
-      iccid: status === 'Success' ? `898401${Math.floor(Math.random() * 1000000000000).toString().padStart(13, '0')}` : '-',
+      iccids,
+      iccid: iccids[0] ?? '-',
       status,
       date: `2026-05-${String((i % 4) + 1).padStart(2, '0')} 14:${String((i * 7) % 60).padStart(2, '0')}`,
       remarks: i % 4 === 0 ? `Client ${i}` : ''
@@ -86,10 +96,10 @@ const MyOrdersView = () => {
         <CardContent className='p-0'>
           {/* Tabs & Filters */}
           <Box className='border-b border-slate-200 px-4 pt-2'>
-            <Tabs value={0} indicatorColor="primary" textColor="primary">
+            <Tabs value={activeTab} onChange={(_, val) => setActiveTab(val)} indicatorColor="primary" textColor="primary">
               <Tab label="Tất cả giao dịch (42)" className='font-bold' />
               <Tab label="Thành công (35)" className='font-bold' />
-              <Tab label="Đang chờ (5)" className='font-bold' />
+              <Tab label="Đang xử lý (5)" className='font-bold' />
               <Tab label="Thất bại (2)" className='font-bold' />
             </Tabs>
           </Box>
@@ -176,7 +186,15 @@ const MyOrdersView = () => {
                 </tr>
               </thead>
               <tbody>
-                {myOrders.map((o) => (
+                {myOrders
+                  .filter(o => {
+                    if (activeTab === 1) return o.status === 'Success'
+                    if (activeTab === 2) return o.status === 'Pending'
+                    if (activeTab === 3) return o.status === 'Failed'
+
+                    return true
+                  })
+                  .map((o) => (
                   <tr key={o.id} className='border-be last:border-0 hover:bg-slate-50/50 transition-colors'>
                     <td className='p-4'>
                       <Typography variant='body2' className='font-medium'>{o.date}</Typography>
@@ -187,6 +205,11 @@ const MyOrdersView = () => {
                     </td>
                     <td className='p-4'>
                       <Typography variant='body2' className='font-mono text-xs'>{o.iccid}</Typography>
+                      {o.iccids.length > 1 && (
+                        <Typography variant='caption' className='text-slate-500'>
+                          +{o.iccids.length - 1} eSIM khác
+                        </Typography>
+                      )}
                     </td>
                     <td className='p-4 text-right'>
                       <Typography variant='body2' className='font-bold'>{o.qty}</Typography>
@@ -195,11 +218,11 @@ const MyOrdersView = () => {
                       <Typography variant='body2' className='font-black text-primary'>{o.amount}</Typography>
                     </td>
                     <td className='p-4 text-center'>
-                      <Chip 
-                        label={o.status === 'Success' ? 'Hoàn tất' : o.status === 'Failed' ? 'Lỗi' : 'Đang xử lý'} 
-                        size='small' 
-                        variant='tonal' 
-                        color={o.status === 'Success' ? 'success' : o.status === 'Failed' ? 'error' : 'warning'} 
+                      <Chip
+                        label={o.status === 'Success' ? 'Thành công' : o.status === 'Failed' ? 'Thất bại' : 'Đang xử lý'}
+                        size='small'
+                        variant='tonal'
+                        color={o.status === 'Success' ? 'success' : o.status === 'Failed' ? 'error' : 'warning'}
                         className='font-bold text-[10px]'
                       />
                     </td>
@@ -225,7 +248,7 @@ const MyOrdersView = () => {
       </Card>
 
       {/* Simplified Detail Dialog */}
-      <Dialog open={openDetailDialog} onClose={handleCloseDialog} maxWidth='sm' fullWidth>
+      <Dialog open={openDetailDialog} onClose={handleCloseDialog} maxWidth='md' fullWidth>
         <DialogTitle className='flex items-center justify-between'>
           <Typography variant='h5' component='span' className='font-black'>Chi tiết giao dịch mua eSIM</Typography>
           <IconButton onClick={handleCloseDialog} size='small'><i className='tabler-x' /></IconButton>
@@ -258,22 +281,58 @@ const MyOrdersView = () => {
                 </Grid2>
               </Box>
 
-              {selectedOrder.status === 'Success' && (
-                <Box className='p-5 bg-white rounded-xl border border-slate-200 flex flex-col items-center shadow-sm'>
-                  <Box className='bg-slate-50 p-4 rounded-lg mbe-4'>
-                    <i className='tabler-qrcode text-[140px] text-slate-800' />
+              {selectedOrder.status === 'Success' && selectedOrder.iccids.length > 0 && (
+                <Box className='flex flex-col gap-4'>
+                  <Box className='flex items-center justify-between flex-wrap gap-2'>
+                    <Box>
+                      <Typography variant='subtitle1' className='font-black'>
+                        Danh sách mã QR ({selectedOrder.iccids.length} eSIM)
+                      </Typography>
+                      <Typography variant='caption' className='text-slate-500'>
+                        Mỗi eSIM có một mã QR và ICCID riêng. Quét hoặc gửi cho khách hàng tương ứng.
+                      </Typography>
+                    </Box>
+                    {selectedOrder.iccids.length > 1 && (
+                      <Box className='flex gap-2'>
+                        <Button size='small' variant='tonal' color='primary' startIcon={<i className='tabler-download' />}>
+                          Tải tất cả QR
+                        </Button>
+                        <Button size='small' variant='tonal' color='primary' startIcon={<i className='tabler-mail' />} onClick={handleSendEmail}>
+                          Gửi Email tất cả
+                        </Button>
+                      </Box>
+                    )}
                   </Box>
-                  <Typography variant='caption' className='text-slate-500 mbe-1 uppercase tracking-wider'>ICCID</Typography>
-                  <Typography variant='body1' className='font-mono font-bold mbe-6 text-lg'>{selectedOrder.iccid}</Typography>
-                  
-                  <Box className='flex gap-3 is-full'>
-                    <Button variant='contained' color='primary' startIcon={<i className='tabler-download' />} fullWidth>
-                      Tải mã QR
-                    </Button>
-                    <Button variant='tonal' color='primary' startIcon={<i className='tabler-mail' />} fullWidth onClick={handleSendEmail}>
-                      Gửi Email
-                    </Button>
-                  </Box>
+
+                  <Grid2 container spacing={3}>
+                    {selectedOrder.iccids.map((iccid: string, idx: number) => (
+                      <Grid2 key={iccid} size={{ xs: 12, sm: selectedOrder.iccids.length === 1 ? 12 : 6 }}>
+                        <Box className='p-5 bg-white rounded-xl border border-slate-200 flex flex-col items-center shadow-sm h-full'>
+                          <Chip
+                            label={`eSIM #${idx + 1}`}
+                            size='small'
+                            color='primary'
+                            variant='tonal'
+                            className='font-bold mbe-3 self-start'
+                          />
+                          <Box className='bg-slate-50 p-4 rounded-lg mbe-4'>
+                            <i className='tabler-qrcode text-[120px] text-slate-800' />
+                          </Box>
+                          <Typography variant='caption' className='text-slate-500 mbe-1 uppercase tracking-wider'>ICCID</Typography>
+                          <Typography variant='body2' className='font-mono font-bold mbe-4 break-all text-center'>{iccid}</Typography>
+
+                          <Box className='flex gap-2 is-full mt-auto'>
+                            <Button size='small' variant='contained' color='primary' startIcon={<i className='tabler-download' />} fullWidth>
+                              Tải QR
+                            </Button>
+                            <Button size='small' variant='tonal' color='primary' startIcon={<i className='tabler-mail' />} fullWidth onClick={handleSendEmail}>
+                              Gửi Email
+                            </Button>
+                          </Box>
+                        </Box>
+                      </Grid2>
+                    ))}
+                  </Grid2>
                 </Box>
               )}
 

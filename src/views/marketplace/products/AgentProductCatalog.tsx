@@ -135,9 +135,9 @@ const AgentProductCatalog = () => {
   return (
     <>
       <PageHeader
-        title="Danh mục eSIM theo Quốc gia"
-        description="Duyệt và quản lý các gói cước eSIM theo từng vùng lãnh thổ trên toàn cầu"
-        breadcrumbs={[{ label: 'Trang chủ', href: '/' }, { label: 'Chợ eSIM' }, { label: 'Danh mục' }]}
+        title="Danh sách eSIM"
+        description="Danh sách và quản lý các gói cước eSIM theo từng vùng lãnh thổ trên toàn cầu"
+        breadcrumbs={[{ label: 'Trang chủ', href: '/' }, { label: 'Chợ eSIM' }, { label: 'Danh sách eSIM' }]}
         className='mbe-6'
       />
 

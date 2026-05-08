@@ -10,7 +10,6 @@ import Stack from '@mui/material/Stack'
 import TextField from '@mui/material/TextField'
 import Switch from '@mui/material/Switch'
 import FormControlLabel from '@mui/material/FormControlLabel'
-import Divider from '@mui/material/Divider'
 
 import PageHeader from '@/components/layout/shared/PageHeader'
 
@@ -55,12 +54,6 @@ const SystemSettings = () => {
                   control={<Switch defaultChecked />}
                   label="Cho phép Đại lý đăng ký mới"
                 />
-                <FormControlLabel
-                  control={<Switch />}
-                  label="Bắt buộc xác thực 2FA cho Nhân viên"
-                />
-                <Divider />
-                <TextField fullWidth label="Tỉ giá quy đổi (1 USD -> VND)" defaultValue="25,450" />
               </Stack>
             </CardContent>
           </Card>

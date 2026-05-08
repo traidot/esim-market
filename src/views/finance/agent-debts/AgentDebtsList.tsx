@@ -36,8 +36,8 @@ const AgentDebtsList = () => {
   ]
 
   const stats = [
-    { title: 'Tổng phải thu', value: '$50,240', color: 'error', icon: 'tabler-trending-up', desc: 'Từ đại lý Postpaid' },
-    { title: 'Tổng nạp ví', value: '$1,135', color: 'success', icon: 'tabler-wallet', desc: 'Từ đại lý Prepaid' },
+    { title: 'Tổng phải thu', value: '$50,240', color: 'error', icon: 'tabler-trending-up', desc: 'Từ đại lý Công nợ' },
+    { title: 'Tổng nạp ví', value: '$1,135', color: 'success', icon: 'tabler-wallet', desc: 'Từ đại lý Ví' },
     { title: 'Đại lý quá hạn', value: '2', color: 'warning', icon: 'tabler-alert-triangle', desc: 'Cần nhắc nợ' },
     { title: 'Kỳ đối soát', value: 'Tháng 04/2026', color: 'info', icon: 'tabler-calendar', desc: 'Đang mở' },
   ]
@@ -133,7 +133,7 @@ const AgentDebtsList = () => {
                   </TableCell>
                   <TableCell>
                     <Chip 
-                      label={agent.type === 'prepaid' ? 'Prepaid (Ví)' : 'Postpaid (Nợ)'} 
+                      label={agent.type === 'prepaid' ? 'Ví' : 'Công nợ'} 
                       color={agent.type === 'prepaid' ? 'success' : 'primary'} 
                       size='small' 
                       variant='tonal' 

@@ -35,29 +35,15 @@ const defaultSuggestions: DefaultSuggestionsType[] = [
         icon: 'tabler-chart-pie-2'
       },
       {
-        label: 'Phiếu nhập kho',
-        href: '/warehouse/inbound',
-        icon: 'tabler-arrow-down'
-      },
-      {
-        label: 'Kho',
-        href: '/warehouse/inventory',
-        icon: 'tabler-shopping-cart'
-      },
-      {
         label: 'Kế hoạch container',
         href: '/logistics/container',
         icon: 'tabler-container'
       },
       {
-        label: 'Phiếu xuất kho',
-        href: '/warehouse/outbound',
-        icon: 'tabler-arrow-up'
-      }, {
         label: 'Đóng container',
         href: '/logistics/container-loading',
         icon: 'tabler-square-rounded-arrow-up'
-      },
+      }
     ]
   },
   {
@@ -77,14 +63,12 @@ const defaultSuggestions: DefaultSuggestionsType[] = [
         label: 'Sản phẩm',
         href: '/master-data/products',
         icon: 'tabler-package'
-      }
-      ,
+      },
       {
         label: 'Danh mục sản phẩm',
         href: '/master-data/product-categories',
         icon: 'tabler-tag'
-      }
-      ,
+      },
       {
         label: 'Giá nhà cung cấp',
         href: '/master-data/supplier-pricing',
@@ -106,8 +90,7 @@ const defaultSuggestions: DefaultSuggestionsType[] = [
         icon: 'tabler-settings'
       }
     ]
-  },
-
+  }
 ]
 
 const DefaultSuggestions = ({ setOpen }: { setOpen: (value: boolean) => void }) => {

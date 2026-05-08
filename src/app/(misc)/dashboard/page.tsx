@@ -57,7 +57,7 @@ const DashboardSelectionPage = () => {
                 </Avatar>
                 <Typography variant='h4' className='font-black mbe-3'>Quản trị (3M Admin)</Typography>
                 <Typography variant='body1' sx={{ color: 'text.secondary' }} className='mbe-8 min-bs-[60px]'>
-                  Dành cho quản trị viên hệ thống. Quản lý kho, nhà cung cấp, đại lý và tài chính tổng hợp.
+                  Dành cho quản trị viên hệ thống. Quản lý danh mục eSIM, nhà cung cấp, đại lý và tài chính tổng hợp.
                 </Typography>
                 <Box className='flex items-center gap-2 text-primary font-bold text-lg'>
                   <span>Truy cập Quản trị</span>

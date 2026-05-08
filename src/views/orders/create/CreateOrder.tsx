@@ -41,8 +41,8 @@ const CreateOrder = () => {
             onChange={(_, val) => val && setAgentType(val)}
             size="small"
           >
-            <ToggleButton value="postpaid">Đại lý Trả sau (Công nợ)</ToggleButton>
-            <ToggleButton value="prepaid">Đại lý Trả trước (Ví)</ToggleButton>
+            <ToggleButton value="postpaid">Đại lý Công nợ</ToggleButton>
+            <ToggleButton value="prepaid">Đại lý Ví</ToggleButton>
           </ToggleButtonGroup>
         }
       />
@@ -134,7 +134,7 @@ const CreateOrder = () => {
                 {agentType === 'postpaid' ? (
                   <Box className='flex items-center justify-between p-3 border border-primary bg-primary/5 rounded-lg'>
                     <Box>
-                      <Typography className='font-bold'>Ghi nhận công nợ (Postpaid)</Typography>
+                      <Typography className='font-bold'>Ghi nhận công nợ</Typography>
                       <Typography variant='caption' className='text-slate-500'>Đơn hàng sẽ được đối soát và thanh toán vào cuối kỳ (15 tháng sau).</Typography>
                     </Box>
                     <i className='tabler-file-invoice text-2xl text-primary' />
@@ -142,7 +142,7 @@ const CreateOrder = () => {
                 ) : (
                   <Box className='flex items-center justify-between p-3 border border-success bg-success/5 rounded-lg'>
                     <Box>
-                      <Typography className='font-bold'>Trừ tiền ví (Prepaid)</Typography>
+                      <Typography className='font-bold'>Trừ tiền ví</Typography>
                       <Typography variant='caption' className='text-slate-500'>
                         Số dư hiện tại: <strong className='text-success'>$1,500.00</strong>
                       </Typography>

@@ -157,7 +157,7 @@ const AgentsList = () => {
                   </Grid2>
                   <Grid2 size={{ xs: 4 }}>
                     <Typography variant='caption' className='font-black uppercase text-slate-400 block mbe-1 text-[10px]'>
-                      {agent.type === 'postpaid' ? 'Công nợ (Nợ)' : 'Số dư (Ví)'}
+                      {agent.type === 'postpaid' ? 'Công nợ' : 'Ví'}
                     </Typography>
                     <Typography variant='body2' className={`font-black ${agent.type === 'postpaid' ? 'text-error' : 'text-success'}`}>
                       {agent.balance}
@@ -238,15 +238,15 @@ const AgentsList = () => {
                   value={newAgent.type}
                   onChange={(e) => setNewAgent({ ...newAgent, type: e.target.value })}
                 >
-                  <FormControlLabel value="prepaid" control={<Radio size='small' />} label={<Typography variant='body2'>Trả trước</Typography>} />
-                  <FormControlLabel value="postpaid" control={<Radio size='small' />} label={<Typography variant='body2'>Trả sau</Typography>} />
+                  <FormControlLabel value="prepaid" control={<Radio size='small' />} label={<Typography variant='body2'>Ví</Typography>} />
+                  <FormControlLabel value="postpaid" control={<Radio size='small' />} label={<Typography variant='body2'>Công nợ</Typography>} />
                 </RadioGroup>
               </FormControl>
             </Grid2>
             <Grid2 size={{ xs: 12 }}>
               <TextField 
                 fullWidth 
-                label={newAgent.type === 'prepaid' ? 'Số dư nạp ban đầu' : 'Hạn mức công nợ'} 
+                label={newAgent.type === 'prepaid' ? 'Số dư ví ban đầu' : 'Công nợ ban đầu'} 
                 placeholder='0.00'
                 type='number'
                 value={newAgent.initialAmount}

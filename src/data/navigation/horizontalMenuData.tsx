@@ -13,33 +13,6 @@ const horizontalMenuData = (dictionary: Awaited<ReturnType<typeof getDictionary>
       href: getUrl('/dashboard')
     },
     {
-      label: 'Inventory',
-      icon: 'tabler-packages',
-      children: [
-        {
-          label: 'Inventory Info',
-          icon: 'tabler-box',
-          href: getUrl('/inventory/info'),
-          exactMatch: false,
-          activeUrl: '/inventory/info'
-        },
-        {
-          label: 'Inventory Transfer',
-          icon: 'tabler-arrows-left-right',
-          href: getUrl('/inventory/transfer'),
-          exactMatch: false,
-          activeUrl: '/inventory/transfer'
-        },
-        {
-          label: 'Stocktaking',
-          icon: 'tabler-clipboard-list',
-          href: getUrl('/inventory/stocktaking'),
-          exactMatch: false,
-          activeUrl: '/inventory/stocktaking'
-        }
-      ]
-    },
-    {
       label: 'Operations',
       icon: 'tabler-settings',
       children: [
