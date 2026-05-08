@@ -1,8 +1,9 @@
 'use client'
 
-import { useMemo, useState } from 'react'
+import { useMemo, useRef, useState } from 'react'
 
 import * as XLSX from 'xlsx'
+import { toast } from 'react-toastify'
 
 import Card from '@mui/material/Card'
 import CardContent from '@mui/material/CardContent'
@@ -24,6 +25,18 @@ import Avatar from '@mui/material/Avatar'
 import Stack from '@mui/material/Stack'
 import Pagination from '@mui/material/Pagination'
 import Divider from '@mui/material/Divider'
+import Stepper from '@mui/material/Stepper'
+import Step from '@mui/material/Step'
+import StepLabel from '@mui/material/StepLabel'
+import Alert from '@mui/material/Alert'
+import AlertTitle from '@mui/material/AlertTitle'
+import Table from '@mui/material/Table'
+import TableBody from '@mui/material/TableBody'
+import TableCell from '@mui/material/TableCell'
+import TableContainer from '@mui/material/TableContainer'
+import TableHead from '@mui/material/TableHead'
+import TableRow from '@mui/material/TableRow'
+import CircularProgress from '@mui/material/CircularProgress'
 
 import PageHeader from '@/components/layout/shared/PageHeader'
 
@@ -150,6 +163,22 @@ const getSortValue = (product: Product, sortKey: SortKey): string | number => {
 const AdminProductCatalog = () => {
   const [searchTerm, setSearchTerm] = useState('')
   const [selectedSupplier, setSelectedSupplier] = useState('all')
+  const [openImportDialog, setOpenImportDialog] = useState(false)
+  const [importStep, setImportStep] = useState(0)
+  const [importSupplier, setImportSupplier] = useState('')
+  const [importFile, setImportFile] = useState<File | null>(null)
+  const [importPreview, setImportPreview] = useState<{ rows: number; headers: string[] } | null>(null)
+  const [importError, setImportError] = useState<string | null>(null)
+  const [importProcessing, setImportProcessing] = useState(false)
+  const importInputRef = useRef<HTMLInputElement | null>(null)
+  const SUPPLIER_OPTIONS = ['Singtel', 'Orange FR', 'AIS', 'T-Mobile']
+  const IMPORT_STEPS = ['Tải lên Báo giá (Excel)', 'Đồng bộ API NCC', 'Kiểm định & Phê duyệt']
+  const validationResults = [
+    { id: 'Z-01', name: 'Japan 10GB', cost: 8.5, status: 'Valid', type: 'Update' },
+    { id: 'Z-02', name: 'USA 5GB', cost: 12.0, status: 'Valid', type: 'New' },
+    { id: 'Z-03', name: 'UK 1GB', cost: 0.0, status: 'Error', type: 'Invalid' },
+    { id: 'Z-04', name: 'Global Pro', cost: 45.0, status: 'Warning', type: 'Check' }
+  ]
   const [selectedStatus, setSelectedStatus] = useState('all')
   const [selectedType, setSelectedType] = useState('all')
   const [selectedData, setSelectedData] = useState('all')
@@ -203,6 +232,95 @@ const AdminProductCatalog = () => {
     setSortDirection(current => (sortKey === nextKey && current === 'asc' ? 'desc' : 'asc'))
     setSortKey(nextKey)
     setPage(1)
+  }
+
+  const handleOpenImport = () => {
+    setImportStep(0)
+    setImportSupplier('')
+    setImportFile(null)
+    setImportPreview(null)
+    setImportError(null)
+    setImportProcessing(false)
+    setOpenImportDialog(true)
+  }
+
+  const handleCloseImport = () => {
+    setOpenImportDialog(false)
+  }
+
+  const handleImportFileChange = async (file: File | null) => {
+    setImportFile(file)
+    setImportError(null)
+    setImportPreview(null)
+
+    if (!file) return
+
+    try {
+      const buffer = await file.arrayBuffer()
+      const workbook = XLSX.read(buffer, { type: 'array' })
+      const sheetName = workbook.SheetNames[0]
+
+      if (!sheetName) {
+        setImportError('File không có sheet nào')
+
+        return
+      }
+
+      const worksheet = workbook.Sheets[sheetName]
+      const json = XLSX.utils.sheet_to_json<Record<string, unknown>>(worksheet, { defval: null })
+
+      if (json.length === 0) {
+        setImportError('File rỗng hoặc không đọc được dữ liệu')
+
+        return
+      }
+
+      const headers = Object.keys(json[0])
+
+      setImportPreview({ rows: json.length, headers })
+    } catch {
+      setImportError('Không thể đọc file Excel. Vui lòng kiểm tra định dạng .xlsx')
+    }
+  }
+
+  const handleImportStepUpload = () => {
+    if (!importSupplier) {
+      setImportError('Vui lòng chọn nhà cung cấp')
+
+      return
+    }
+
+    if (!importFile || !importPreview) {
+      setImportError('Vui lòng chọn file báo giá hợp lệ')
+
+      return
+    }
+
+    setImportError(null)
+    setImportProcessing(true)
+    setTimeout(() => {
+      setImportProcessing(false)
+      setImportStep(1)
+    }, 1200)
+  }
+
+  const handleImportStepSync = () => {
+    setImportProcessing(true)
+    setTimeout(() => {
+      setImportProcessing(false)
+      setImportStep(2)
+    }, 1500)
+  }
+
+  const handleImportStepCommit = () => {
+    setImportProcessing(true)
+    setTimeout(() => {
+      setImportProcessing(false)
+      setImportStep(3)
+      toast.success(
+        `Đã nhập ${importPreview?.rows ?? 0} dòng báo giá từ ${importSupplier} vào danh mục eSIM.`
+      )
+    }, 1200)
   }
 
   const handleExportExcel = () => {
@@ -272,14 +390,24 @@ const AdminProductCatalog = () => {
           { label: 'Danh mục eSIM' }
         ]}
         actions={
-          <Button
-            variant='tonal'
-            color='secondary'
-            startIcon={<i className='tabler-file-spreadsheet' />}
-            onClick={handleExportExcel}
-          >
-            Xuất Excel
-          </Button>
+          <Stack direction='row' spacing={2}>
+            <Button
+              variant='contained'
+              color='primary'
+              startIcon={<i className='tabler-file-upload' />}
+              onClick={handleOpenImport}
+            >
+              Import báo giá
+            </Button>
+            <Button
+              variant='tonal'
+              color='secondary'
+              startIcon={<i className='tabler-file-spreadsheet' />}
+              onClick={handleExportExcel}
+            >
+              Xuất Excel
+            </Button>
+          </Stack>
         }
         className='mbe-6'
       />
@@ -764,6 +892,284 @@ const AdminProductCatalog = () => {
             Đóng
           </Button>
         </DialogActions>
+      </Dialog>
+
+      <Dialog open={openImportDialog} onClose={handleCloseImport} maxWidth='lg' fullWidth>
+        <DialogTitle className='font-black flex items-center justify-between border-be'>
+          <Box>
+            <Typography variant='h5' className='font-black'>
+              Quy trình Đồng bộ Báo giá
+            </Typography>
+            <Typography variant='caption' className='text-slate-500'>
+              Upload file → Đồng bộ API → Kiểm định & phê duyệt
+            </Typography>
+          </Box>
+          <IconButton size='small' onClick={handleCloseImport}>
+            <i className='tabler-x' />
+          </IconButton>
+        </DialogTitle>
+        <DialogContent className='flex flex-col gap-6 p-6 pt-6'>
+          <Card className='border-none shadow-none bg-slate-50'>
+            <CardContent className='py-5'>
+              <Stepper activeStep={importStep} alternativeLabel>
+                {IMPORT_STEPS.map(label => (
+                  <Step key={label}>
+                    <StepLabel>{label}</StepLabel>
+                  </Step>
+                ))}
+              </Stepper>
+            </CardContent>
+          </Card>
+
+          {importStep === 0 && (
+            <Stack spacing={5}>
+              <Box className='text-center flex flex-col items-center'>
+                <Avatar variant='rounded' className='w-16 h-16 bg-primary/10 text-primary mbe-4'>
+                  <i className='tabler-file-spreadsheet text-4xl' />
+                </Avatar>
+                <Typography variant='h5' className='font-black mbe-1'>
+                  Bước 1: Tải lên Báo giá Excel
+                </Typography>
+                <Typography variant='body2' className='text-slate-500 max-is-[600px]'>
+                  Chọn nhà cung cấp và tải file .xlsx báo giá. Hệ thống sẽ đọc cột tiêu đề ở dòng đầu để ánh xạ vào danh
+                  mục eSIM.
+                </Typography>
+              </Box>
+
+              <Grid2 container spacing={4}>
+                <Grid2 size={{ xs: 12, md: 5 }}>
+                  <Typography variant='subtitle2' className='font-black mbe-2'>
+                    Nhà cung cấp <span className='text-error'>*</span>
+                  </Typography>
+                  <Select
+                    fullWidth
+                    size='small'
+                    displayEmpty
+                    value={importSupplier}
+                    onChange={e => setImportSupplier(e.target.value)}
+                  >
+                    <MenuItem value='' disabled>
+                      Chọn nhà cung cấp
+                    </MenuItem>
+                    {SUPPLIER_OPTIONS.map(name => (
+                      <MenuItem key={name} value={name}>
+                        {name}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </Grid2>
+                <Grid2 size={{ xs: 12, md: 7 }}>
+                  <Typography variant='subtitle2' className='font-black mbe-2'>
+                    File báo giá <span className='text-error'>*</span>
+                  </Typography>
+                  <Box
+                    className='rounded-lg border-2 border-dashed border-primary/40 bg-primary/5 p-5 cursor-pointer hover:bg-primary/10 transition-colors'
+                    onClick={() => importInputRef.current?.click()}
+                  >
+                    <Stack direction='row' spacing={3} alignItems='center'>
+                      <Avatar variant='rounded' className='bg-primary/10 text-primary'>
+                        <i className='tabler-paperclip' />
+                      </Avatar>
+                      <Box className='min-w-0 flex-1'>
+                        <Typography variant='body2' className='font-bold truncate'>
+                          {importFile ? importFile.name : 'Click để chọn hoặc kéo thả file .xlsx'}
+                        </Typography>
+                        <Typography variant='caption' className='text-slate-500'>
+                          Hỗ trợ .xlsx (tối đa 10MB)
+                        </Typography>
+                      </Box>
+                      <Button variant='outlined' size='small'>
+                        Chọn file
+                      </Button>
+                    </Stack>
+                    <input
+                      ref={importInputRef}
+                      hidden
+                      type='file'
+                      accept='.xlsx,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+                      onChange={event => handleImportFileChange(event.target.files?.[0] ?? null)}
+                    />
+                  </Box>
+                </Grid2>
+              </Grid2>
+
+              {importPreview && (
+                <Box className='p-4 bg-success/5 rounded-lg border border-success/30'>
+                  <Typography variant='subtitle2' className='font-black text-success mbe-1'>
+                    Đã đọc {importPreview.rows} dòng dữ liệu
+                  </Typography>
+                  <Typography variant='caption' className='text-slate-600 block mbe-2'>
+                    Cột nhận diện: {importPreview.headers.length}
+                  </Typography>
+                  <Box className='flex flex-wrap gap-1'>
+                    {importPreview.headers.slice(0, 12).map(h => (
+                      <Chip key={h} label={h} size='small' variant='tonal' color='primary' className='font-bold' />
+                    ))}
+                    {importPreview.headers.length > 12 && (
+                      <Chip
+                        label={`+${importPreview.headers.length - 12}`}
+                        size='small'
+                        variant='tonal'
+                        color='secondary'
+                        className='font-bold'
+                      />
+                    )}
+                  </Box>
+                </Box>
+              )}
+
+              {importError && (
+                <Box className='p-3 bg-error/10 text-error rounded-lg flex items-center gap-2'>
+                  <i className='tabler-alert-circle' />
+                  <Typography variant='body2' color='error' className='font-medium'>
+                    {importError}
+                  </Typography>
+                </Box>
+              )}
+            </Stack>
+          )}
+
+          {importStep === 1 && (
+            <Box className='text-center flex flex-col items-center py-10'>
+              <Avatar variant='rounded' className='w-16 h-16 bg-info/10 text-info mbe-4'>
+                <i className='tabler-api text-4xl' />
+              </Avatar>
+              <Typography variant='h5' className='font-black mbe-1'>
+                Bước 2: Đồng bộ từ API {importSupplier}
+              </Typography>
+              <Typography variant='body2' className='text-slate-500 max-is-[600px] mbe-6'>
+                Đã nhận diện file báo giá ({importPreview?.rows ?? 0} dòng). Hệ thống sẽ gọi API NCC để lấy danh sách
+                eSIM thực tế và đối chiếu giá.
+              </Typography>
+              <Button
+                variant='contained'
+                size='large'
+                startIcon={<i className='tabler-refresh' />}
+                onClick={handleImportStepSync}
+              >
+                Bắt đầu Đồng bộ API ngay
+              </Button>
+            </Box>
+          )}
+
+          {importStep === 2 && (
+            <Stack spacing={4}>
+              <Alert severity='warning'>
+                <AlertTitle className='font-black'>Phát hiện gói cước cần xử lý</AlertTitle>
+                Dữ liệu từ API và File đã được gộp. Vui lòng kiểm tra các dòng màu đỏ/vàng trước khi duyệt.
+              </Alert>
+              <Card className='border border-slate-200 shadow-none overflow-hidden'>
+                <Box className='p-4 bg-slate-900 text-white'>
+                  <Typography variant='subtitle1' className='text-white font-black'>
+                    Bảng Kiểm Định & So Sánh Giá
+                  </Typography>
+                  <Typography variant='caption' className='text-slate-400 font-bold'>
+                    Dữ liệu chuẩn hóa từ File & API mới nhất
+                  </Typography>
+                </Box>
+                <TableContainer>
+                  <Table size='small'>
+                    <TableHead className='bg-slate-50'>
+                      <TableRow>
+                        <TableCell className='font-black uppercase text-[11px]'>Mã gói</TableCell>
+                        <TableCell className='font-black uppercase text-[11px]'>Tên eSIM</TableCell>
+                        <TableCell className='font-black uppercase text-[11px] text-right'>Giá Vốn</TableCell>
+                        <TableCell className='font-black uppercase text-[11px] text-center'>Kiểm định</TableCell>
+                      </TableRow>
+                    </TableHead>
+                    <TableBody>
+                      {validationResults.map(res => (
+                        <TableRow key={res.id} hover>
+                          <TableCell className='font-mono text-xs'>{res.id}</TableCell>
+                          <TableCell className='font-bold'>{res.name}</TableCell>
+                          <TableCell className='text-right font-black text-primary'>${res.cost.toFixed(2)}</TableCell>
+                          <TableCell className='text-center'>
+                            <Chip
+                              label={res.status}
+                              size='small'
+                              color={res.status === 'Valid' ? 'success' : res.status === 'Error' ? 'error' : 'warning'}
+                              variant='tonal'
+                              className='font-black'
+                            />
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </TableContainer>
+              </Card>
+            </Stack>
+          )}
+
+          {importStep === 3 && (
+            <Box className='text-center flex flex-col items-center py-10'>
+              <Avatar className='w-20 h-20 bg-success/10 text-success mbe-4'>
+                <i className='tabler-shield-check text-5xl' />
+              </Avatar>
+              <Typography variant='h4' className='font-black mbe-1 text-success'>
+                Phê duyệt Hoàn tất
+              </Typography>
+              <Typography variant='body1' className='text-slate-500 max-is-[600px]'>
+                Báo giá từ {importSupplier} đã được niêm yết vào danh mục eSIM Market.
+              </Typography>
+            </Box>
+          )}
+        </DialogContent>
+        <DialogActions className='p-6 pt-0 border-bs'>
+          {importStep === 0 && (
+            <>
+              <Button variant='outlined' color='secondary' onClick={handleCloseImport}>
+                Hủy
+              </Button>
+              <Button
+                variant='contained'
+                color='primary'
+                startIcon={<i className='tabler-arrow-right' />}
+                onClick={handleImportStepUpload}
+                disabled={!importSupplier || !importPreview}
+              >
+                Tiếp tục
+              </Button>
+            </>
+          )}
+          {importStep === 1 && (
+            <Button variant='outlined' color='secondary' onClick={handleCloseImport}>
+              Hủy
+            </Button>
+          )}
+          {importStep === 2 && (
+            <>
+              <Button variant='outlined' color='secondary' onClick={() => setImportStep(1)}>
+                Quay lại
+              </Button>
+              <Button
+                variant='contained'
+                color='success'
+                startIcon={<i className='tabler-check' />}
+                onClick={handleImportStepCommit}
+              >
+                Phê duyệt & Nhập danh mục
+              </Button>
+            </>
+          )}
+          {importStep === 3 && (
+            <Button variant='contained' color='primary' onClick={handleCloseImport}>
+              Đóng
+            </Button>
+          )}
+        </DialogActions>
+      </Dialog>
+
+      <Dialog open={importProcessing}>
+        <DialogContent className='p-10 flex flex-col items-center gap-3'>
+          <CircularProgress size={48} thickness={4} />
+          <Typography variant='subtitle1' className='font-black'>
+            Đang chuẩn hóa dữ liệu...
+          </Typography>
+          <Typography variant='caption' className='text-slate-500'>
+            Vui lòng đợi trong giây lát
+          </Typography>
+        </DialogContent>
       </Dialog>
     </>
   )
