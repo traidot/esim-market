@@ -31,9 +31,13 @@ import TableSortLabel from '@mui/material/TableSortLabel'
 import { visuallyHidden } from '@mui/utils'
 import Stack from '@mui/material/Stack'
 
+import Link from 'next/link'
+import PriceImportWizard from '@/views/upstream/import/PriceImportWizard'
+
 import PageHeader from '@/components/layout/shared/PageHeader'
 
 const MappingTable = () => {
+  const [importOpen, setImportOpen] = useState(false)
   const [searchQuery, setSearchQuery] = useState('')
   const [selectedPkg, setSelectedPkg] = useState<any>(null)
   const [isDetailOpen, setIsDetailOpen] = useState(false)
@@ -138,7 +142,16 @@ const MappingTable = () => {
         description="Quản lý toàn bộ gói cước từ tất cả nhà cung cấp, lọc theo khu vực và quốc gia"
         breadcrumbs={[{ label: 'Trang chủ', href: '/' }, { label: 'Nguồn cung' }, { label: 'Tất cả sản phẩm' }]}
         actions={
-          <Button variant='contained' startIcon={<i className='tabler-refresh' />}>Đồng bộ Toàn sàn</Button>
+          <Box className='flex gap-2'>
+            <Button
+              variant='outlined'
+              startIcon={<i className='tabler-file-upload' />}
+              onClick={() => setImportOpen(true)}
+            >
+              Import Báo giá
+            </Button>
+            <Button variant='contained' startIcon={<i className='tabler-refresh' />}>Đồng bộ Toàn sàn</Button>
+          </Box>
         }
         className='mbe-6'
       />
@@ -625,6 +638,30 @@ const MappingTable = () => {
           <Button variant='tonal' color='secondary' onClick={() => setIsDetailOpen(false)} className='bg-white'>Đóng</Button>
           <Button variant='contained' color='primary' startIcon={<i className='tabler-copy' />}>Sao chép Mã gói</Button>
         </DialogActions>
+      </Dialog>
+      {/* Import Báo giá Dialog */}
+      <Dialog
+        open={importOpen}
+        onClose={() => setImportOpen(false)}
+        maxWidth='xl'
+        fullWidth
+        scroll='paper'
+        aria-labelledby='import-dialog-title'
+      >
+        <DialogTitle id='import-dialog-title' sx={{ m: 0, p: 2, borderBottom: '1px solid', borderColor: 'divider' }}>
+          <Box className='flex items-center justify-between'>
+            <Box className='flex items-center gap-2'>
+              <i className='tabler-file-upload text-primary text-xl' />
+              <Typography variant='h6' className='font-black'>Import Báo giá Nhà cung cấp</Typography>
+            </Box>
+            <IconButton onClick={() => setImportOpen(false)} size='small' aria-label='close'>
+              <i className='tabler-x' />
+            </IconButton>
+          </Box>
+        </DialogTitle>
+        <DialogContent sx={{ p: 4, pt: 3 }}>
+          <PriceImportWizard onClose={() => setImportOpen(false)} />
+        </DialogContent>
       </Dialog>
     </>
   )
