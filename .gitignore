@@ -54,3 +54,6 @@ src/assets/iconify-icons/generated-icons.js
 src/assets/iconify-icons/generated-icons.css
 
 .gitnexus
+
+# git worktrees
+.worktrees
