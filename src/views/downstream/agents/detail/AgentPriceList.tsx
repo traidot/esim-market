@@ -49,11 +49,22 @@ const AgentPriceList = ({ id }: { id: string }) => {
     { sku: 'US-5GB-10D', country: 'Hoa Kỳ', name: '5GB 10 Ngày', basePrice: 8.00, agentPrice: 11.90, appliedRule: `Tier ${agentTier}`, esimType: 'eSIM', packageType: 'Total', data: '5' },
     { sku: 'TH-50GB-10D', country: 'Thái Lan', name: '50GB 10 Ngày', basePrice: 3.50, agentPrice: 5.10, appliedRule: 'Quốc gia (+15%)', esimType: 'Physical', packageType: 'Total', data: '50' },
     { sku: 'EU-10GB-30D', country: 'Châu Âu (33 nước)', name: '10GB 30 Ngày', basePrice: 15.00, agentPrice: 20.40, appliedRule: `Tier ${agentTier}`, esimType: 'eSIM', packageType: 'Total', data: '10' },
+    
+    // real physical SIM packages added with same formula
+    { sku: 'HK-DAILY1', country: 'Hồng Kông', name: 'HK Daily Essential', basePrice: 0.39, agentPrice: 0.45, appliedRule: `Tier ${agentTier} (-15%)`, esimType: 'Physical', packageType: 'Daily', data: '1' },
+    { sku: 'HK-DAILY3', country: 'Hồng Kông', name: 'HK Daily HighCap', basePrice: 1.18, agentPrice: 1.42, appliedRule: 'Quốc gia (+20%)', esimType: 'Physical', packageType: 'Daily', data: '3' },
+    { sku: 'HK-PRO10', country: 'Hồng Kông', name: 'HK Pro Traveler 30D', basePrice: 2.75, agentPrice: 3.54, appliedRule: 'Ghi đè Gói (Package Level)', esimType: 'Physical', packageType: 'Total', data: '10' },
+    { sku: 'US-TRAVEL5', country: 'Mỹ', name: 'US Travel Lite 5D', basePrice: 3.73, agentPrice: 4.29, appliedRule: `Tier ${agentTier} (-15%)`, esimType: 'Physical', packageType: 'Total', data: '5' },
+    { sku: 'US-UNLIMITED7', country: 'Mỹ', name: 'US Unlimited Premium', basePrice: 7.47, agentPrice: 8.59, appliedRule: `Tier ${agentTier} (-15%)`, esimType: 'Physical', packageType: 'Total', data: 'unlimited' }
   ]
 
   const filteredPackages = packages.filter(p => {
     if (search && !p.sku.toLowerCase().includes(search.toLowerCase()) && !p.name.toLowerCase().includes(search.toLowerCase())) return false
-    if (region !== 'all' && p.country.toLowerCase().includes(region.toLowerCase()) === false) return false
+    if (region !== 'all') {
+      const matchNames = region === 'mỹ' ? ['mỹ', 'hoa kỳ'] : [region]
+      const matchesCountry = matchNames.some(name => p.country.toLowerCase().includes(name))
+      if (!matchesCountry) return false
+    }
     if (dataLimit !== 'all' && p.data !== dataLimit) return false
     if (duration !== 'all' && !p.name.includes(duration)) return false
     if (esimType !== 'all' && p.esimType !== esimType) return false
@@ -165,9 +176,10 @@ const AgentPriceList = ({ id }: { id: string }) => {
             <Grid2 size={{ xs: 12, sm: 6, md: 2 }}>
               <TextField select fullWidth size='small' value={region} onChange={e => setRegion(e.target.value)} label='Vùng/Quốc gia'>
                 <MenuItem value='all'>Tất cả vùng</MenuItem>
-                <MenuItem value='jp'>Nhật Bản</MenuItem>
-                <MenuItem value='us'>Hoa Kỳ</MenuItem>
-                <MenuItem value='th'>Thái Lan</MenuItem>
+                <MenuItem value='nhật bản'>Nhật Bản</MenuItem>
+                <MenuItem value='mỹ'>Mỹ / Hoa Kỳ</MenuItem>
+                <MenuItem value='thái lan'>Thái Lan</MenuItem>
+                <MenuItem value='hồng kông'>Hồng Kông</MenuItem>
               </TextField>
             </Grid2>
             <Grid2 size={{ xs: 12, sm: 6, md: 2 }}>

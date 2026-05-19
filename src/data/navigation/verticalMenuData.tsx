@@ -26,12 +26,13 @@ const verticalMenuData = (dictionary: Awaited<ReturnType<typeof getDictionary>>)
     },
     {
       label: 'Kho SIM Vật lý',
-      icon: 'tabler-sim-card',
+      icon: 'tabler-cpu',
       roles: ['admin'],
       children: [
         { label: 'Danh sách Phôi SIM', icon: 'tabler-database', href: getUrl('/3m/physical-sim/inventory') },
         { label: 'Nhập kho', icon: 'tabler-file-import', href: getUrl('/3m/physical-sim/import') },
         { label: 'Phân bổ Đại lý', icon: 'tabler-share', href: getUrl('/3m/physical-sim/allocation') },
+        { label: 'Quản lý Gói cước', icon: 'tabler-packages', href: getUrl('/3m/physical-sim/packages') },
         { label: 'Lịch sử Kích hoạt', icon: 'tabler-history-toggle', href: getUrl('/3m/physical-sim/history') }
       ]
     },
@@ -89,10 +90,11 @@ const verticalMenuData = (dictionary: Awaited<ReturnType<typeof getDictionary>>)
         { label: 'Lịch sử mua eSIM', icon: 'tabler-history', href: getUrl('/agent/orders/my-orders') },
         {
           label: 'Quản lý SIM trắng vật lý',
-          icon: 'tabler-sim-card',
+          icon: 'tabler-cpu',
           children: [
             { label: 'Mua Phôi SIM', icon: 'tabler-shopping-cart', href: getUrl('/agent/physical-sim/order') },
-            { label: 'Kho Phôi SIM', icon: 'tabler-sim-card', href: getUrl('/agent/physical-sim/inventory') },
+            { label: 'Kho Phôi SIM', icon: 'tabler-database', href: getUrl('/agent/physical-sim/inventory') },
+            { label: 'Bảng giá Gói cước', icon: 'tabler-receipt-2', href: getUrl('/agent/physical-sim/packages') },
             { label: 'Kích hoạt SIM', icon: 'tabler-bolt', href: getUrl('/agent/physical-sim/activation') },
             { label: 'Lịch sử Kích hoạt', icon: 'tabler-history', href: getUrl('/agent/physical-sim/history') }
           ]
