@@ -108,6 +108,16 @@ const AgentPriceList = ({ id }: { id: string }) => {
         actions={
           <Stack direction='row' spacing={2}>
             <Button variant='tonal' color='secondary' component={Link} href={`/3m/downstream/agents/${id}`}>Quay lại</Button>
+            <Button
+              variant='tonal'
+              color='info'
+              startIcon={<i className='tabler-download' />}
+              component='a'
+              href='/api/downstream/agent-price-list-template.xlsx'
+              download
+            >
+              Tải template
+            </Button>
             <Button variant='contained' color='success' startIcon={<i className='tabler-file-spreadsheet' />}>Xuất Excel</Button>
           </Stack>
         }

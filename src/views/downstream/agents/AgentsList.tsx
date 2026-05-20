@@ -40,7 +40,8 @@ const AgentsList = () => {
     email: '',
     tier: 'SILVER',
     type: 'prepaid',
-    initialAmount: ''
+    currency: 'VND',
+    paymentDeadlineDay: ''
   })
 
   const agents = [
@@ -57,7 +58,8 @@ const AgentsList = () => {
       email: '',
       tier: 'SILVER',
       type: 'prepaid',
-      initialAmount: ''
+      currency: 'VND',
+      paymentDeadlineDay: ''
     })
   }
 
@@ -243,17 +245,29 @@ const AgentsList = () => {
                 </RadioGroup>
               </FormControl>
             </Grid2>
-            <Grid2 size={{ xs: 12 }}>
-              <TextField 
-                fullWidth 
-                label={newAgent.type === 'prepaid' ? 'Số dư ví ban đầu' : 'Công nợ ban đầu'} 
-                placeholder='0.00'
+            <Grid2 size={{ xs: 12, sm: 6 }}>
+              <FormControl fullWidth>
+                <Typography variant='caption' className='mbe-1 font-black text-slate-500 uppercase'>Đơn vị tiền tệ</Typography>
+                <Select
+                  value={newAgent.currency}
+                  onChange={(e) => setNewAgent({ ...newAgent, currency: e.target.value })}
+                >
+                  <MenuItem value='VND'>VND (đ)</MenuItem>
+                  <MenuItem value='USD'>USD ($)</MenuItem>
+                  <MenuItem value='JPY'>JPY (¥)</MenuItem>
+                </Select>
+              </FormControl>
+            </Grid2>
+            <Grid2 size={{ xs: 12, sm: 6 }}>
+              <Typography variant='caption' className='mbe-1 font-black text-slate-500 uppercase'>Ngày deadline thanh toán</Typography>
+              <TextField
+                fullWidth
+                placeholder='1 - 31'
                 type='number'
-                value={newAgent.initialAmount}
-                onChange={(e) => setNewAgent({ ...newAgent, initialAmount: e.target.value })}
-                InputProps={{
-                  startAdornment: <InputAdornment position='start'>$</InputAdornment>
-                }}
+                value={newAgent.paymentDeadlineDay}
+                onChange={(e) => setNewAgent({ ...newAgent, paymentDeadlineDay: e.target.value })}
+                inputProps={{ min: 1, max: 31, 'aria-label': 'Ngày deadline thanh toán' }}
+                helperText='Ngày trong tháng (1-31)'
               />
             </Grid2>
           </Grid2>

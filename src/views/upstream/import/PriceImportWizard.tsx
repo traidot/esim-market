@@ -2,6 +2,7 @@
 
 import { useState, useCallback, useRef } from 'react'
 
+import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import * as XLSX from 'xlsx'
 
@@ -10,9 +11,6 @@ import Card from '@mui/material/Card'
 import CardContent from '@mui/material/CardContent'
 import Typography from '@mui/material/Typography'
 import Button from '@mui/material/Button'
-import Stepper from '@mui/material/Stepper'
-import Step from '@mui/material/Step'
-import StepLabel from '@mui/material/StepLabel'
 import Grid2 from '@mui/material/Grid2'
 import Chip from '@mui/material/Chip'
 import Stack from '@mui/material/Stack'
@@ -128,6 +126,11 @@ const MOCK_SUPPLIERS = [
   { id: 'mos',  name: 'MOS (Urocomm)', color: '#FF9800' },
   { id: 'ucl',  name: 'uCloudlink', color: '#9C27B0' },
 ]
+
+const SURFACE_CARD_SX = {
+  borderRadius: 3,
+  boxShadow: '0 1px 2px rgba(15, 23, 42, 0.08), 0 0 0 1px rgba(15, 23, 42, 0.08)'
+}
 
 // ─────────────────────────────────────────────────────────────────────────────
 // HELPERS
@@ -309,106 +312,168 @@ function Step1Upload({ onParsed }: Step1Props) {
   }, [supplierId, onParsed])
 
   return (
-    <Grid2 container spacing={6} justifyContent='center'>
-      <Grid2 size={{ xs: 12, md: 8 }}>
-
-        {/* Chọn NCC */}
-        <Card className='mbe-6'>
-          <CardContent>
-            <Typography variant='subtitle1' className='font-black mbe-1'>Bước 1 — Chọn Nhà cung cấp</Typography>
-            <Typography variant='body2' color='text.secondary' className='mbe-4'>
-              Mỗi NCC có cấu trúc file khác nhau. Chọn đúng NCC để hệ thống gợi ý mapping phù hợp.
-            </Typography>
-            <Grid2 container spacing={3}>
-              {MOCK_SUPPLIERS.map(s => (
-                <Grid2 key={s.id} size={{ xs: 6, sm: 3 }}>
-                  <Box
-                    onClick={() => { setSupplierId(s.id); setError('') }}
-                    className='cursor-pointer rounded-xl border-2 p-4 text-center transition-all'
-                    sx={{
-                      borderColor: supplierId === s.id ? s.color : 'divider',
-                      bgcolor: supplierId === s.id ? `${s.color}12` : 'background.paper',
-                      '&:hover': { borderColor: s.color, bgcolor: `${s.color}08` }
-                    }}
-                  >
-                    <Avatar sx={{ bgcolor: `${s.color}20`, color: s.color, mx: 'auto', mb: 1 }}>
-                      <i className='tabler-building-store' />
-                    </Avatar>
-                    <Typography variant='caption' className='font-black block'>{s.name}</Typography>
-                    {supplierId === s.id && (
-                      <Chip label='Đã chọn' size='small' sx={{ mt: 0.5, bgcolor: s.color, color: '#fff' }} />
-                    )}
-                  </Box>
-                </Grid2>
-              ))}
-            </Grid2>
-
-            <Alert severity='info' className='mbe-0 mbs-4' icon={<i className='tabler-plus text-sm' />}>
-              <Typography variant='caption'>
-                Không thấy NCC? Thêm mới tại{' '}
-                <a href='/3m/upstream/suppliers' className='font-black underline'>Quản lý Nhà cung cấp</a>.
-                Hệ thống hỗ trợ bất kỳ file Excel/CSV nào — bạn sẽ tự cấu hình mapping ở bước sau.
+    <Grid2 container spacing={6}>
+      <Grid2 size={{ xs: 12, lg: 8 }}>
+        <Stack spacing={6}>
+          <Card sx={SURFACE_CARD_SX}>
+            <CardContent className='p-6'>
+              <Typography variant='h6' className='font-semibold mbe-1'>Chọn Nhà cung cấp</Typography>
+              <Typography variant='body2' color='text.secondary' className='mbe-4'>
+                Chọn đúng NCC để hệ thống gợi ý cấu hình sheet, header và mapping phù hợp.
               </Typography>
-            </Alert>
-          </CardContent>
-        </Card>
+              <Grid2 container spacing={3}>
+                {MOCK_SUPPLIERS.map(s => {
+                  const selected = supplierId === s.id
 
-        {/* Upload zone */}
-        <Card>
-          <CardContent>
-            <Typography variant='subtitle1' className='font-black mbe-1'>Bước 2 — Tải lên file báo giá</Typography>
-            <Typography variant='body2' color='text.secondary' className='mbe-4'>
-              Hỗ trợ <strong>.xlsx, .xls, .csv</strong>. Nhiều sheet trong cùng một file đều được đọc.
-            </Typography>
+                  return (
+                    <Grid2 key={s.id} size={{ xs: 12, sm: 6 }}>
+                      <Box
+                        component='button'
+                        type='button'
+                        onClick={() => { setSupplierId(s.id); setError('') }}
+                        className='flex w-full cursor-pointer items-start gap-3 rounded-2xl border p-4 text-left transition-all'
+                        sx={{
+                          borderColor: selected ? 'primary.main' : 'divider',
+                          bgcolor: selected ? 'primary.lighter' : 'background.paper',
+                          '&:hover': { borderColor: 'primary.main', bgcolor: selected ? 'primary.lighter' : 'action.hover' }
+                        }}
+                      >
+                        <Avatar
+                          variant='rounded'
+                          sx={{
+                            bgcolor: selected ? 'primary.main' : `${s.color}20`,
+                            color: selected ? '#fff' : s.color
+                          }}
+                        >
+                          <i className='tabler-building-store' />
+                        </Avatar>
+                        <Box className='min-w-0 flex-1'>
+                          <Typography variant='body2' className='font-semibold'>{s.name}</Typography>
+                          <Typography variant='caption' className='block text-slate-500'>
+                            Template mapping và định dạng báo giá riêng.
+                          </Typography>
+                          {selected ? (
+                            <Chip label='Đã chọn' size='small' color='primary' className='mbs-2 font-bold text-[10px]' />
+                          ) : null}
+                        </Box>
+                      </Box>
+                    </Grid2>
+                  )
+                })}
+              </Grid2>
+            </CardContent>
+          </Card>
 
-            <Box
-              onDragOver={e => { e.preventDefault(); setIsDragOver(true) }}
-              onDragLeave={() => setIsDragOver(false)}
-              onDrop={e => {
-                e.preventDefault(); setIsDragOver(false)
-                const f = e.dataTransfer.files[0]
-                if (f) handleFile(f)
-              }}
-              onClick={() => fileRef.current?.click()}
-              className='cursor-pointer rounded-2xl border-2 border-dashed p-10 text-center transition-all'
-              sx={{
-                borderColor: isDragOver ? 'primary.main' : 'divider',
-                bgcolor: isDragOver ? 'primary.lighter' : 'action.hover',
-                '&:hover': { borderColor: 'primary.main', bgcolor: 'primary.lighter' }
-              }}
-            >
-              {isLoading ? (
-                <Box>
-                  <CircularProgress size={48} className='mbe-3' />
-                  <Typography variant='body1' className='font-black'>Đang đọc file...</Typography>
-                </Box>
-              ) : (
-                <Box>
-                  <Avatar variant='rounded' className='mx-auto mbe-4 w-16 h-16' sx={{ bgcolor: 'primary.lighter', color: 'primary.main' }}>
+          <Card sx={SURFACE_CARD_SX}>
+            <CardContent className='p-6'>
+              <Typography variant='h6' className='font-semibold mbe-1'>Tải lên file báo giá</Typography>
+              <Typography variant='body2' color='text.secondary' className='mbe-4'>
+                Hỗ trợ <strong>.xlsx, .xls, .csv</strong>. Nhiều sheet trong cùng một file đều được đọc.
+              </Typography>
+
+              <Box
+                component='button'
+                type='button'
+                onDragOver={e => { e.preventDefault(); setIsDragOver(true) }}
+                onDragLeave={() => setIsDragOver(false)}
+                onDrop={e => {
+                  e.preventDefault(); setIsDragOver(false)
+                  const f = e.dataTransfer.files[0]
+                  if (f) handleFile(f)
+                }}
+                onClick={() => fileRef.current?.click()}
+                className='flex min-h-64 w-full cursor-pointer flex-col items-center justify-center gap-4 rounded-2xl border border-dashed p-10 text-center transition-all'
+                sx={{
+                  borderColor: isDragOver ? 'primary.main' : 'divider',
+                  bgcolor: isDragOver ? 'primary.lighter' : 'action.hover',
+                  '&:hover': { borderColor: 'primary.main', bgcolor: 'primary.lighter' }
+                }}
+              >
+                <Avatar variant='rounded' className='size-16' sx={{ bgcolor: 'primary.lighter', color: 'primary.main' }}>
+                  {isLoading ? (
+                    <CircularProgress size={28} color='inherit' />
+                  ) : (
                     <i className='tabler-file-spreadsheet text-3xl' />
-                  </Avatar>
-                  <Typography variant='h6' className='font-black mbe-1'>Kéo thả file vào đây</Typography>
-                  <Typography variant='body2' color='text.secondary' className='mbe-3'>hoặc click để chọn file từ máy tính</Typography>
-                  <Chip label='.xlsx  .xls  .csv' variant='outlined' size='small' />
+                  )}
+                </Avatar>
+                <Box>
+                  <Typography variant='h6' className='font-semibold'>
+                    {isLoading ? 'Đang đọc file...' : 'Kéo thả file vào đây'}
+                  </Typography>
+                  <Typography variant='body2' color='text.secondary'>
+                    hoặc click để chọn file từ máy tính
+                  </Typography>
                 </Box>
-              )}
-            </Box>
+                <Chip label='.xlsx · .xls · .csv' variant='outlined' size='small' />
+              </Box>
 
-            <input
-              ref={fileRef} type='file' hidden accept='.xlsx,.xls,.csv'
-              onChange={e => { const f = e.target.files?.[0]; if (f) handleFile(f) }}
-            />
+              <input
+                ref={fileRef} type='file' hidden accept='.xlsx,.xls,.csv'
+                onChange={e => { const f = e.target.files?.[0]; if (f) handleFile(f) }}
+              />
 
-            {error && <Alert severity='error' className='mbs-4'>{error}</Alert>}
+              {error ? <Alert severity='error' className='mbs-4'>{error}</Alert> : null}
+            </CardContent>
+          </Card>
+        </Stack>
+      </Grid2>
 
-            <Box className='mbs-4 p-3 rounded-xl bg-slate-50 flex gap-3 flex-wrap'>
-              <Box className='flex gap-2 items-center'><i className='tabler-check text-success text-sm'/><Typography variant='caption'>Nhiều sheet trong 1 file</Typography></Box>
-              <Box className='flex gap-2 items-center'><i className='tabler-check text-success text-sm'/><Typography variant='caption'>Tự nhận diện header</Typography></Box>
-              <Box className='flex gap-2 items-center'><i className='tabler-check text-success text-sm'/><Typography variant='caption'>Gợi ý mapping tự động</Typography></Box>
-              <Box className='flex gap-2 items-center'><i className='tabler-check text-success text-sm'/><Typography variant='caption'>Lưu template mapping cho lần sau</Typography></Box>
-            </Box>
-          </CardContent>
-        </Card>
+      <Grid2 size={{ xs: 12, lg: 4 }}>
+        <Stack spacing={6}>
+          <Card sx={SURFACE_CARD_SX}>
+            <CardContent className='p-6'>
+              <Box className='flex items-center gap-2 mbe-3'>
+                <i className='tabler-list-check text-primary text-xl' />
+                <Typography variant='h6' className='font-semibold'>Luồng import</Typography>
+              </Box>
+              <Stack spacing={3}>
+                {[
+                  'Đọc nhiều sheet trong cùng một file',
+                  'Tự nhận diện header',
+                  'Gợi ý mapping tự động',
+                  'Lưu lịch sử import và lỗi dòng'
+                ].map(item => (
+                  <Box key={item} className='flex items-center gap-2'>
+                    <i className='tabler-circle-check text-primary' />
+                    <Typography variant='body2'>{item}</Typography>
+                  </Box>
+                ))}
+              </Stack>
+            </CardContent>
+          </Card>
+
+          <Card sx={SURFACE_CARD_SX}>
+            <CardContent className='p-6'>
+              <Typography variant='h6' className='font-semibold mbe-1'>Cấu hình nhanh</Typography>
+              <Typography variant='body2' color='text.secondary' className='mbe-4'>
+                NCC đã chọn sẽ được dùng để sinh gợi ý mapping.
+              </Typography>
+              <FormControl fullWidth size='small'>
+                <InputLabel>Nhà cung cấp</InputLabel>
+                <Select
+                  value={supplierId}
+                  label='Nhà cung cấp'
+                  onChange={e => { setSupplierId(e.target.value); setError('') }}
+                >
+                  <MenuItem value=''>Chọn NCC</MenuItem>
+                  {MOCK_SUPPLIERS.map(s => (
+                    <MenuItem key={s.id} value={s.id}>{s.name}</MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+              <Button
+                fullWidth
+                component={Link}
+                href='/3m/upstream/suppliers'
+                variant='outlined'
+                className='mbs-3'
+                startIcon={<i className='tabler-plus' />}
+              >
+                Thêm NCC
+              </Button>
+            </CardContent>
+          </Card>
+        </Stack>
       </Grid2>
     </Grid2>
   )
@@ -1150,6 +1215,12 @@ export default function PriceImportWizard({ onClose }: { onClose?: () => void } 
     }))
   }, [])
 
+  const canOpenStep = (index: number) => {
+    if (index === 0) return true
+    if (index === 1) return workbook !== null
+    return workbook !== null && sheetConfigs.some(config => config.enabled)
+  }
+
   const stepContent = [
     <Step1Upload key={0} onParsed={handleFileParsed} />,
     <Step2SheetConfig
@@ -1194,42 +1265,78 @@ export default function PriceImportWizard({ onClose }: { onClose?: () => void } 
           { label: 'Import Báo giá' },
         ]}
         actions={
-          <Button
-            variant='outlined'
-            color='secondary'
-            startIcon={<i className='tabler-arrow-left' />}
-            onClick={() => router.back()}
-          >
-            Quay lại
-          </Button>
+          <Stack direction='row' spacing={2}>
+            <Button
+              variant='outlined'
+              color='secondary'
+              startIcon={<i className='tabler-history' />}
+              component={Link}
+              href='/3m/upstream/import/history'
+            >
+              Lịch sử import
+            </Button>
+            <Button
+              variant='outlined'
+              color='secondary'
+              startIcon={<i className='tabler-arrow-left' />}
+              onClick={() => router.back()}
+            >
+              Quay lại
+            </Button>
+          </Stack>
         }
         className='mbe-6'
       />
 
-      {/* Stepper */}
-      <Card className='mbe-6'>
-        <CardContent>
-          <Stepper activeStep={step} alternativeLabel>
-            {STEPS.map((s, idx) => (
-              <Step key={s.label} completed={idx < step}>
-                <StepLabel
-                  icon={
+      {/* Step cards */}
+      <Card className='mbe-4' sx={SURFACE_CARD_SX}>
+        <CardContent className='p-4'>
+          <Grid2 container spacing={3}>
+            {STEPS.map((s, idx) => {
+              const isActive = step === idx
+              const isComplete = idx < step
+              const isEnabled = canOpenStep(idx)
+
+              return (
+                <Grid2 key={s.label} size={{ xs: 12, sm: 6, lg: 3 }}>
+                  <Box
+                    component='button'
+                    type='button'
+                    disabled={!isEnabled}
+                    onClick={() => isEnabled && setStep(idx)}
+                    className='flex w-full min-w-0 items-center gap-3 rounded-xl border p-3 text-left transition-colors'
+                    sx={{
+                      cursor: isEnabled ? 'pointer' : 'not-allowed',
+                      opacity: isEnabled ? 1 : 0.5,
+                      borderColor: isActive ? 'primary.main' : 'divider',
+                      bgcolor: isActive ? 'primary.lighter' : 'background.paper',
+                      '&:hover': { bgcolor: isEnabled ? (isActive ? 'primary.lighter' : 'action.hover') : 'background.paper' }
+                    }}
+                  >
                     <Avatar
+                      variant='rounded'
                       sx={{
-                        width: 36, height: 36,
-                        bgcolor: idx < step ? 'success.main' : idx === step ? 'primary.main' : 'action.selected',
-                        color: idx <= step ? '#fff' : 'text.secondary',
+                        width: 40,
+                        height: 40,
+                        bgcolor: isActive || isComplete ? 'primary.main' : 'action.selected',
+                        color: isActive || isComplete ? '#fff' : 'text.secondary'
                       }}
                     >
-                      {idx < step ? <i className='tabler-check text-sm' /> : <i className={`${s.icon} text-sm`} />}
+                      {isComplete ? <i className='tabler-check text-sm' /> : <i className={`${s.icon} text-sm`} />}
                     </Avatar>
-                  }
-                >
-                  <Typography variant='caption' className='font-black'>{s.label}</Typography>
-                </StepLabel>
-              </Step>
-            ))}
-          </Stepper>
+                    <Box className='min-w-0'>
+                      <Typography variant='body2' className='truncate font-semibold'>
+                        {idx + 1}. {s.label}
+                      </Typography>
+                      <Typography variant='caption' className='block truncate text-slate-500'>
+                        {idx === 0 ? 'Chọn NCC và file' : idx === 1 ? 'Sheet, header' : idx === 2 ? 'Map cột dữ liệu' : 'Validate, import'}
+                      </Typography>
+                    </Box>
+                  </Box>
+                </Grid2>
+              )
+            })}
+          </Grid2>
         </CardContent>
       </Card>
 

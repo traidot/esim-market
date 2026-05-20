@@ -29,6 +29,8 @@ const AgentDetail = ({ id }: { id: string }) => {
   const [openEdit, setOpenEdit] = useState(false)
   const [openPayment, setOpenPayment] = useState(false)
   const [year, setYear] = useState('2026')
+  const [accountStatus, setAccountStatus] = useState<'ACTIVE' | 'LOCKED'>('ACTIVE')
+  const [pendingStatus, setPendingStatus] = useState<'ACTIVE' | 'LOCKED' | null>(null)
 
   // Mock Agent Data
   const agent = {
@@ -98,6 +100,21 @@ const AgentDetail = ({ id }: { id: string }) => {
     { name: 'Lợi nhuận', data: [2500, 3200, 4100, 3800, 5200, 0, 0, 0, 0, 0, 0, 0] }
   ]
 
+  const handleRequestStatusChange = (nextStatus: 'ACTIVE' | 'LOCKED') => {
+    setPendingStatus(nextStatus)
+  }
+
+  const handleConfirmStatusChange = () => {
+    if (!pendingStatus) return
+
+    setAccountStatus(pendingStatus)
+    setPendingStatus(null)
+  }
+
+  const handleCloseStatusConfirm = () => {
+    setPendingStatus(null)
+  }
+
   return (
     <>
       <PageHeader
@@ -115,6 +132,25 @@ const AgentDetail = ({ id }: { id: string }) => {
             >
               Cổng API & Webhooks
             </Button>
+            {accountStatus === 'ACTIVE' ? (
+              <Button
+                variant='tonal'
+                color='error'
+                startIcon={<i className='tabler-lock mie-2' />}
+                onClick={() => handleRequestStatusChange('LOCKED')}
+              >
+                Khóa tài khoản
+              </Button>
+            ) : (
+              <Button
+                variant='tonal'
+                color='success'
+                startIcon={<i className='tabler-lock-open mie-2' />}
+                onClick={() => handleRequestStatusChange('ACTIVE')}
+              >
+                Mở khóa
+              </Button>
+            )}
             <Button
               variant='contained'
               color='primary'
@@ -308,12 +344,23 @@ const AgentDetail = ({ id }: { id: string }) => {
                 <MenuItem value='prepaid'>Ví</MenuItem>
               </TextField>
             </Grid2>
-            <Grid2 size={{ xs: 12 }}>
+            <Grid2 size={{ xs: 12, sm: 6 }}>
               <TextField select fullWidth label='Đơn vị tiền tệ' defaultValue='USD'>
                 <MenuItem value='USD'>USD ($)</MenuItem>
                 <MenuItem value='JPY'>JPY (¥)</MenuItem>
                 <MenuItem value='VND'>VND (đ)</MenuItem>
               </TextField>
+            </Grid2>
+            <Grid2 size={{ xs: 12, sm: 6 }}>
+              <TextField
+                fullWidth
+                label='Ngày deadline thanh toán'
+                type='number'
+                defaultValue=''
+                placeholder='1 - 31'
+                inputProps={{ min: 1, max: 31 }}
+                helperText='Ngày trong tháng (1-31)'
+              />
             </Grid2>
           </Grid2>
         </DialogContent>
@@ -369,6 +416,48 @@ const AgentDetail = ({ id }: { id: string }) => {
           <Button variant='tonal' color='secondary' onClick={() => setOpenPayment(false)}>Hủy</Button>
           <Button variant='contained' color={agent.type === 'postpaid' ? 'error' : 'success'} onClick={() => setOpenPayment(false)}>
             {agent.type === 'postpaid' ? 'Xác nhận thanh toán' : 'Xác nhận nạp tiền'}
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      <Dialog
+        open={pendingStatus !== null}
+        onClose={handleCloseStatusConfirm}
+        maxWidth='xs'
+        fullWidth
+      >
+        <DialogTitle className='font-black text-xl'>
+          {pendingStatus === 'LOCKED' ? 'Xác nhận khóa tài khoản' : 'Xác nhận mở khóa tài khoản'}
+        </DialogTitle>
+        <DialogContent dividers>
+          <Stack spacing={4} className='mbs-2'>
+            <Box className={pendingStatus === 'LOCKED' ? 'p-4 rounded-lg bg-error/5' : 'p-4 rounded-lg bg-success/5'}>
+              <Typography variant='caption' className='font-bold text-slate-500 uppercase block mbe-1'>
+                Đại lý
+              </Typography>
+              <Typography variant='h6' className='font-black'>
+                {agent.name}
+              </Typography>
+              <Typography variant='caption' className='font-mono font-bold text-slate-400 uppercase'>
+                ID: {agent.id}
+              </Typography>
+            </Box>
+            <Typography variant='body2' className='text-slate-600'>
+              {pendingStatus === 'LOCKED'
+                ? 'Tài khoản bị khóa sẽ không thể tiếp tục thao tác mua hàng hoặc sử dụng các cấu hình phân phối.'
+                : 'Tài khoản sẽ được mở lại và có thể tiếp tục sử dụng các chức năng phân phối.'}
+            </Typography>
+          </Stack>
+        </DialogContent>
+        <DialogActions className='p-4'>
+          <Button variant='tonal' color='secondary' onClick={handleCloseStatusConfirm}>Hủy</Button>
+          <Button
+            variant='contained'
+            color={pendingStatus === 'LOCKED' ? 'error' : 'success'}
+            onClick={handleConfirmStatusChange}
+            startIcon={<i className={pendingStatus === 'LOCKED' ? 'tabler-lock' : 'tabler-lock-open'} />}
+          >
+            {pendingStatus === 'LOCKED' ? 'Xác nhận khóa' : 'Xác nhận mở khóa'}
           </Button>
         </DialogActions>
       </Dialog>
