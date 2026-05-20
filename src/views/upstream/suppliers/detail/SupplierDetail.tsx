@@ -2,9 +2,11 @@
 
 import { useState } from 'react'
 import Link from 'next/link'
+import { useRouter } from 'next/navigation'
 import Grid2 from '@mui/material/Grid2'
 import Card from '@mui/material/Card'
 import CardContent from '@mui/material/CardContent'
+import CardActionArea from '@mui/material/CardActionArea'
 import Typography from '@mui/material/Typography'
 import Box from '@mui/material/Box'
 import Button from '@mui/material/Button'
@@ -12,122 +14,211 @@ import Chip from '@mui/material/Chip'
 import Stack from '@mui/material/Stack'
 import Divider from '@mui/material/Divider'
 import Avatar from '@mui/material/Avatar'
-import LinearProgress from '@mui/material/LinearProgress'
-import Alert from '@mui/material/Alert'
-import AlertTitle from '@mui/material/AlertTitle'
 
 import PageHeader from '@/components/layout/shared/PageHeader'
+import {
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  Legend,
+  ResponsiveContainer,
+} from '@/libs/Recharts'
+
+const orderChartData = [
+  { week: 'T1/W1', success: 120, failed: 5 },
+  { week: 'T1/W2', success: 145, failed: 3 },
+  { week: 'T1/W3', success: 98,  failed: 8 },
+  { week: 'T1/W4', success: 160, failed: 2 },
+  { week: 'T2/W1', success: 134, failed: 6 },
+  { week: 'T2/W2', success: 178, failed: 4 },
+  { week: 'T2/W3', success: 200, failed: 1 },
+  { week: 'T2/W4', success: 190, failed: 3 },
+]
 
 const SupplierDetail = ({ id }: { id: string }) => {
-  const [isPaymentOpen, setIsPaymentOpen] = useState(false)
+  const router = useRouter()
 
-  // Giả lập dữ liệu cho demo
   const supplier = {
     id,
     name: id.toUpperCase() === 'AIRALO' ? 'Airalo Global' : 'Nomad API',
-    logo: id.toUpperCase() === 'AIRALO' ? 'A' : 'N',
-    color: id.toUpperCase() === 'AIRALO' ? 'primary.main' : 'info.main',
-    status: 'Connected',
-    type: id.toUpperCase() === 'AIRALO' ? 'postpaid' : 'prepaid',
-    balance: id.toUpperCase() === 'AIRALO' ? 3150.20 : 5000.00,
-    limit: 10000,
+    color: id.toUpperCase() === 'AIRALO' ? '#7367F0' : '#00BAD1',
+    connected: id.toUpperCase() !== 'GOMO',
     ordersThisMonth: 850,
-    successRate: 99.2
+    productsCount: 450,
+    successRate: 99.2,
   }
 
-  const quotaPercent = (supplier.balance / supplier.limit) * 100
+  const [connected, setConnected] = useState(supplier.connected)
 
-
-
-  const quickLinks = [
-    { title: 'Cấu hình API', desc: 'Thông số kỹ thuật & Keys', icon: 'tabler-settings-automation', href: `/3m/upstream/suppliers/${id}/config`, color: 'info' },
-    { title: 'Đối soát Giao dịch', desc: 'Nhật ký mua hàng & nợ', icon: 'tabler-receipt-2', href: `/3m/upstream/transactions?supplier=${id}`, color: 'success' }
-  ]
+  const currentMonth = new Date().toISOString().slice(0, 7) // YYYY-MM
 
   return (
     <>
       <PageHeader
         title={`Dashboard: ${supplier.name}`}
         description="Quản lý hiệu năng, công nợ và cảnh báo hệ thống Upstream"
-        breadcrumbs={[{ label: 'Trang chủ', href: '/' }, { label: 'Nguồn cung', href: '/3m/upstream/suppliers' }, { label: supplier.name }]}
-
+        breadcrumbs={[
+          { label: 'Trang chủ', href: '/' },
+          { label: 'Nguồn cung', href: '/3m/upstream/suppliers' },
+          { label: supplier.name },
+        ]}
+        actions={
+          <Button
+            variant={connected ? 'tonal' : 'contained'}
+            color={connected ? 'error' : 'success'}
+            startIcon={<i className={connected ? 'tabler-plug-x' : 'tabler-plug'} />}
+            onClick={() => setConnected(!connected)}
+          >
+            {connected ? 'Gỡ kết nối' : 'Kết nối'}
+          </Button>
+        }
         className='mbe-6'
       />
 
-      <Grid2 container spacing={6}>
-        {/* TOP KPI CARDS */}
-        <Grid2 size={{ xs: 12, sm: 6, md: 4 }}>
-          <Card className='border-none shadow-sm h-full'>
-            <CardContent className='p-6'>
-              <Box className='flex justify-between items-start mbe-2'>
-                <Typography variant='subtitle2' className='font-black uppercase text-slate-500'>Sản phẩm</Typography>
-                <Avatar variant='rounded' className='bg-info/10 text-info w-8 h-8'>
-                  <i className='tabler-packages text-lg' />
-                </Avatar>
-              </Box>
-              <Typography variant='h4' className='font-black mbe-1'>450</Typography>
-              <Typography variant='caption' className='text-success font-bold'>+12 gói mới tháng này</Typography>
-            </CardContent>
-          </Card>
-        </Grid2>
-
-        <Grid2 size={{ xs: 12, sm: 6, md: 4 }}>
-          <Card className='border-none shadow-sm h-full'>
-            <CardContent className='p-6'>
-              <Box className='flex justify-between items-start mbe-2'>
-                <Typography variant='subtitle2' className='font-black uppercase text-slate-500'>Đơn hàng (Tháng)</Typography>
-                <Avatar variant='rounded' className='bg-success/10 text-success w-8 h-8'>
-                  <i className='tabler-shopping-cart text-lg' />
-                </Avatar>
-              </Box>
-              <Typography variant='h4' className='font-black mbe-1'>{supplier.ordersThisMonth}</Typography>
-              <Typography variant='caption' className='text-slate-500'>Avg. 28 đơn/ngày</Typography>
-            </CardContent>
-          </Card>
-        </Grid2>
-
-        <Grid2 size={{ xs: 12, sm: 6, md: 4 }}>
-          <Card className='border-none shadow-sm h-full'>
-            <CardContent className='p-6'>
-              <Box className='flex justify-between items-start mbe-2'>
-                <Typography variant='subtitle2' className='font-black uppercase text-slate-500'>Tỷ lệ thành công</Typography>
-                <Avatar variant='rounded' className='bg-warning/10 text-warning w-8 h-8'>
-                  <i className='tabler-chart-bar text-lg' />
-                </Avatar>
-              </Box>
-              <Typography variant='h4' className='font-black mbe-1'>{supplier.successRate}%</Typography>
-              <Box className='flex items-center gap-1'>
-                <Box className='w-2 h-2 rounded-full bg-success animate-pulse' />
-                <Typography variant='caption' className='text-success font-bold'>API: Connected</Typography>
-              </Box>
-            </CardContent>
-          </Card>
-        </Grid2>
-
-        {/* QUICK NAVIGATION */}
-        <Grid2 size={{ xs: 12 }}>
-          <Typography variant='h5' className='font-black mbe-4'>Điều hướng nhanh</Typography>
+      <Grid2 container spacing={4}>
+        {/* Left column: KPIs + chart */}
+        <Grid2 size={{ xs: 12, md: 8 }}>
           <Grid2 container spacing={4}>
-            {quickLinks.map((link) => (
-              <Grid2 key={link.title} size={{ xs: 12, md: 4 }}>
-                <Card 
-                  component={Link} 
-                  href={link.href}
-                  className='border-none shadow-sm hover:shadow-md transition-all border-2 border-transparent hover:border-primary/20'
+            {/* KPI: Products — clickable (4.7) */}
+            <Grid2 size={{ xs: 12, sm: 4 }}>
+              <Card className='border-none shadow-sm h-full'>
+                <CardActionArea
+                  onClick={() => router.push(`/3m/marketplace/products?supplierId=${id}`)}
+                  className='h-full'
                 >
-                  <CardContent className='flex items-center gap-4 p-4'>
-                    <Avatar variant='rounded' sx={{ bgcolor: `${link.color}.main`, width: 44, height: 44 }}>
-                      <i className={`${link.icon} text-xl`} />
+                  <CardContent className='p-4'>
+                    <Box className='flex justify-between items-start mbe-2'>
+                      <Typography variant='subtitle2' className='font-black uppercase text-slate-500 text-[11px]'>Sản phẩm</Typography>
+                      <Avatar variant='rounded' sx={{ bgcolor: 'info.light', color: 'info.main', width: 32, height: 32 }}>
+                        <i className='tabler-packages text-base' />
+                      </Avatar>
+                    </Box>
+                    <Typography variant='h4' className='font-black mbe-1'>{supplier.productsCount}</Typography>
+                    <Typography variant='caption' className='text-success font-bold'>+12 gói mới tháng này</Typography>
+                  </CardContent>
+                </CardActionArea>
+              </Card>
+            </Grid2>
+
+            {/* KPI: Orders — clickable (4.8) */}
+            <Grid2 size={{ xs: 12, sm: 4 }}>
+              <Card className='border-none shadow-sm h-full'>
+                <CardActionArea
+                  onClick={() => router.push(`/3m/upstream/transactions?supplierId=${id}&month=${currentMonth}`)}
+                  className='h-full'
+                >
+                  <CardContent className='p-4'>
+                    <Box className='flex justify-between items-start mbe-2'>
+                      <Typography variant='subtitle2' className='font-black uppercase text-slate-500 text-[11px]'>Đơn hàng (Tháng)</Typography>
+                      <Avatar variant='rounded' sx={{ bgcolor: 'success.light', color: 'success.main', width: 32, height: 32 }}>
+                        <i className='tabler-shopping-cart text-base' />
+                      </Avatar>
+                    </Box>
+                    <Typography variant='h4' className='font-black mbe-1'>{supplier.ordersThisMonth}</Typography>
+                    <Typography variant='caption' className='text-slate-500'>Avg. 28 đơn/ngày</Typography>
+                  </CardContent>
+                </CardActionArea>
+              </Card>
+            </Grid2>
+
+            {/* KPI: Success rate */}
+            <Grid2 size={{ xs: 12, sm: 4 }}>
+              <Card className='border-none shadow-sm h-full'>
+                <CardContent className='p-4'>
+                  <Box className='flex justify-between items-start mbe-2'>
+                    <Typography variant='subtitle2' className='font-black uppercase text-slate-500 text-[11px]'>Tỷ lệ thành công</Typography>
+                    <Avatar variant='rounded' sx={{ bgcolor: 'warning.light', color: 'warning.main', width: 32, height: 32 }}>
+                      <i className='tabler-chart-bar text-base' />
+                    </Avatar>
+                  </Box>
+                  <Typography variant='h4' className='font-black mbe-1'>{supplier.successRate}%</Typography>
+                  <Box className='flex items-center gap-1'>
+                    <Box className={`w-2 h-2 rounded-full ${connected ? 'bg-success animate-pulse' : 'bg-error'}`} />
+                    <Typography variant='caption' className={`font-bold ${connected ? 'text-success' : 'text-error'}`}>
+                      {connected ? 'API: Connected' : 'API: Disconnected'}
+                    </Typography>
+                  </Box>
+                </CardContent>
+              </Card>
+            </Grid2>
+
+            {/* Order chart (4.5) */}
+            <Grid2 size={{ xs: 12 }}>
+              <Card className='border-none shadow-sm'>
+                <CardContent className='p-4'>
+                  <Typography variant='h6' className='font-black mbe-4'>Đơn hàng theo tuần (2 tháng gần nhất)</Typography>
+                  <ResponsiveContainer width='100%' height={220}>
+                    <BarChart data={orderChartData} margin={{ top: 4, right: 16, left: -16, bottom: 0 }}>
+                      <CartesianGrid strokeDasharray='3 3' stroke='#f0f0f0' />
+                      <XAxis dataKey='week' tick={{ fontSize: 11 }} />
+                      <YAxis tick={{ fontSize: 11 }} />
+                      <Tooltip />
+                      <Legend wrapperStyle={{ fontSize: 12 }} />
+                      <Bar dataKey='success' name='Thành công' fill='#28C76F' radius={[3, 3, 0, 0]} />
+                      <Bar dataKey='failed' name='Thất bại' fill='#EA5455' radius={[3, 3, 0, 0]} />
+                    </BarChart>
+                  </ResponsiveContainer>
+                </CardContent>
+              </Card>
+            </Grid2>
+          </Grid2>
+        </Grid2>
+
+        {/* Right column: quick nav */}
+        <Grid2 size={{ xs: 12, md: 4 }}>
+          <Card className='border-none shadow-sm'>
+            <CardContent className='p-4'>
+              <Typography variant='h6' className='font-black mbe-3'>Điều hướng nhanh</Typography>
+              <Stack spacing={2}>
+                <Card
+                  component={Link}
+                  href={`/3m/upstream/suppliers/${id}/config`}
+                  className='border shadow-none hover:shadow-sm transition-all'
+                  sx={{ textDecoration: 'none' }}
+                >
+                  <CardContent className='flex items-center gap-3 p-3'>
+                    <Avatar variant='rounded' sx={{ bgcolor: 'info.main', width: 36, height: 36 }}>
+                      <i className='tabler-settings-automation text-lg' />
                     </Avatar>
                     <Box>
-                      <Typography variant='body1' className='font-black'>{link.title}</Typography>
-                      <Typography variant='caption' className='text-slate-500'>{link.desc}</Typography>
+                      <Typography variant='body2' className='font-black'>Cấu hình API</Typography>
+                      <Typography variant='caption' className='text-slate-500'>Thông số kỹ thuật & Keys</Typography>
                     </Box>
                   </CardContent>
                 </Card>
-              </Grid2>
-            ))}
-          </Grid2>
+                <Card
+                  component={Link}
+                  href={`/3m/upstream/transactions?supplier=${id}`}
+                  className='border shadow-none hover:shadow-sm transition-all'
+                  sx={{ textDecoration: 'none' }}
+                >
+                  <CardContent className='flex items-center gap-3 p-3'>
+                    <Avatar variant='rounded' sx={{ bgcolor: 'success.main', width: 36, height: 36 }}>
+                      <i className='tabler-receipt-2 text-lg' />
+                    </Avatar>
+                    <Box>
+                      <Typography variant='body2' className='font-black'>Đối soát Giao dịch</Typography>
+                      <Typography variant='caption' className='text-slate-500'>Nhật ký mua hàng & nợ</Typography>
+                    </Box>
+                  </CardContent>
+                </Card>
+              </Stack>
+
+              <Divider className='my-4' />
+
+              <Box className='p-3 rounded-lg' sx={{ bgcolor: connected ? 'success.light' : 'error.light' }}>
+                <Box className='flex items-center gap-2'>
+                  <Box className={`w-2 h-2 rounded-full ${connected ? 'bg-success animate-pulse' : 'bg-error'}`} />
+                  <Typography variant='body2' className='font-black'>
+                    Trạng thái: {connected ? 'Đã kết nối' : 'Chưa kết nối'}
+                  </Typography>
+                </Box>
+              </Box>
+            </CardContent>
+          </Card>
         </Grid2>
       </Grid2>
     </>

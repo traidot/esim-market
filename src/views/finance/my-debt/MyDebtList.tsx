@@ -24,6 +24,7 @@ import DialogTitle from '@mui/material/DialogTitle'
 import DialogContent from '@mui/material/DialogContent'
 import DialogActions from '@mui/material/DialogActions'
 import MenuItem from '@mui/material/MenuItem'
+import TablePagination from '@mui/material/TablePagination'
 import { useState } from 'react'
 import { toast } from 'react-toastify'
 
@@ -31,6 +32,8 @@ import PageHeader from '@/components/layout/shared/PageHeader'
 
 const MyDebtList = () => {
   const [openPaymentDialog, setOpenPaymentDialog] = useState(false)
+  const [stmtPage, setStmtPage] = useState(0)
+  const STMT_PER_PAGE = 10
   const currentDebt = 5240.00
   const [paymentAmount, setPaymentAmount] = useState(currentDebt.toLocaleString('en-US', { minimumFractionDigits: 2 }))
   const [depositorName, setDepositorName] = useState('Asia Travel Hub')
@@ -145,7 +148,7 @@ const MyDebtList = () => {
               </TableRow>
             </TableHead>
             <TableBody>
-              {statements.map((stmt) => (
+              {statements.slice(stmtPage * STMT_PER_PAGE, stmtPage * STMT_PER_PAGE + STMT_PER_PAGE).map((stmt) => (
                 <TableRow key={stmt.month} hover>
                   <TableCell>
                     <Typography variant='body2' className='font-black'>Tháng {stmt.month}</Typography>
@@ -192,6 +195,15 @@ const MyDebtList = () => {
             </TableBody>
           </Table>
         </TableContainer>
+        <TablePagination
+          component='div'
+          count={statements.length}
+          page={stmtPage}
+          onPageChange={(_, p) => setStmtPage(p)}
+          rowsPerPage={STMT_PER_PAGE}
+          rowsPerPageOptions={[STMT_PER_PAGE]}
+          labelDisplayedRows={({ from, to, count }) => `${from}–${to} / ${count}`}
+        />
       </Card>
 
       <Dialog open={openPaymentDialog} onClose={() => setOpenPaymentDialog(false)} maxWidth='sm' fullWidth>

@@ -1,5 +1,7 @@
 'use client'
 
+import { useState } from 'react'
+
 import Grid2 from '@mui/material/Grid2'
 import Card from '@mui/material/Card'
 import CardHeader from '@mui/material/CardHeader'
@@ -13,6 +15,8 @@ import Divider from '@mui/material/Divider'
 import Stack from '@mui/material/Stack'
 import Switch from '@mui/material/Switch'
 import FormControlLabel from '@mui/material/FormControlLabel'
+import TextField from '@mui/material/TextField'
+import MenuItem from '@mui/material/MenuItem'
 
 import PageHeader from '@/components/layout/shared/PageHeader'
 
@@ -30,6 +34,19 @@ const UserDetailView = ({ id }: { id: string }) => {
        { module: 'Inventory', access: 'Full Access' },
        { module: 'System', access: 'Admin' }
     ]
+  }
+
+  const [editForm, setEditForm] = useState({
+    firstName: 'Admin',
+    lastName: 'User',
+    email: userData.email,
+    phone: '',
+    role: userData.role,
+    status: userData.status
+  })
+
+  const handleEditChange = (field: string) => (e: React.ChangeEvent<HTMLInputElement>) => {
+    setEditForm(prev => ({ ...prev, [field]: e.target.value }))
   }
 
   return (
@@ -107,6 +124,56 @@ const UserDetailView = ({ id }: { id: string }) => {
                     <FormControlLabel control={<Switch defaultChecked />} label={<Typography variant='body2' className='font-medium'>Require Multi-Factor Authentication (MFA)</Typography>} />
                     <FormControlLabel control={<Switch defaultChecked />} label={<Typography variant='body2' className='font-medium'>Force Password Rotation every 90 days</Typography>} />
                     <FormControlLabel control={<Switch />} label={<Typography variant='body2' className='font-medium'>Allow API access with bearer tokens</Typography>} />
+                </CardContent>
+            </Card>
+
+            <Card className='mt-6'>
+                <CardHeader title='Chỉnh sửa thông tin' subheader='Cập nhật thông tin cơ bản của người dùng' />
+                <CardContent className='flex flex-col gap-4'>
+                    <Box className='flex gap-4'>
+                        <TextField
+                            fullWidth
+                            size='small'
+                            label='Họ'
+                            value={editForm.firstName}
+                            onChange={handleEditChange('firstName')}
+                        />
+                        <TextField
+                            fullWidth
+                            size='small'
+                            label='Tên'
+                            value={editForm.lastName}
+                            onChange={handleEditChange('lastName')}
+                        />
+                    </Box>
+                    <TextField
+                        fullWidth
+                        size='small'
+                        label='Email'
+                        type='email'
+                        value={editForm.email}
+                        onChange={handleEditChange('email')}
+                    />
+                    <TextField
+                        fullWidth
+                        size='small'
+                        label='Số điện thoại'
+                        value={editForm.phone}
+                        onChange={handleEditChange('phone')}
+                    />
+                    <TextField select fullWidth size='small' label='Vai trò' value={editForm.role} onChange={handleEditChange('role')}>
+                        <MenuItem value='Administrator'>Administrator</MenuItem>
+                        <MenuItem value='Manager'>Manager</MenuItem>
+                        <MenuItem value='Operator'>Operator</MenuItem>
+                        <MenuItem value='Viewer'>Viewer</MenuItem>
+                    </TextField>
+                    <TextField select fullWidth size='small' label='Trạng thái' value={editForm.status} onChange={handleEditChange('status')}>
+                        <MenuItem value='Active'>Active</MenuItem>
+                        <MenuItem value='Locked'>Locked</MenuItem>
+                    </TextField>
+                    <Box className='flex justify-end'>
+                        <Button variant='contained' color='primary'>Lưu thay đổi</Button>
+                    </Box>
                 </CardContent>
             </Card>
          </Grid2>

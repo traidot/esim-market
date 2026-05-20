@@ -1,13 +1,19 @@
 'use client'
 
+import { useMemo } from 'react'
 import { Modal, Card, CardHeader, CardContent, Grid2, TextField, Button, Box, Typography, Divider, MenuItem } from '@mui/material'
+import IconButton from '@mui/material/IconButton'
 
 type Props = {
   open: boolean
   handleClose: () => void
+  supplierCount?: number
 }
 
-const AddSupplierModal = ({ open, handleClose }: Props) => {
+const AddSupplierModal = ({ open, handleClose, supplierCount = 3 }: Props) => {
+  // Auto-generate supplier code based on count (mock: next sequential number)
+  const nextCode = useMemo(() => `SUP-${supplierCount + 1}`, [supplierCount])
+
   return (
     <Modal
       open={open}
@@ -15,8 +21,8 @@ const AddSupplierModal = ({ open, handleClose }: Props) => {
       className='flex items-center justify-center'
     >
       <Card className='max-w-[600px] w-full mx-4 shadow-2xl'>
-        <CardHeader 
-          title="Thêm Nhà cung cấp Mới" 
+        <CardHeader
+          title="Thêm Nhà cung cấp Mới"
           subheader="Cấu hình kết nối API Upstream"
           action={
             <IconButton onClick={handleClose} size='small'>
@@ -29,6 +35,16 @@ const AddSupplierModal = ({ open, handleClose }: Props) => {
           <Grid2 container spacing={4}>
             <Grid2 size={{ xs: 12, md: 6 }}>
               <TextField fullWidth label="Tên Nhà cung cấp" placeholder="vd: Airalo" variant='outlined' />
+            </Grid2>
+            <Grid2 size={{ xs: 12, md: 6 }}>
+              <TextField
+                fullWidth
+                label="Mã NCC"
+                value={nextCode}
+                InputProps={{ readOnly: true }}
+                helperText="Tự động tạo, không thể chỉnh sửa"
+                variant='outlined'
+              />
             </Grid2>
             <Grid2 size={{ xs: 12, md: 6 }}>
               <TextField fullWidth select label="Loại Adapter" defaultValue="rest">
@@ -46,7 +62,7 @@ const AddSupplierModal = ({ open, handleClose }: Props) => {
             <Grid2 size={{ xs: 12, md: 6 }}>
               <TextField fullWidth label="API Secret" type='password' />
             </Grid2>
-            
+
             <Grid2 size={{ xs: 12 }}>
               <Box className='p-4 bg-slate-50 rounded-lg border border-dashed border-slate-300'>
                 <Typography variant='caption' className='text-slate-500'>
@@ -65,7 +81,5 @@ const AddSupplierModal = ({ open, handleClose }: Props) => {
     </Modal>
   )
 }
-
-import IconButton from '@mui/material/IconButton'
 
 export default AddSupplierModal

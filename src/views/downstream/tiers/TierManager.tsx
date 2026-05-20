@@ -72,14 +72,6 @@ const TierManager = () => {
                       <Typography variant='body2' className='text-slate-500 font-bold'>Tỉ lệ nâng giá:</Typography>
                       <Typography variant='h6' className='font-black text-primary'>{t.markup}</Typography>
                     </Box>
-                    <Box className='flex justify-between'>
-                      <Typography variant='body2' className='text-slate-500'>Hạn mức nợ:</Typography>
-                      <Typography variant='body2' className='font-black'>{t.creditLimit}</Typography>
-                    </Box>
-                    <Box className='flex justify-between'>
-                      <Typography variant='body2' className='text-slate-500'>Ký quỹ tối thiểu:</Typography>
-                      <Typography variant='body2' className='font-black'>{t.minDeposit}</Typography>
-                    </Box>
                   </Stack>
                   <Button fullWidth variant='tonal' color={t.color as any} className='mt-8 font-black' component={Link} href={`/3m/downstream/tiers/${t.name.toLowerCase()}`}>Cấu hình chi tiết</Button>
                 </Box>

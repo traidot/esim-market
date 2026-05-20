@@ -1,5 +1,7 @@
 'use client'
 
+import { useState } from 'react'
+
 import Grid2 from '@mui/material/Grid2'
 import Card from '@mui/material/Card'
 import CardHeader from '@mui/material/CardHeader'
@@ -15,10 +17,22 @@ import TableCell from '@mui/material/TableCell'
 import TableContainer from '@mui/material/TableContainer'
 import TableHead from '@mui/material/TableHead'
 import TableRow from '@mui/material/TableRow'
+import Dialog from '@mui/material/Dialog'
+import DialogTitle from '@mui/material/DialogTitle'
+import DialogContent from '@mui/material/DialogContent'
+import DialogActions from '@mui/material/DialogActions'
 
 import PageHeader from '@/components/layout/shared/PageHeader'
 
 const PermissionsView = () => {
+  const [copyDialogOpen, setCopyDialogOpen] = useState(false)
+  const [copiedRole, setCopiedRole] = useState('')
+
+  const handleCopy = (role: string) => {
+    setCopiedRole(role)
+    setCopyDialogOpen(true)
+  }
+
   const roles = ['Warehouse Admin', 'Inventory Manager', 'Picker/Packer', 'Quality Inspector']
   const modules = [
     { name: 'Inventory Management', perms: ['Read', 'Create', 'Update', 'Delete'] },
@@ -47,7 +61,12 @@ const PermissionsView = () => {
                   <TableRow className='bg-slate-50'>
                     <TableCell className='font-bold'>Functional Module</TableCell>
                     {roles.map(role => (
-                      <TableCell key={role} align='center' className='font-bold'>{role}</TableCell>
+                      <TableCell key={role} align='center' className='font-bold'>
+                        <Box className='flex flex-col items-center gap-1'>
+                          <span>{role}</span>
+                          <Button size='small' variant='outlined' color='secondary' onClick={() => handleCopy(role)}>Sao chép</Button>
+                        </Box>
+                      </TableCell>
                     ))}
                   </TableRow>
                 </TableHead>
@@ -76,6 +95,16 @@ const PermissionsView = () => {
           </Card>
         </Grid2>
       </Grid2>
+
+      <Dialog open={copyDialogOpen} onClose={() => setCopyDialogOpen(false)} maxWidth='xs' fullWidth>
+        <DialogTitle>Sao chép nhóm quyền</DialogTitle>
+        <DialogContent>
+          <Typography variant='body2'>Đã sao chép nhóm quyền: <strong>{copiedRole}</strong></Typography>
+        </DialogContent>
+        <DialogActions>
+          <Button variant='contained' onClick={() => setCopyDialogOpen(false)}>Đóng</Button>
+        </DialogActions>
+      </Dialog>
     </>
   )
 }

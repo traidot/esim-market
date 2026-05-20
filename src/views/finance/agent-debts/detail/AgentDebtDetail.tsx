@@ -1,6 +1,6 @@
 'use client'
 
-import React from 'react'
+import React, { useState } from 'react'
 import { useParams } from 'next/navigation'
 import Grid2 from '@mui/material/Grid2'
 import Card from '@mui/material/Card'
@@ -17,11 +17,17 @@ import TableCell from '@mui/material/TableCell'
 import TableContainer from '@mui/material/TableContainer'
 import TableHead from '@mui/material/TableHead'
 import TableRow from '@mui/material/TableRow'
+import Pagination from '@mui/material/Pagination'
+import Select from '@mui/material/Select'
+import MenuItem from '@mui/material/MenuItem'
 
 import PageHeader from '@/components/layout/shared/PageHeader'
+import { formatVND, formatDate } from '@/lib/format'
 
 const AgentDebtDetail = () => {
   const { id } = useParams()
+  const [page, setPage] = useState(1)
+  const [pageSize, setPageSize] = useState(10)
 
   const agentsMock = [
     { id: 'a001', name: 'TravelConnect Solutions', code: 'TR', email: 'finance@travelconnect.com', phone: '+84 912 345 678', tier: 'PLATINUM', type: 'postpaid', balance: 5240.00, status: 'Active', joinDate: '2025-01-15' },
@@ -39,6 +45,9 @@ const AgentDebtDetail = () => {
     { id: 'TX-9875', type: 'order', description: 'Mua gói Thailand Unlimited', amount: -8.00, balance: 9752.50, date: '2026-04-24 16:12:05' },
     { id: 'TX-9860', type: 'charge', description: 'Nạp tiền ký quỹ (Deposit)', amount: 5000.00, balance: 9760.50, date: '2026-04-20 09:45:00' },
   ]
+
+  const totalPages = Math.max(1, Math.ceil(transactions.length / pageSize))
+  const paginatedTransactions = transactions.slice((page - 1) * pageSize, page * pageSize)
 
   return (
     <>
@@ -104,7 +113,7 @@ const AgentDebtDetail = () => {
                   </Box>
                   <Box className='flex justify-between items-center'>
                     <Typography variant='body2' className='font-bold text-slate-500'>Ngày gia nhập</Typography>
-                    <Typography variant='body2' className='font-black'>{agent.joinDate}</Typography>
+                    <Typography variant='body2' className='font-black'>{formatDate(agent.joinDate)}</Typography>
                   </Box>
                 </Stack>
               </CardContent>
@@ -123,7 +132,7 @@ const AgentDebtDetail = () => {
                       {agent.type === 'postpaid' ? 'Dư nợ hiện tại' : 'Số dư ví'}
                     </Typography>
                     <Typography variant='h3' className={`font-black ${agent.type === 'postpaid' ? 'text-error' : 'text-success'}`}>
-                      ${agent.balance.toLocaleString()}
+                      {formatVND(agent.balance)}
                     </Typography>
                   </CardContent>
                 </Card>
@@ -133,7 +142,7 @@ const AgentDebtDetail = () => {
                   <CardContent className='p-6'>
                     <Typography variant='caption' className='font-bold text-slate-500 uppercase text-[10px]'>Tổng chi tiêu (Tháng này)</Typography>
                     <Typography variant='h3' className='font-black text-slate-800'>
-                      $12,450
+                      {formatVND(12450)}
                     </Typography>
                   </CardContent>
                 </Card>
@@ -157,7 +166,7 @@ const AgentDebtDetail = () => {
                     </TableRow>
                   </TableHead>
                   <TableBody>
-                    {transactions.map((tx) => (
+                    {paginatedTransactions.map((tx) => (
                       <TableRow key={tx.id} hover>
                         <TableCell>
                           <Typography variant='body2' className='font-black text-primary'>{tx.id}</Typography>
@@ -175,11 +184,11 @@ const AgentDebtDetail = () => {
                         </TableCell>
                         <TableCell className='text-right'>
                           <Typography variant='body2' className={`font-black ${tx.amount < 0 ? 'text-error' : 'text-success'}`}>
-                            {tx.amount > 0 ? '+' : ''}${Math.abs(tx.amount).toFixed(2)}
+                            {tx.amount > 0 ? '+' : '-'}{formatVND(Math.abs(tx.amount))}
                           </Typography>
                         </TableCell>
                         <TableCell className='text-right'>
-                          <Typography variant='body2' className='font-black'>${tx.balance.toFixed(2)}</Typography>
+                          <Typography variant='body2' className='font-black'>{formatVND(tx.balance)}</Typography>
                         </TableCell>
                         <TableCell className='text-right'>
                           <Typography variant='caption' className='font-bold text-slate-400'>{tx.date}</Typography>
@@ -189,8 +198,36 @@ const AgentDebtDetail = () => {
                   </TableBody>
                 </Table>
               </TableContainer>
-              <Box className='p-4 text-center border-ts bg-slate-50/30'>
-                <Button variant='text' size='small' className='font-black'>Xem tất cả lịch sử</Button>
+              <Box className='p-5 border-ts bg-slate-50/30 flex justify-between items-center'>
+                <Stack direction='row' alignItems='center' spacing={1}>
+                  <Typography variant='caption' className='text-slate-500'>
+                    Hiển thị
+                  </Typography>
+                  <Select
+                    size='small'
+                    value={pageSize}
+                    onChange={e => {
+                      setPageSize(Number(e.target.value))
+                      setPage(1)
+                    }}
+                    sx={{ fontSize: '0.75rem', minWidth: 70 }}
+                  >
+                    <MenuItem value={10}>10</MenuItem>
+                    <MenuItem value={50}>50</MenuItem>
+                    <MenuItem value={100}>100</MenuItem>
+                  </Select>
+                  <Typography variant='caption' className='text-slate-500'>
+                    hàng / trang
+                  </Typography>
+                </Stack>
+                <Pagination
+                  count={totalPages}
+                  page={page}
+                  onChange={(_, v) => setPage(v)}
+                  color='primary'
+                  shape='rounded'
+                  size='small'
+                />
               </Box>
             </Card>
           </Stack>

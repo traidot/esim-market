@@ -25,6 +25,7 @@ const SupplierList = () => {
       id: '1',
       name: 'Airalo Global',
       code: 'AIRALO',
+      supplierCode: 'SUP-1',
       balance: '$1,245.50',
       status: 'active',
       connectionStatus: 'Connected',
@@ -37,6 +38,7 @@ const SupplierList = () => {
       id: '2',
       name: 'Nomad API',
       code: 'NOMAD',
+      supplierCode: 'SUP-2',
       balance: '$850.00',
       status: 'active',
       connectionStatus: 'Connected',
@@ -49,6 +51,7 @@ const SupplierList = () => {
       id: '3',
       name: 'GoMoWorld',
       code: 'GOMO',
+      supplierCode: 'SUP-3',
       balance: '$0.00',
       status: 'inactive',
       connectionStatus: 'Disconnected',
@@ -101,6 +104,7 @@ const SupplierList = () => {
                     <Box>
                       <Typography variant='h5' className='font-black'>{supplier.name}</Typography>
                       <Typography variant='body2' className='text-slate-400'>{supplier.code}</Typography>
+                      <Typography variant='caption' className='text-slate-400 font-mono'>Mã NCC: {supplier.supplierCode}</Typography>
                     </Box>
                   </Box>
                   <Box className='flex flex-col items-end gap-2'>
@@ -154,7 +158,7 @@ const SupplierList = () => {
         ))}
       </Grid2>
 
-      <AddSupplierModal open={isModalOpen} handleClose={() => setIsModalOpen(false)} />
+      <AddSupplierModal open={isModalOpen} handleClose={() => setIsModalOpen(false)} supplierCount={suppliers.length} />
     </>
   )
 }

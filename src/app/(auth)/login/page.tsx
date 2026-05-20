@@ -333,6 +333,7 @@ const LoginPage = () => {
             />
             <div className='flex justify-between items-center gap-x-3 gap-y-1 flex-wrap'>
               <FormControlLabel control={<Checkbox />} label={t('auth.rememberMe')} />
+              <Link href='/forgot-password' className='text-primary text-sm hover:underline'>Quên mật khẩu?</Link>
             </div>
             <Button fullWidth variant='contained' type='submit' disabled={isLoading}>
               {isLoading ? t('auth.loggingIn') : t('auth.login')}

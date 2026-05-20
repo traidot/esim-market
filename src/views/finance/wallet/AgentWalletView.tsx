@@ -22,11 +22,14 @@ import DialogContent from '@mui/material/DialogContent'
 import DialogActions from '@mui/material/DialogActions'
 import TextField from '@mui/material/TextField'
 import InputAdornment from '@mui/material/InputAdornment'
+import TablePagination from '@mui/material/TablePagination'
 
 import PageHeader from '@/components/layout/shared/PageHeader'
 
 const AgentWalletView = () => {
   const [openDepositDialog, setOpenDepositDialog] = useState(false)
+  const [txPage, setTxPage] = useState(0)
+  const TX_PER_PAGE = 10
   
   const walletData = {
     balance: 1250.75,
@@ -106,22 +109,13 @@ const AgentWalletView = () => {
       <Card className='border-none shadow-sm'>
         <Box className='p-6 border-be flex justify-between items-center'>
           <Typography variant='h6' className='font-black uppercase text-sm text-slate-500 tracking-widest'>Biến động số dư gần đây</Typography>
-          <Button 
-            variant='text' 
-            size='small' 
-            className='font-bold' 
-            endIcon={<i className='tabler-arrow-narrow-right' />}
-            component={Link}
-            href='/agent/finance/transactions'
-          >
-            Xem tất cả
-          </Button>
         </Box>
         <Box className='overflow-x-auto'>
           <table className='w-full text-left border-collapse'>
             <thead>
               <tr className='bg-slate-50 border-be'>
-                <th className='p-4 text-xs font-black text-slate-500 uppercase'>Ngày & Thời gian</th>
+                <th className='p-4 text-xs font-black text-slate-500 uppercase'>Ngày</th>
+                <th className='p-4 text-xs font-black text-slate-500 uppercase'>Mã giao dịch</th>
                 <th className='p-4 text-xs font-black text-slate-500 uppercase'>Loại giao dịch</th>
                 <th className='p-4 text-xs font-black text-slate-500 uppercase'>Nội dung / Reference</th>
                 <th className='p-4 text-xs font-black text-slate-500 uppercase text-right'>Biến động</th>
@@ -129,10 +123,12 @@ const AgentWalletView = () => {
               </tr>
             </thead>
             <tbody>
-              {recentTransactions.map((t) => (
+              {recentTransactions.slice(txPage * TX_PER_PAGE, txPage * TX_PER_PAGE + TX_PER_PAGE).map((t) => (
                 <tr key={t.id} className='border-be last:border-0 hover:bg-slate-50/50 transition-colors'>
                   <td className='p-4'>
                     <Typography variant='body2' className='font-medium'>{t.date}</Typography>
+                  </td>
+                  <td className='p-4'>
                     <Typography variant='caption' className='text-slate-400 font-mono'>{t.id}</Typography>
                   </td>
                   <td className='p-4'>
@@ -145,7 +141,19 @@ const AgentWalletView = () => {
                   </td>
                   <td className='p-4'>
                     <Typography variant='body2' className='font-medium text-slate-700'>{t.method}</Typography>
-                    {t.reference && <Typography variant='caption' className='text-slate-500'>Ref: <span className='font-bold'>{t.reference}</span></Typography>}
+                    {t.reference && t.type === 'Purchase' ? (
+                      <Typography variant='caption' className='text-slate-500'>
+                        Order ID:{' '}
+                        <Link
+                          href={`/agent/orders/my-orders?orderId=${encodeURIComponent(t.reference)}`}
+                          className='font-bold text-primary hover:underline'
+                        >
+                          {t.reference}
+                        </Link>
+                      </Typography>
+                    ) : t.reference ? (
+                      <Typography variant='caption' className='text-slate-500'>Ref: <span className='font-bold'>{t.reference}</span></Typography>
+                    ) : null}
                   </td>
                   <td className='p-4 text-right'>
                     <Typography variant='body2' className={`font-black ${t.amount > 0 ? 'text-success' : 'text-error'}`}>
@@ -160,6 +168,15 @@ const AgentWalletView = () => {
             </tbody>
           </table>
         </Box>
+        <TablePagination
+          component='div'
+          count={recentTransactions.length}
+          page={txPage}
+          onPageChange={(_, p) => setTxPage(p)}
+          rowsPerPage={TX_PER_PAGE}
+          rowsPerPageOptions={[TX_PER_PAGE]}
+          labelDisplayedRows={({ from, to, count }) => `${from}–${to} / ${count}`}
+        />
       </Card>
     </>
   )

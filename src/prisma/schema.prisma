@@ -845,9 +845,13 @@ model Agent {
   balance       Decimal   @default(0) @db.Decimal(18, 4)
   webhookUrl    String?
   apiKey        String?   @unique
-  status        CommonStatus @default(active)
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
+  status              CommonStatus @default(active)
+  accountStatus       String       @default("ACTIVE") // ACTIVE | LOCKED
+  paymentDeadlineDay  Int?         // Day of month for payment deadline (1-31)
+  currency            String?      // preferred currency unit (VND, USD, JPY)
+  initialBalance      Decimal?     @db.Decimal(18, 4)
+  createdAt           DateTime     @default(now())
+  updatedAt           DateTime     @updatedAt
 
   user          User?     @relation(fields: [userId], references: [id], onDelete: SetNull)
   wallets       Wallet[]
@@ -867,6 +871,7 @@ model MarketplaceProduct {
   dataAmount    Int       // in MB
   validityDays  Int
   status        CommonStatus @default(active)
+  isAvailable   Boolean      @default(true) // toggleable Mở bán / Chưa mở bán
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
 
@@ -958,6 +963,9 @@ model DigitalOrder {
   activationCode      String?   // QR code URL or LPA string
   customerEmail       String?
   notes               String?
+  retryCount          Int       @default(0)
+  lastRetryAt         DateTime?
+  traceId             String?
   createdAt           DateTime  @default(now())
   updatedAt           DateTime  @updatedAt
 
