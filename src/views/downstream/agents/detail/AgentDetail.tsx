@@ -27,7 +27,6 @@ import AppReactApexCharts from '@/libs/styles/AppReactApexCharts'
 const AgentDetail = ({ id }: { id: string }) => {
   const theme = useTheme()
   const [openEdit, setOpenEdit] = useState(false)
-  const [openPayment, setOpenPayment] = useState(false)
   const [year, setYear] = useState('2026')
   const [accountStatus, setAccountStatus] = useState<'ACTIVE' | 'LOCKED'>('ACTIVE')
   const [pendingStatus, setPendingStatus] = useState<'ACTIVE' | 'LOCKED' | null>(null)
@@ -178,11 +177,6 @@ const AgentDetail = ({ id }: { id: string }) => {
                       <Chip label="Dùng Công nợ" size="small" color="error" variant="tonal" className="font-bold" />
                     </Box>
                     <Typography variant='h2' className='font-black mbe-4 text-slate-900'>${agent.balance.toLocaleString('en-US', { minimumFractionDigits: 2 })}</Typography>
-                    <Box className='mbe-6'>
-                      <Button variant="contained" color="error" size="small" startIcon={<i className='tabler-receipt' />} onClick={() => setOpenPayment(true)}>
-                        Thanh toán nợ
-                      </Button>
-                    </Box>
                     <Box>
                       <Typography variant='caption' className='font-black uppercase text-slate-500 mbe-1 block text-[10px]'>Đơn vị tiền tệ</Typography>
                       <Typography variant='h6' className='font-black text-primary'>USD ($)</Typography>
@@ -197,11 +191,6 @@ const AgentDetail = ({ id }: { id: string }) => {
                       <Chip label="Dùng Ví" size="small" color="success" variant="tonal" className="font-bold" />
                     </Box>
                     <Typography variant='h2' className='font-black mbe-4 text-slate-900'>${agent.balance.toLocaleString('en-US', { minimumFractionDigits: 2 })}</Typography>
-                    <Box className='mbe-6'>
-                      <Button variant="contained" color="success" size="small" startIcon={<i className='tabler-plus' />} onClick={() => setOpenPayment(true)}>
-                        Nạp thêm tiền
-                      </Button>
-                    </Box>
                     <Box>
                       <Typography variant='caption' className='font-black uppercase text-slate-500 mbe-1 block text-[10px]'>Đơn vị tiền tệ</Typography>
                       <Typography variant='h6' className='font-black text-success'>USD ($)</Typography>
@@ -367,56 +356,6 @@ const AgentDetail = ({ id }: { id: string }) => {
         <DialogActions className='p-4'>
           <Button variant='tonal' color='secondary' onClick={() => setOpenEdit(false)}>Hủy</Button>
           <Button variant='contained' onClick={() => setOpenEdit(false)}>Lưu thay đổi</Button>
-        </DialogActions>
-      </Dialog>
-
-      <Dialog
-        open={openPayment}
-        onClose={() => setOpenPayment(false)}
-        maxWidth='xs'
-        fullWidth
-      >
-        <DialogTitle className='font-black text-xl'>
-          {agent.type === 'postpaid' ? 'Thanh toán công nợ' : 'Nạp tiền vào ví'}
-        </DialogTitle>
-        <DialogContent dividers>
-          <Stack spacing={4} className='mbs-2'>
-            <Box className='p-4 bg-primary/5 rounded-lg'>
-              <Typography variant='caption' className='font-bold text-slate-500 uppercase block mbe-1'>
-                {agent.type === 'postpaid' ? 'Công nợ hiện tại' : 'Số dư hiện tại'}
-              </Typography>
-              <Typography variant='h4' className='font-black text-primary'>
-                ${agent.balance.toLocaleString('en-US', { minimumFractionDigits: 2 })}
-              </Typography>
-            </Box>
-            <TextField
-              fullWidth
-              label='Số tiền thanh toán'
-              placeholder='0.00'
-              type='number'
-              InputProps={{
-                startAdornment: <i className='tabler-currency-dollar text-slate-400 mie-2' />
-              }}
-            />
-            <TextField select fullWidth label='Phương thức thanh toán' defaultValue='bank'>
-              <MenuItem value='bank'>Chuyển khoản ngân hàng</MenuItem>
-              <MenuItem value='cash'>Tiền mặt</MenuItem>
-              <MenuItem value='wallet'>Ví điện tử</MenuItem>
-            </TextField>
-            <TextField
-              fullWidth
-              multiline
-              rows={2}
-              label='Ghi chú'
-              placeholder='Nhập nội dung thanh toán...'
-            />
-          </Stack>
-        </DialogContent>
-        <DialogActions className='p-4'>
-          <Button variant='tonal' color='secondary' onClick={() => setOpenPayment(false)}>Hủy</Button>
-          <Button variant='contained' color={agent.type === 'postpaid' ? 'error' : 'success'} onClick={() => setOpenPayment(false)}>
-            {agent.type === 'postpaid' ? 'Xác nhận thanh toán' : 'Xác nhận nạp tiền'}
-          </Button>
         </DialogActions>
       </Dialog>
 
