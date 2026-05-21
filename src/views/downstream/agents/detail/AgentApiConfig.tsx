@@ -1,6 +1,5 @@
 'use client'
 
-import { useState } from 'react'
 import Link from 'next/link'
 import Grid2 from '@mui/material/Grid2'
 import Card from '@mui/material/Card'
@@ -14,9 +13,7 @@ import InputAdornment from '@mui/material/InputAdornment'
 import Divider from '@mui/material/Divider'
 import Switch from '@mui/material/Switch'
 import FormControlLabel from '@mui/material/FormControlLabel'
-import IconButton from '@mui/material/IconButton'
 import Chip from '@mui/material/Chip'
-import Tooltip from '@mui/material/Tooltip'
 
 import PageHeader from '@/components/layout/shared/PageHeader'
 
@@ -24,9 +21,6 @@ const AgentApiConfig = ({ id }: { id: string }) => {
   const agentName = id.toUpperCase() === 'A001' ? 'TravelConnect Solutions' : 'Global eSIM Hub'
   const apiKey = 'sk_live_123abc456def789ghi'
   const hmacSecret = 'hmac_live_9876543210abcdef'
-
-  const [showLiveKey, setShowLiveKey] = useState(false)
-  const [showHmacSecret, setShowHmacSecret] = useState(false)
 
   return (
     <>
@@ -115,15 +109,10 @@ const AgentApiConfig = ({ id }: { id: string }) => {
                     <TextField 
                       fullWidth 
                       size='small' 
-                      type={showLiveKey ? 'text' : 'password'}
+                      type='password'
                       defaultValue={apiKey}
                       InputProps={{ readOnly: true }}
                     />
-                    <Tooltip title={showLiveKey ? 'Ẩn API key' : 'Hiện API key'}>
-                      <IconButton onClick={() => setShowLiveKey(!showLiveKey)} className='bg-slate-100 rounded'>
-                        <i className={showLiveKey ? 'tabler-eye-off' : 'tabler-eye'} />
-                      </IconButton>
-                    </Tooltip>
                     <Button variant='tonal' className='shrink-0' onClick={() => void navigator.clipboard.writeText(apiKey)}>Copy</Button>
                   </Box>
 
@@ -132,15 +121,10 @@ const AgentApiConfig = ({ id }: { id: string }) => {
                     <TextField
                       fullWidth
                       size='small'
-                      type={showHmacSecret ? 'text' : 'password'}
+                      type='password'
                       defaultValue={hmacSecret}
                       InputProps={{ readOnly: true }}
                     />
-                    <Tooltip title={showHmacSecret ? 'Ẩn HMAC secret' : 'Hiện HMAC secret'}>
-                      <IconButton onClick={() => setShowHmacSecret(!showHmacSecret)} className='bg-slate-100 rounded'>
-                        <i className={showHmacSecret ? 'tabler-eye-off' : 'tabler-eye'} />
-                      </IconButton>
-                    </Tooltip>
                     <Button variant='tonal' className='shrink-0' onClick={() => void navigator.clipboard.writeText(hmacSecret)}>Copy</Button>
                   </Box>
 
