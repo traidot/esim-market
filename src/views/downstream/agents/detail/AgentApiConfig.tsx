@@ -16,14 +16,17 @@ import Switch from '@mui/material/Switch'
 import FormControlLabel from '@mui/material/FormControlLabel'
 import IconButton from '@mui/material/IconButton'
 import Chip from '@mui/material/Chip'
+import Tooltip from '@mui/material/Tooltip'
 
 import PageHeader from '@/components/layout/shared/PageHeader'
 
 const AgentApiConfig = ({ id }: { id: string }) => {
   const agentName = id.toUpperCase() === 'A001' ? 'TravelConnect Solutions' : 'Global eSIM Hub'
+  const apiKey = 'sk_live_123abc456def789ghi'
+  const hmacSecret = 'hmac_live_9876543210abcdef'
 
   const [showLiveKey, setShowLiveKey] = useState(false)
-  const [showSandboxKey, setShowSandboxKey] = useState(false)
+  const [showHmacSecret, setShowHmacSecret] = useState(false)
 
   return (
     <>
@@ -89,58 +92,61 @@ const AgentApiConfig = ({ id }: { id: string }) => {
         </Grid2>
 
         <Grid2 size={{ xs: 12, md: 8 }}>
-          {/* API KEYS */}
+          {/* API CREDENTIALS */}
           <Card className='border-none shadow-sm mbe-6'>
             <CardContent className='p-6'>
               <Box className='flex justify-between items-center mbe-6'>
-                <Typography variant='h6' className='font-black'>API Keys</Typography>
-                <Button variant='outlined' size='small' color='error' startIcon={<i className='tabler-refresh' />}>Làm mới API Key (Rotate)</Button>
+                <Typography variant='h6' className='font-black'>API Key & HMAC Secret</Typography>
+                <Button variant='outlined' size='small' color='error' startIcon={<i className='tabler-refresh' />}>Rotate Credential</Button>
               </Box>
 
-              <Stack spacing={6}>
-                {/* LIVE KEY */}
+              <Stack spacing={5}>
                 <Box>
                   <Box className='flex items-center gap-2 mbe-2'>
-                    <Typography variant='subtitle2' className='font-bold'>Live Environment (Môi trường Thật)</Typography>
+                    <Typography variant='subtitle2' className='font-bold'>Public API Credential</Typography>
                     <Chip label='Active' color='success' size='small' className='h-[20px] text-[10px]' />
                   </Box>
-                  <Box className='flex gap-2'>
+                  <Typography variant='body2' className='text-slate-500 mbe-4'>
+                    API key xác thực đối tác. HMAC secret dùng để ký request qua header x-api-signature.
+                  </Typography>
+
+                  <Typography variant='caption' className='font-bold text-slate-600 mbe-1 inline-block'>API Key</Typography>
+                  <Box className='flex flex-col sm:flex-row gap-2'>
                     <TextField 
                       fullWidth 
                       size='small' 
                       type={showLiveKey ? 'text' : 'password'}
-                      defaultValue="live_sk_test_123abc456def789ghi"
+                      defaultValue={apiKey}
                       InputProps={{ readOnly: true }}
                     />
-                    <IconButton onClick={() => setShowLiveKey(!showLiveKey)} className='bg-slate-100 rounded'>
-                      <i className={showLiveKey ? 'tabler-eye-off' : 'tabler-eye'} />
-                    </IconButton>
-                    <Button variant='tonal' className='shrink-0'>Copy</Button>
+                    <Tooltip title={showLiveKey ? 'Ẩn API key' : 'Hiện API key'}>
+                      <IconButton onClick={() => setShowLiveKey(!showLiveKey)} className='bg-slate-100 rounded'>
+                        <i className={showLiveKey ? 'tabler-eye-off' : 'tabler-eye'} />
+                      </IconButton>
+                    </Tooltip>
+                    <Button variant='tonal' className='shrink-0' onClick={() => void navigator.clipboard.writeText(apiKey)}>Copy</Button>
                   </Box>
-                  <Typography variant='caption' className='text-error mt-1 inline-block'>Cảnh báo: Không chia sẻ Live Key. Giao dịch sẽ trừ tiền thật.</Typography>
-                </Box>
 
-                <Divider />
-
-                {/* SANDBOX KEY */}
-                <Box>
-                  <Box className='flex items-center gap-2 mbe-2'>
-                    <Typography variant='subtitle2' className='font-bold'>Sandbox Environment (Môi trường Thử nghiệm)</Typography>
-                    <Chip label='Testing' color='warning' size='small' className='h-[20px] text-[10px]' />
-                  </Box>
-                  <Box className='flex gap-2'>
-                    <TextField 
-                      fullWidth 
-                      size='small' 
-                      type={showSandboxKey ? 'text' : 'password'}
-                      defaultValue="sandbox_sk_test_987zyx654wvu321tsr"
+                  <Typography variant='caption' className='font-bold text-slate-600 mbe-1 mt-4 inline-block'>HMAC Secret</Typography>
+                  <Box className='flex flex-col sm:flex-row gap-2'>
+                    <TextField
+                      fullWidth
+                      size='small'
+                      type={showHmacSecret ? 'text' : 'password'}
+                      defaultValue={hmacSecret}
                       InputProps={{ readOnly: true }}
                     />
-                    <IconButton onClick={() => setShowSandboxKey(!showSandboxKey)} className='bg-slate-100 rounded'>
-                      <i className={showSandboxKey ? 'tabler-eye-off' : 'tabler-eye'} />
-                    </IconButton>
-                    <Button variant='tonal' className='shrink-0'>Copy</Button>
+                    <Tooltip title={showHmacSecret ? 'Ẩn HMAC secret' : 'Hiện HMAC secret'}>
+                      <IconButton onClick={() => setShowHmacSecret(!showHmacSecret)} className='bg-slate-100 rounded'>
+                        <i className={showHmacSecret ? 'tabler-eye-off' : 'tabler-eye'} />
+                      </IconButton>
+                    </Tooltip>
+                    <Button variant='tonal' className='shrink-0' onClick={() => void navigator.clipboard.writeText(hmacSecret)}>Copy</Button>
                   </Box>
+
+                  <Typography variant='caption' className='text-error mt-2 inline-block'>
+                    Cảnh báo: Không chia sẻ API key hoặc HMAC secret. Giao dịch sẽ trừ tiền thật.
+                  </Typography>
                 </Box>
               </Stack>
             </CardContent>
