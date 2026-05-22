@@ -75,10 +75,11 @@ const verticalMenuData = (dictionary: Awaited<ReturnType<typeof getDictionary>>)
       icon: 'tabler-settings-cog',
       roles: ['admin'],
       children: [
-        { label: 'Người dùng Nội bộ', icon: 'tabler-user-shield', href: getUrl('/3m/system/users') },
+        { label: 'Người dùng nội bộ', icon: 'tabler-user-shield', href: getUrl('/3m/system/users') },
+        { label: 'Phân quyền & Vai trò', icon: 'tabler-shield-check', href: getUrl('/3m/system/users/permissions') },
         { label: 'Cấu hình Hệ thống', icon: 'tabler-settings', href: getUrl('/3m/system/settings') },
         { label: 'Quản lý log', icon: 'tabler-history-toggle', href: getUrl('/3m/system/audit-logs') },
-        { label: 'Cổng API (Gateway)', icon: 'tabler-key', href: getUrl('/3m/downstream/api-keys') }
+        { label: 'Cổng API (Gateway)', icon: 'tabler-key', href: getUrl('/3m/system/api-keys') }
       ]
     },
     {

@@ -1,16 +1,14 @@
 'use client'
 
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 import Link from 'next/link'
-import Grid2 from '@mui/material/Grid2'
+
 import Card from '@mui/material/Card'
 import CardContent from '@mui/material/CardContent'
 import Typography from '@mui/material/Typography'
 import Box from '@mui/material/Box'
 import Button from '@mui/material/Button'
 import Chip from '@mui/material/Chip'
-import Avatar from '@mui/material/Avatar'
-import Divider from '@mui/material/Divider'
 import Stack from '@mui/material/Stack'
 import TextField from '@mui/material/TextField'
 import InputAdornment from '@mui/material/InputAdornment'
@@ -22,178 +20,482 @@ import DialogContent from '@mui/material/DialogContent'
 import DialogActions from '@mui/material/DialogActions'
 import IconButton from '@mui/material/IconButton'
 import FormControl from '@mui/material/FormControl'
-import FormLabel from '@mui/material/FormLabel'
 import RadioGroup from '@mui/material/RadioGroup'
 import FormControlLabel from '@mui/material/FormControlLabel'
 import Radio from '@mui/material/Radio'
+import Grid2 from '@mui/material/Grid2'
+import Pagination from '@mui/material/Pagination'
+import Table from '@mui/material/Table'
+import TableBody from '@mui/material/TableBody'
+import TableCell from '@mui/material/TableCell'
+import TableHead from '@mui/material/TableHead'
+import TableRow from '@mui/material/TableRow'
+import Tooltip from '@mui/material/Tooltip'
 
+import MultiSelectDropdown from '@/components/common/MultiSelectDropdown'
 import PageHeader from '@/components/layout/shared/PageHeader'
+
+type AgentStatus = 'Active' | 'Inactive'
+type AgentTier = 'PLATINUM' | 'GOLD' | 'SILVER'
+type AgentPaymentType = 'prepaid' | 'postpaid'
+
+type Agent = {
+  id: string
+  name: string
+  email: string
+  tier: AgentTier
+  status: AgentStatus
+  type: AgentPaymentType
+}
+
+const buildEmptyAgentForm = () => ({
+  name: '',
+  email: '',
+  tier: 'SILVER',
+  type: 'prepaid',
+  currency: 'VND',
+  purchaseDeadlineDays: ''
+})
+
+const agents: Agent[] = [
+  { id: 'A001', name: 'TravelConnect Solutions', email: 'contact@travelconnect.vn', tier: 'PLATINUM', status: 'Active', type: 'postpaid' },
+  { id: 'A002', name: 'Global eSIM Hub', email: 'hub@globale.sim', tier: 'GOLD', status: 'Active', type: 'prepaid' },
+  { id: 'A003', name: 'CheapData Agency', email: 'sales@cheapdata.com', tier: 'SILVER', status: 'Active', type: 'prepaid' },
+  { id: 'A004', name: 'Nomad Partner', email: 'partner@nomad.com', tier: 'GOLD', status: 'Inactive', type: 'prepaid' }
+]
+
+const getStatusLabel = (status: AgentStatus) => {
+  if (status === 'Active') return 'Hoạt động'
+  return 'Tạm dừng'
+}
+
+const getStatusColor = (status: AgentStatus) => {
+  if (status === 'Active') return 'success'
+  return 'default'
+}
+
+const getPaymentTypeLabel = (type: AgentPaymentType) => (type === 'postpaid' ? 'Công nợ' : 'Ví')
 
 const AgentsList = () => {
   const [searchTerm, setSearchTerm] = useState('')
-  const [tierFilter, setTierFilter] = useState('all')
-  const [statusFilter, setStatusFilter] = useState('all')
+  const [selectedTiers, setSelectedTiers] = useState<string[]>([])
+  const [selectedStatuses, setSelectedStatuses] = useState<string[]>([])
+  const [selectedPaymentTypes, setSelectedPaymentTypes] = useState<string[]>([])
+  const [page, setPage] = useState(1)
+  const [pageSize, setPageSize] = useState(10)
   const [openAddDialog, setOpenAddDialog] = useState(false)
-  
-  const [newAgent, setNewAgent] = useState({
-    name: '',
-    email: '',
-    tier: 'SILVER',
-    type: 'prepaid',
-    currency: 'VND',
-    paymentDeadlineType: 'billing_cycle',
-    purchaseDeadlineDays: '',
-    paymentDeadlineDay: ''
-  })
+  const [editingAgent, setEditingAgent] = useState<Agent | null>(null)
 
-  const agents = [
-    { id: 'A001', name: 'TravelConnect Solutions', email: 'contact@travelconnect.vn', tier: 'PLATINUM', balance: '$5,240.00', status: 'Active', orders: 1240, color: 'primary', type: 'postpaid' },
-    { id: 'A002', name: 'Global eSIM Hub', email: 'hub@globale.sim', tier: 'GOLD', balance: '$1,120.50', status: 'Active', orders: 850, color: 'warning', type: 'prepaid' },
-    { id: 'A003', name: 'CheapData Agency', email: 'sales@cheapdata.com', tier: 'SILVER', balance: '$15.00', status: 'Low Balance', orders: 45, color: 'secondary', type: 'prepaid' },
-    { id: 'A004', name: 'Nomad Partner', email: 'partner@nomad.com', tier: 'GOLD', balance: '$0.00', status: 'Inactive', orders: 0, color: 'error', type: 'prepaid' }
-  ]
+  const [newAgent, setNewAgent] = useState(buildEmptyAgentForm)
+  const [editAgent, setEditAgent] = useState(buildEmptyAgentForm)
+
+  const hasAnyFilter =
+    searchTerm.length > 0 || selectedTiers.length > 0 || selectedStatuses.length > 0 || selectedPaymentTypes.length > 0
+
+  const filteredAgents = useMemo(
+    () =>
+      agents.filter(agent => {
+        const keyword = searchTerm.trim().toLowerCase()
+        const matchesSearch =
+          keyword.length === 0 ||
+          agent.name.toLowerCase().includes(keyword) ||
+          agent.email.toLowerCase().includes(keyword) ||
+          agent.id.toLowerCase().includes(keyword)
+        const matchesTier = selectedTiers.length === 0 || selectedTiers.includes(agent.tier)
+        const matchesStatus = selectedStatuses.length === 0 || selectedStatuses.includes(agent.status)
+        const matchesPayment = selectedPaymentTypes.length === 0 || selectedPaymentTypes.includes(agent.type)
+
+        return matchesSearch && matchesTier && matchesStatus && matchesPayment
+      }),
+    [searchTerm, selectedPaymentTypes, selectedStatuses, selectedTiers]
+  )
+
+  const paginatedAgents = filteredAgents.slice((page - 1) * pageSize, page * pageSize)
 
   const handleCloseDialog = () => {
     setOpenAddDialog(false)
-    setNewAgent({
-      name: '',
-      email: '',
-      tier: 'SILVER',
-      type: 'prepaid',
-      currency: 'VND',
-      paymentDeadlineType: 'billing_cycle',
-      purchaseDeadlineDays: '',
-      paymentDeadlineDay: ''
+    setNewAgent(buildEmptyAgentForm())
+  }
+
+  const handleOpenEditDialog = (agent: Agent) => {
+    setEditingAgent(agent)
+    setEditAgent({
+      ...buildEmptyAgentForm(),
+      name: agent.name,
+      email: agent.email,
+      tier: agent.tier,
+      type: agent.type,
+      currency: 'USD'
     })
+  }
+
+  const handleCloseEditDialog = () => {
+    setEditingAgent(null)
+    setEditAgent(buildEmptyAgentForm())
+  }
+
+  const handleResetAll = () => {
+    setSearchTerm('')
+    setSelectedTiers([])
+    setSelectedStatuses([])
+    setSelectedPaymentTypes([])
+    setPage(1)
   }
 
   return (
     <>
       <PageHeader
-        title="Quản lý Đại lý (Agents)"
-        description="Quản lý mạng lưới phân phối, số dư ví và cấu hình chiết khấu cho từng đối tác"
+        title='Quản lý Đại lý (Agents)'
+        description='Quản lý mạng lưới phân phối, số dư ví và cấu hình chiết khấu cho từng đối tác'
         breadcrumbs={[{ label: 'Trang chủ', href: '/' }, { label: 'Phân phối' }, { label: 'Đại lý' }]}
         actions={
           <Stack direction='row' spacing={2}>
-            <Button variant='contained' onClick={() => setOpenAddDialog(true)} startIcon={<i className='tabler-plus' />}>Thêm Đại lý</Button>
+            <Button variant='contained' onClick={() => setOpenAddDialog(true)} startIcon={<i className='tabler-plus' />}>
+              Thêm Đại lý
+            </Button>
           </Stack>
         }
         className='mbe-6'
       />
 
-      {/* Advanced Filters */}
-      <Card className='border-none shadow-sm mbe-6'>
-        <CardContent className='p-4'>
-          <Grid2 container spacing={4} className='items-end'>
-            <Grid2 size={{ xs: 12, md: 4 }}>
-              <Typography variant='subtitle2' className='font-black mbe-2 uppercase text-[11px] text-slate-500'>Tìm kiếm đại lý</Typography>
-              <TextField 
-                fullWidth 
-                size='small' 
-                placeholder='Tên, email, mã đại lý...'
+      <Card
+        className='border-none shadow-sm mbe-4'
+        sx={{ borderRadius: 3, boxShadow: '0 1px 2px rgba(15, 23, 42, 0.08), 0 0 0 1px rgba(15, 23, 42, 0.06)' }}
+      >
+        <CardContent sx={{ p: 4 }}>
+          <Grid2 container spacing={3} alignItems='flex-end'>
+            <Grid2 size={{ xs: 12, md: 6, lg: 3.8 }}>
+              <Typography variant='caption' className='block font-black uppercase text-slate-500 mbe-1'>
+                Tìm kiếm
+              </Typography>
+              <TextField
+                fullWidth
+                size='small'
+                placeholder='Tìm tên, email, mã đại lý...'
                 value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
+                onChange={event => {
+                  setSearchTerm(event.target.value)
+                  setPage(1)
+                }}
                 InputProps={{
-                  startAdornment: <InputAdornment position='start'><i className='tabler-search' /></InputAdornment>
+                  startAdornment: (
+                    <InputAdornment position='start'>
+                      <i className='tabler-search text-slate-400' />
+                    </InputAdornment>
+                  )
                 }}
               />
             </Grid2>
-            <Grid2 size={{ xs: 6, md: 3 }}>
-              <Typography variant='subtitle2' className='font-black mbe-2 uppercase text-[11px] text-slate-500'>Cấp bậc (Tier)</Typography>
-              <Select fullWidth size='small' value={tierFilter} onChange={(e) => setTierFilter(e.target.value)}>
-                <MenuItem value='all'>Tất cả cấp bậc</MenuItem>
-                <MenuItem value='PLATINUM'>Platinum</MenuItem>
-                <MenuItem value='GOLD'>Gold</MenuItem>
-                <MenuItem value='SILVER'>Silver</MenuItem>
-              </Select>
+
+            <Grid2 size={{ xs: 12, sm: 6, md: 3, lg: 1.8 }}>
+              <Typography variant='caption' className='block font-black uppercase text-slate-500 mbe-1'>
+                Cấp bậc
+              </Typography>
+              <MultiSelectDropdown
+                label='Tất cả cấp bậc'
+                options={[
+                  { value: 'PLATINUM', label: 'Platinum' },
+                  { value: 'GOLD', label: 'Gold' },
+                  { value: 'SILVER', label: 'Silver' }
+                ]}
+                value={selectedTiers}
+                onChange={value => {
+                  setSelectedTiers(value)
+                  setPage(1)
+                }}
+              />
             </Grid2>
-            <Grid2 size={{ xs: 6, md: 3 }}>
-              <Typography variant='subtitle2' className='font-black mbe-2 uppercase text-[11px] text-slate-500'>Trạng thái</Typography>
-              <Select fullWidth size='small' value={statusFilter} onChange={(e) => setStatusFilter(e.target.value)}>
-                <MenuItem value='all'>Tất cả trạng thái</MenuItem>
-                <MenuItem value='Active'>Hoạt động</MenuItem>
-                <MenuItem value='Low Balance'>Sắp hết tiền</MenuItem>
-                <MenuItem value='Inactive'>Tạm dừng</MenuItem>
-              </Select>
+
+            <Grid2 size={{ xs: 12, sm: 6, md: 3, lg: 2 }}>
+              <Typography variant='caption' className='block font-black uppercase text-slate-500 mbe-1'>
+                Trạng thái
+              </Typography>
+              <MultiSelectDropdown
+                label='Tất cả trạng thái'
+                options={[
+                  { value: 'Active', label: 'Hoạt động' },
+                  { value: 'Inactive', label: 'Tạm dừng' }
+                ]}
+                value={selectedStatuses}
+                onChange={value => {
+                  setSelectedStatuses(value)
+                  setPage(1)
+                }}
+              />
             </Grid2>
-            <Grid2 size={{ xs: 12, md: 2 }}>
-              <Button fullWidth variant='tonal' color='secondary' startIcon={<i className='tabler-filter-off' />}>Xóa lọc</Button>
+
+            <Grid2 size={{ xs: 12, sm: 6, md: 3, lg: 2.8 }}>
+              <Typography variant='caption' className='block font-black uppercase text-slate-500 mbe-1'>
+                Hình thức thanh toán
+              </Typography>
+              <MultiSelectDropdown
+                label='Tất cả hình thức'
+                options={[
+                  { value: 'prepaid', label: 'Ví' },
+                  { value: 'postpaid', label: 'Công nợ' }
+                ]}
+                value={selectedPaymentTypes}
+                onChange={value => {
+                  setSelectedPaymentTypes(value)
+                  setPage(1)
+                }}
+              />
+            </Grid2>
+
+            <Grid2 size={{ xs: 6, md: 2, lg: 1.2 }}>
+              <Button
+                fullWidth
+                variant='tonal'
+                color='secondary'
+                size='small'
+                onClick={handleResetAll}
+                disabled={!hasAnyFilter}
+                startIcon={<i className='tabler-rotate-2 text-[14px]' />}
+                sx={{ height: 38, fontWeight: 700, fontSize: '0.8125rem', textTransform: 'none' }}
+              >
+                Đặt lại
+              </Button>
             </Grid2>
           </Grid2>
         </CardContent>
       </Card>
 
-      <Grid2 container spacing={6}>
-        {agents.map((agent) => (
-          <Grid2 key={agent.id} size={{ xs: 12, sm: 6, md: 4 }}>
-            <Card className='h-full border-none shadow-sm hover:shadow-md transition-all group border-2 border-transparent hover:border-primary/20'>
-              <CardContent className='p-6'>
-                <Box className='flex justify-between items-start mbe-4'>
-                  <Box className='flex items-center gap-3'>
-                    <Avatar 
-                      variant='rounded' 
-                      className={`bg-${agent.color}/10 text-${agent.color} w-[56px] h-[56px] font-black`}
-                    >
-                      {agent.name.substring(0, 2).toUpperCase()}
-                    </Avatar>
-                    <Box>
-                      <Typography variant='h5' className='font-black line-clamp-1'>{agent.name}</Typography>
-                      <Typography variant='body2' className='text-slate-400'>{agent.id} • {agent.email}</Typography>
-                    </Box>
-                  </Box>
-                  <Chip 
-                    label={agent.status} 
-                    size='small' 
-                    color={agent.status === 'Active' ? 'success' : agent.status === 'Low Balance' ? 'error' : 'default'}
-                    variant='tonal'
-                    className='font-black uppercase text-[10px]'
-                  />
-                </Box>
-
-                <Divider className='mbe-4 border-dashed' />
-
-                <Grid2 container spacing={4} className='mbe-6'>
-                  <Grid2 size={{ xs: 4 }}>
-                    <Typography variant='caption' className='font-black uppercase text-slate-400 block mbe-1 text-[10px]'>Cấp bậc</Typography>
-                    <Typography variant='body2' className={`font-black text-${agent.color}`}>{agent.tier}</Typography>
-                  </Grid2>
-                  <Grid2 size={{ xs: 4 }}>
-                    <Typography variant='caption' className='font-black uppercase text-slate-400 block mbe-1 text-[10px]'>Đơn (Tổng)</Typography>
-                    <Typography variant='body2' className='font-black'>{agent.orders.toLocaleString()}</Typography>
-                  </Grid2>
-                  <Grid2 size={{ xs: 4 }}>
-                    <Typography variant='caption' className='font-black uppercase text-slate-400 block mbe-1 text-[10px]'>
-                      {agent.type === 'postpaid' ? 'Công nợ' : 'Ví'}
-                    </Typography>
-                    <Typography variant='body2' className={`font-black ${agent.type === 'postpaid' ? 'text-error' : 'text-success'}`}>
-                      {agent.balance}
-                    </Typography>
-                  </Grid2>
-                </Grid2>
-
-                <Button 
-                  fullWidth 
-                  variant='contained' 
-                  className='shadow-none group-hover:shadow-lg transition-all py-2.5'
-                  startIcon={<i className='tabler-user-cog' />}
-                  component={Link}
-                  href={`/3m/downstream/agents/${agent.id.toLowerCase()}`}
-                >
-                  Chi tiết Đại lý
-                </Button>
-              </CardContent>
-            </Card>
-          </Grid2>
-        ))}
-      </Grid2>
-
-      {/* Add Agent Dialog */}
-      <Dialog 
-        open={openAddDialog} 
-        onClose={handleCloseDialog}
-        maxWidth='sm'
-        fullWidth
+      <Card
+        className='border-none shadow-sm overflow-hidden mbe-6'
+        sx={{ borderRadius: 3, boxShadow: '0 1px 2px rgba(15, 23, 42, 0.08), 0 0 0 1px rgba(15, 23, 42, 0.1)' }}
       >
+        <Box className='px-5 py-2 border-be bg-white flex justify-between items-center'>
+          <Box className='flex items-center gap-3'>
+            <Typography variant='h6' className='font-black'>
+              Danh sách đại lý
+            </Typography>
+            <Chip
+              label={`${filteredAgents.length} items`}
+              size='small'
+              color='primary'
+              variant='tonal'
+              className='font-bold text-[10px]'
+            />
+          </Box>
+        </Box>
+
+        <Box sx={{ position: 'relative', height: 'calc(100dvh - 24rem)', minHeight: 360, maxHeight: 640, overflow: 'auto' }}>
+          <Table stickyHeader sx={{ minWidth: 980, borderCollapse: 'separate', borderSpacing: 0 }}>
+            <TableHead>
+              <TableRow>
+                <TableCell sx={{ position: 'sticky', left: 0, zIndex: 4, bgcolor: 'grey.100', minWidth: 260, boxShadow: '2px 0 4px rgba(0,0,0,0.06)' }}>
+                  <span className='font-semibold uppercase tracking-normal text-slate-500 text-[11px]'>Đại lý</span>
+                </TableCell>
+                <TableCell sx={{ bgcolor: 'grey.100', minWidth: 220 }}>
+                  <span className='font-semibold uppercase tracking-normal text-slate-500 text-[11px]'>Email</span>
+                </TableCell>
+                <TableCell sx={{ bgcolor: 'grey.100', minWidth: 130, textAlign: 'center' }}>
+                  <span className='font-semibold uppercase tracking-normal text-slate-500 text-[11px]'>Cấp bậc</span>
+                </TableCell>
+                <TableCell sx={{ bgcolor: 'grey.100', minWidth: 130, textAlign: 'center' }}>
+                  <span className='font-semibold uppercase tracking-normal text-slate-500 text-[11px]'>Thanh toán</span>
+                </TableCell>
+                <TableCell sx={{ bgcolor: 'grey.100', minWidth: 140, textAlign: 'center' }}>
+                  <span className='font-semibold uppercase tracking-normal text-slate-500 text-[11px]'>Trạng thái</span>
+                </TableCell>
+                <TableCell sx={{ position: 'sticky', right: 0, zIndex: 4, bgcolor: 'grey.100', minWidth: 120, textAlign: 'center', boxShadow: '-2px 0 4px rgba(0,0,0,0.06)' }}>
+                  <span className='font-semibold uppercase tracking-normal text-slate-500 text-[11px]'>Hành động</span>
+                </TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {paginatedAgents.length > 0 ? (
+                paginatedAgents.map(agent => {
+                  const detailHref = `/3m/downstream/agents/${agent.id.toLowerCase()}`
+
+                  return (
+                  <TableRow key={agent.id} hover>
+                    <TableCell sx={{ position: 'sticky', left: 0, zIndex: 1, bgcolor: 'background.paper', boxShadow: '2px 0 4px rgba(0,0,0,0.04)' }}>
+                      <Link href={detailHref} className='inline-flex flex-col gap-0.5 hover:underline'>
+                        <Typography variant='body2' className='font-black text-slate-900'>
+                          {agent.name}
+                        </Typography>
+                        <Typography variant='caption' className='font-mono font-bold text-primary uppercase text-[10px]'>
+                          {agent.id}
+                        </Typography>
+                      </Link>
+                    </TableCell>
+                    <TableCell>
+                      <Typography variant='body2' className='text-slate-600'>
+                        {agent.email}
+                      </Typography>
+                    </TableCell>
+                    <TableCell sx={{ textAlign: 'center' }}>
+                      <Chip
+                        label={agent.tier}
+                        size='small'
+                        color={agent.tier === 'PLATINUM' ? 'primary' : agent.tier === 'GOLD' ? 'warning' : 'secondary'}
+                        variant='tonal'
+                        sx={{ fontWeight: 700, fontSize: '0.7rem' }}
+                      />
+                    </TableCell>
+                    <TableCell sx={{ textAlign: 'center' }}>
+                      <Chip
+                        label={getPaymentTypeLabel(agent.type)}
+                        size='small'
+                        color={agent.type === 'postpaid' ? 'error' : 'success'}
+                        variant='tonal'
+                        sx={{ fontWeight: 700, fontSize: '0.7rem' }}
+                      />
+                    </TableCell>
+                    <TableCell sx={{ textAlign: 'center' }}>
+                      <Chip
+                        label={getStatusLabel(agent.status)}
+                        size='small'
+                        color={getStatusColor(agent.status)}
+                        variant='tonal'
+                        sx={{ fontWeight: 700, fontSize: '0.7rem' }}
+                      />
+                    </TableCell>
+                    <TableCell sx={{ position: 'sticky', right: 0, zIndex: 1, bgcolor: 'background.paper', textAlign: 'center', boxShadow: '-2px 0 4px rgba(0,0,0,0.04)' }}>
+                      <Stack direction='row' justifyContent='center' spacing={0.5}>
+                        <Tooltip title='Chỉnh sửa đại lý'>
+                          <IconButton size='small' onClick={() => handleOpenEditDialog(agent)}>
+                            <i className='tabler-edit text-[16px]' />
+                          </IconButton>
+                        </Tooltip>
+                      </Stack>
+                    </TableCell>
+                  </TableRow>
+                  )
+                })
+              ) : (
+                <TableRow>
+                  <TableCell colSpan={6}>
+                    <Box className='flex flex-col items-center gap-4 opacity-40 py-20'>
+                      <i className='tabler-users-off text-[64px]' />
+                      <Typography variant='h6' className='font-black'>
+                        Không tìm thấy đại lý nào
+                      </Typography>
+                      <Button variant='tonal' size='small' onClick={handleResetAll}>
+                        Xóa bộ lọc
+                      </Button>
+                    </Box>
+                  </TableCell>
+                </TableRow>
+              )}
+            </TableBody>
+          </Table>
+        </Box>
+
+        <Box className='p-5 border-ts bg-slate-50/30 flex justify-between items-center'>
+          <Stack direction='row' alignItems='center' spacing={1}>
+            <Typography variant='caption' className='text-slate-500'>
+              Hiển thị
+            </Typography>
+            <Select
+              size='small'
+              value={pageSize}
+              onChange={event => {
+                setPageSize(Number(event.target.value))
+                setPage(1)
+              }}
+              sx={{ fontSize: '0.75rem', minWidth: 70 }}
+            >
+              <MenuItem value={10}>10</MenuItem>
+              <MenuItem value={50}>50</MenuItem>
+              <MenuItem value={100}>100</MenuItem>
+            </Select>
+            <Typography variant='caption' className='text-slate-500'>
+              hàng / trang
+            </Typography>
+          </Stack>
+          <Pagination
+            count={Math.max(1, Math.ceil(filteredAgents.length / pageSize))}
+            page={page}
+            onChange={(_, value) => setPage(value)}
+            color='primary'
+            shape='rounded'
+            size='small'
+          />
+        </Box>
+      </Card>
+
+      <Dialog open={editingAgent !== null} onClose={handleCloseEditDialog} maxWidth='sm' fullWidth>
+        <DialogTitle component='div' className='flex justify-between items-center border-be'>
+          <Box>
+            <Typography variant='h5' className='font-black'>Chỉnh sửa Đại lý</Typography>
+            <Typography variant='caption' className='text-slate-500 uppercase font-bold tracking-widest'>
+              {editingAgent ? `Mã đại lý: ${editingAgent.id}` : 'Cập nhật thông tin phân phối'}
+            </Typography>
+          </Box>
+          <IconButton onClick={handleCloseEditDialog} size='small' className='bg-slate-100'>
+            <i className='tabler-x' />
+          </IconButton>
+        </DialogTitle>
+        <DialogContent className='p-6'>
+          <Grid2 container spacing={5} className='mbs-2'>
+            <Grid2 size={{ xs: 12 }}>
+              <TextField
+                fullWidth
+                label='Tên Đại lý / Công ty'
+                value={editAgent.name}
+                onChange={event => setEditAgent({ ...editAgent, name: event.target.value })}
+              />
+            </Grid2>
+            <Grid2 size={{ xs: 12 }}>
+              <TextField
+                fullWidth
+                label='Email liên hệ'
+                value={editAgent.email}
+                onChange={event => setEditAgent({ ...editAgent, email: event.target.value })}
+              />
+            </Grid2>
+            <Grid2 size={{ xs: 12, sm: 6 }}>
+              <FormControl fullWidth>
+                <Typography variant='caption' className='mbe-1 font-black text-slate-500 uppercase'>Cấp bậc Đại lý</Typography>
+                <Select value={editAgent.tier} onChange={event => setEditAgent({ ...editAgent, tier: event.target.value })}>
+                  <MenuItem value='PLATINUM'>Platinum (+5%)</MenuItem>
+                  <MenuItem value='GOLD'>Gold (+10%)</MenuItem>
+                  <MenuItem value='SILVER'>Silver (+15%)</MenuItem>
+                </Select>
+              </FormControl>
+            </Grid2>
+            <Grid2 size={{ xs: 12, sm: 6 }}>
+              <FormControl component='fieldset'>
+                <Typography variant='caption' className='mbe-1 font-black text-slate-500 uppercase'>Hình thức Thanh toán</Typography>
+                <RadioGroup row value={editAgent.type} onChange={event => setEditAgent({ ...editAgent, type: event.target.value })}>
+                  <FormControlLabel value='prepaid' control={<Radio size='small' />} label={<Typography variant='body2'>Ví</Typography>} />
+                  <FormControlLabel value='postpaid' control={<Radio size='small' />} label={<Typography variant='body2'>Công nợ</Typography>} />
+                </RadioGroup>
+              </FormControl>
+            </Grid2>
+            <Grid2 size={{ xs: 12, sm: 6 }}>
+              <Typography variant='caption' className='mbe-1 font-black text-slate-500 uppercase'>Số ngày deadline thanh toán</Typography>
+              <TextField
+                fullWidth
+                placeholder='VD: 7'
+                type='number'
+                value={editAgent.purchaseDeadlineDays}
+                onChange={event => setEditAgent({ ...editAgent, purchaseDeadlineDays: event.target.value })}
+                inputProps={{ min: 1, 'aria-label': 'Số ngày deadline thanh toán' }}
+                helperText='Số ngày kể từ ngày mua'
+              />
+            </Grid2>
+            <Grid2 size={{ xs: 12, sm: 6 }}>
+              <FormControl fullWidth>
+                <Typography variant='caption' className='mbe-1 font-black text-slate-500 uppercase'>Đơn vị tiền tệ</Typography>
+                <Select value={editAgent.currency} onChange={event => setEditAgent({ ...editAgent, currency: event.target.value })}>
+                  <MenuItem value='VND'>VND (đ)</MenuItem>
+                  <MenuItem value='USD'>USD ($)</MenuItem>
+                  <MenuItem value='JPY'>JPY (¥)</MenuItem>
+                </Select>
+              </FormControl>
+            </Grid2>
+          </Grid2>
+        </DialogContent>
+        <DialogActions className='p-6 pt-0 flex gap-3'>
+          <Button fullWidth variant='tonal' color='secondary' onClick={handleCloseEditDialog} className='font-black'>Hủy bỏ</Button>
+          <Button fullWidth variant='contained' onClick={handleCloseEditDialog} className='font-black'>Lưu thay đổi</Button>
+        </DialogActions>
+      </Dialog>
+
+      <Dialog open={openAddDialog} onClose={handleCloseDialog} maxWidth='sm' fullWidth>
         <DialogTitle component='div' className='flex justify-between items-center border-be'>
           <Box>
             <Typography variant='h5' className='font-black'>Thêm Đại lý mới</Typography>
@@ -206,30 +508,27 @@ const AgentsList = () => {
         <DialogContent className='p-6'>
           <Grid2 container spacing={5} className='mbs-2'>
             <Grid2 size={{ xs: 12 }}>
-              <TextField 
-                fullWidth 
-                label='Tên Đại lý / Công ty' 
+              <TextField
+                fullWidth
+                label='Tên Đại lý / Công ty'
                 placeholder='VD: TravelConnect Solutions'
                 value={newAgent.name}
-                onChange={(e) => setNewAgent({ ...newAgent, name: e.target.value })}
+                onChange={event => setNewAgent({ ...newAgent, name: event.target.value })}
               />
             </Grid2>
             <Grid2 size={{ xs: 12 }}>
-              <TextField 
-                fullWidth 
-                label='Email liên hệ' 
+              <TextField
+                fullWidth
+                label='Email liên hệ'
                 placeholder='VD: contact@travel.vn'
                 value={newAgent.email}
-                onChange={(e) => setNewAgent({ ...newAgent, email: e.target.value })}
+                onChange={event => setNewAgent({ ...newAgent, email: event.target.value })}
               />
             </Grid2>
             <Grid2 size={{ xs: 12, sm: 6 }}>
               <FormControl fullWidth>
                 <Typography variant='caption' className='mbe-1 font-black text-slate-500 uppercase'>Cấp bậc Đại lý</Typography>
-                <Select 
-                  value={newAgent.tier}
-                  onChange={(e) => setNewAgent({ ...newAgent, tier: e.target.value })}
-                >
+                <Select value={newAgent.tier} onChange={event => setNewAgent({ ...newAgent, tier: event.target.value })}>
                   <MenuItem value='PLATINUM'>Platinum (+5%)</MenuItem>
                   <MenuItem value='GOLD'>Gold (+10%)</MenuItem>
                   <MenuItem value='SILVER'>Silver (+15%)</MenuItem>
@@ -237,64 +536,30 @@ const AgentsList = () => {
               </FormControl>
             </Grid2>
             <Grid2 size={{ xs: 12, sm: 6 }}>
-              <FormControl component="fieldset">
+              <FormControl component='fieldset'>
                 <Typography variant='caption' className='mbe-1 font-black text-slate-500 uppercase'>Hình thức Thanh toán</Typography>
-                <RadioGroup 
-                  row 
-                  value={newAgent.type}
-                  onChange={(e) => setNewAgent({ ...newAgent, type: e.target.value })}
-                >
-                  <FormControlLabel value="prepaid" control={<Radio size='small' />} label={<Typography variant='body2'>Ví</Typography>} />
-                  <FormControlLabel value="postpaid" control={<Radio size='small' />} label={<Typography variant='body2'>Công nợ</Typography>} />
+                <RadioGroup row value={newAgent.type} onChange={event => setNewAgent({ ...newAgent, type: event.target.value })}>
+                  <FormControlLabel value='prepaid' control={<Radio size='small' />} label={<Typography variant='body2'>Ví</Typography>} />
+                  <FormControlLabel value='postpaid' control={<Radio size='small' />} label={<Typography variant='body2'>Công nợ</Typography>} />
                 </RadioGroup>
               </FormControl>
             </Grid2>
             <Grid2 size={{ xs: 12, sm: 6 }}>
-              <FormControl fullWidth>
-                <Typography variant='caption' className='mbe-1 font-black text-slate-500 uppercase'>Loại deadline thanh toán</Typography>
-                <Select
-                  value={newAgent.paymentDeadlineType}
-                  onChange={(e) => setNewAgent({ ...newAgent, paymentDeadlineType: e.target.value })}
-                >
-                  <MenuItem value='purchase_date'>Deadline theo ngày mua</MenuItem>
-                  <MenuItem value='billing_cycle'>Deadline theo kỳ thanh toán</MenuItem>
-                </Select>
-              </FormControl>
+              <Typography variant='caption' className='mbe-1 font-black text-slate-500 uppercase'>Số ngày deadline thanh toán</Typography>
+              <TextField
+                fullWidth
+                placeholder='VD: 7'
+                type='number'
+                value={newAgent.purchaseDeadlineDays}
+                onChange={event => setNewAgent({ ...newAgent, purchaseDeadlineDays: event.target.value })}
+                inputProps={{ min: 1, 'aria-label': 'Số ngày deadline thanh toán' }}
+                helperText='Số ngày kể từ ngày mua'
+              />
             </Grid2>
-            {newAgent.paymentDeadlineType === 'purchase_date' ? (
-              <Grid2 size={{ xs: 12, sm: 6 }}>
-                <Typography variant='caption' className='mbe-1 font-black text-slate-500 uppercase'>Số ngày deadline thanh toán</Typography>
-                <TextField
-                  fullWidth
-                  placeholder='VD: 7'
-                  type='number'
-                  value={newAgent.purchaseDeadlineDays}
-                  onChange={(e) => setNewAgent({ ...newAgent, purchaseDeadlineDays: e.target.value })}
-                  inputProps={{ min: 1, 'aria-label': 'Số ngày deadline thanh toán' }}
-                  helperText='Số ngày kể từ ngày mua'
-                />
-              </Grid2>
-            ) : (
-              <Grid2 size={{ xs: 12, sm: 6 }}>
-                <Typography variant='caption' className='mbe-1 font-black text-slate-500 uppercase'>Ngày deadline thanh toán</Typography>
-                <TextField
-                  fullWidth
-                  placeholder='1 - 31'
-                  type='number'
-                  value={newAgent.paymentDeadlineDay}
-                  onChange={(e) => setNewAgent({ ...newAgent, paymentDeadlineDay: e.target.value })}
-                  inputProps={{ min: 1, max: 31, 'aria-label': 'Ngày deadline thanh toán' }}
-                  helperText='Ngày trong tháng (1-31)'
-                />
-              </Grid2>
-            )}
             <Grid2 size={{ xs: 12, sm: 6 }}>
               <FormControl fullWidth>
                 <Typography variant='caption' className='mbe-1 font-black text-slate-500 uppercase'>Đơn vị tiền tệ</Typography>
-                <Select
-                  value={newAgent.currency}
-                  onChange={(e) => setNewAgent({ ...newAgent, currency: e.target.value })}
-                >
+                <Select value={newAgent.currency} onChange={event => setNewAgent({ ...newAgent, currency: event.target.value })}>
                   <MenuItem value='VND'>VND (đ)</MenuItem>
                   <MenuItem value='USD'>USD ($)</MenuItem>
                   <MenuItem value='JPY'>JPY (¥)</MenuItem>
