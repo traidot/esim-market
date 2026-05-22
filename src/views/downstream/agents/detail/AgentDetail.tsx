@@ -28,6 +28,7 @@ const AgentDetail = ({ id }: { id: string }) => {
   const theme = useTheme()
   const [openEdit, setOpenEdit] = useState(false)
   const [year, setYear] = useState('2026')
+  const [editDeadlineType, setEditDeadlineType] = useState<'purchase_date' | 'billing_cycle'>('billing_cycle')
   const [accountStatus, setAccountStatus] = useState<'ACTIVE' | 'LOCKED'>('ACTIVE')
   const [pendingStatus, setPendingStatus] = useState<'ACTIVE' | 'LOCKED' | null>(null)
 
@@ -334,22 +335,48 @@ const AgentDetail = ({ id }: { id: string }) => {
               </TextField>
             </Grid2>
             <Grid2 size={{ xs: 12, sm: 6 }}>
+              <TextField
+                select
+                fullWidth
+                label='Loại deadline thanh toán'
+                value={editDeadlineType}
+                onChange={(event) => setEditDeadlineType(event.target.value as 'purchase_date' | 'billing_cycle')}
+              >
+                <MenuItem value='purchase_date'>Deadline theo ngày mua</MenuItem>
+                <MenuItem value='billing_cycle'>Deadline theo kỳ thanh toán</MenuItem>
+              </TextField>
+            </Grid2>
+            {editDeadlineType === 'purchase_date' ? (
+              <Grid2 size={{ xs: 12, sm: 6 }}>
+                <TextField
+                  fullWidth
+                  label='Số ngày deadline thanh toán'
+                  type='number'
+                  defaultValue=''
+                  placeholder='VD: 7'
+                  inputProps={{ min: 1 }}
+                  helperText='Số ngày kể từ ngày mua'
+                />
+              </Grid2>
+            ) : (
+              <Grid2 size={{ xs: 12, sm: 6 }}>
+                <TextField
+                  fullWidth
+                  label='Ngày deadline thanh toán'
+                  type='number'
+                  defaultValue=''
+                  placeholder='1 - 31'
+                  inputProps={{ min: 1, max: 31 }}
+                  helperText='Ngày trong tháng (1-31)'
+                />
+              </Grid2>
+            )}
+            <Grid2 size={{ xs: 12, sm: 6 }}>
               <TextField select fullWidth label='Đơn vị tiền tệ' defaultValue='USD'>
                 <MenuItem value='USD'>USD ($)</MenuItem>
                 <MenuItem value='JPY'>JPY (¥)</MenuItem>
                 <MenuItem value='VND'>VND (đ)</MenuItem>
               </TextField>
-            </Grid2>
-            <Grid2 size={{ xs: 12, sm: 6 }}>
-              <TextField
-                fullWidth
-                label='Ngày deadline thanh toán'
-                type='number'
-                defaultValue=''
-                placeholder='1 - 31'
-                inputProps={{ min: 1, max: 31 }}
-                helperText='Ngày trong tháng (1-31)'
-              />
             </Grid2>
           </Grid2>
         </DialogContent>

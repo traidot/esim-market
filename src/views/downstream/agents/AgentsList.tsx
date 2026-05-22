@@ -41,6 +41,8 @@ const AgentsList = () => {
     tier: 'SILVER',
     type: 'prepaid',
     currency: 'VND',
+    paymentDeadlineType: 'billing_cycle',
+    purchaseDeadlineDays: '',
     paymentDeadlineDay: ''
   })
 
@@ -59,6 +61,8 @@ const AgentsList = () => {
       tier: 'SILVER',
       type: 'prepaid',
       currency: 'VND',
+      paymentDeadlineType: 'billing_cycle',
+      purchaseDeadlineDays: '',
       paymentDeadlineDay: ''
     })
   }
@@ -247,6 +251,45 @@ const AgentsList = () => {
             </Grid2>
             <Grid2 size={{ xs: 12, sm: 6 }}>
               <FormControl fullWidth>
+                <Typography variant='caption' className='mbe-1 font-black text-slate-500 uppercase'>Loại deadline thanh toán</Typography>
+                <Select
+                  value={newAgent.paymentDeadlineType}
+                  onChange={(e) => setNewAgent({ ...newAgent, paymentDeadlineType: e.target.value })}
+                >
+                  <MenuItem value='purchase_date'>Deadline theo ngày mua</MenuItem>
+                  <MenuItem value='billing_cycle'>Deadline theo kỳ thanh toán</MenuItem>
+                </Select>
+              </FormControl>
+            </Grid2>
+            {newAgent.paymentDeadlineType === 'purchase_date' ? (
+              <Grid2 size={{ xs: 12, sm: 6 }}>
+                <Typography variant='caption' className='mbe-1 font-black text-slate-500 uppercase'>Số ngày deadline thanh toán</Typography>
+                <TextField
+                  fullWidth
+                  placeholder='VD: 7'
+                  type='number'
+                  value={newAgent.purchaseDeadlineDays}
+                  onChange={(e) => setNewAgent({ ...newAgent, purchaseDeadlineDays: e.target.value })}
+                  inputProps={{ min: 1, 'aria-label': 'Số ngày deadline thanh toán' }}
+                  helperText='Số ngày kể từ ngày mua'
+                />
+              </Grid2>
+            ) : (
+              <Grid2 size={{ xs: 12, sm: 6 }}>
+                <Typography variant='caption' className='mbe-1 font-black text-slate-500 uppercase'>Ngày deadline thanh toán</Typography>
+                <TextField
+                  fullWidth
+                  placeholder='1 - 31'
+                  type='number'
+                  value={newAgent.paymentDeadlineDay}
+                  onChange={(e) => setNewAgent({ ...newAgent, paymentDeadlineDay: e.target.value })}
+                  inputProps={{ min: 1, max: 31, 'aria-label': 'Ngày deadline thanh toán' }}
+                  helperText='Ngày trong tháng (1-31)'
+                />
+              </Grid2>
+            )}
+            <Grid2 size={{ xs: 12, sm: 6 }}>
+              <FormControl fullWidth>
                 <Typography variant='caption' className='mbe-1 font-black text-slate-500 uppercase'>Đơn vị tiền tệ</Typography>
                 <Select
                   value={newAgent.currency}
@@ -257,18 +300,6 @@ const AgentsList = () => {
                   <MenuItem value='JPY'>JPY (¥)</MenuItem>
                 </Select>
               </FormControl>
-            </Grid2>
-            <Grid2 size={{ xs: 12, sm: 6 }}>
-              <Typography variant='caption' className='mbe-1 font-black text-slate-500 uppercase'>Ngày deadline thanh toán</Typography>
-              <TextField
-                fullWidth
-                placeholder='1 - 31'
-                type='number'
-                value={newAgent.paymentDeadlineDay}
-                onChange={(e) => setNewAgent({ ...newAgent, paymentDeadlineDay: e.target.value })}
-                inputProps={{ min: 1, max: 31, 'aria-label': 'Ngày deadline thanh toán' }}
-                helperText='Ngày trong tháng (1-31)'
-              />
             </Grid2>
           </Grid2>
         </DialogContent>
