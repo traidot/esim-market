@@ -1,7 +1,9 @@
 'use client'
 
-import React, { useState } from 'react'
+import { useState } from 'react'
+
 import { useParams } from 'next/navigation'
+
 import Grid2 from '@mui/material/Grid2'
 import Card from '@mui/material/Card'
 import CardContent from '@mui/material/CardContent'
@@ -22,7 +24,7 @@ import Select from '@mui/material/Select'
 import MenuItem from '@mui/material/MenuItem'
 
 import PageHeader from '@/components/layout/shared/PageHeader'
-import { formatVND, formatDate } from '@/lib/format'
+import { formatVND } from '@/lib/format'
 
 const SupplierDebtDetail = () => {
   const { id } = useParams()
@@ -100,21 +102,6 @@ const SupplierDebtDetail = () => {
                     <Chip label={supplier.status} size='small' color={supplier.status === 'Warning' ? 'warning' : 'success'} variant='tonal' className='font-bold' />
                   </Box>
                 </Box>
-
-                <Stack spacing={4} className='border-ts pts-6'>
-                  <Box className='flex justify-between items-center'>
-                    <Typography variant='body2' className='font-bold text-slate-500'>Email</Typography>
-                    <Typography variant='body2' className='font-black text-right'>{supplier.email}</Typography>
-                  </Box>
-                  <Box className='flex justify-between items-center'>
-                    <Typography variant='body2' className='font-bold text-slate-500'>Số điện thoại</Typography>
-                    <Typography variant='body2' className='font-black'>{supplier.phone}</Typography>
-                  </Box>
-                  <Box className='flex justify-between items-center'>
-                    <Typography variant='body2' className='font-bold text-slate-500'>Ngày gia nhập</Typography>
-                    <Typography variant='body2' className='font-black'>{formatDate(supplier.joinDate)}</Typography>
-                  </Box>
-                </Stack>
               </CardContent>
             </Card>
           </Stack>
