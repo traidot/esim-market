@@ -1,8 +1,10 @@
 'use client'
 
 import { useState } from 'react'
+
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
+
 import Grid2 from '@mui/material/Grid2'
 import Card from '@mui/material/Card'
 import CardContent from '@mui/material/CardContent'
@@ -10,7 +12,6 @@ import CardActionArea from '@mui/material/CardActionArea'
 import Typography from '@mui/material/Typography'
 import Box from '@mui/material/Box'
 import Button from '@mui/material/Button'
-import Chip from '@mui/material/Chip'
 import Stack from '@mui/material/Stack'
 import Divider from '@mui/material/Divider'
 import Avatar from '@mui/material/Avatar'
@@ -66,14 +67,25 @@ const SupplierDetail = ({ id }: { id: string }) => {
           { label: supplier.name },
         ]}
         actions={
-          <Button
-            variant={connected ? 'tonal' : 'contained'}
-            color={connected ? 'error' : 'success'}
-            startIcon={<i className={connected ? 'tabler-plug-x' : 'tabler-plug'} />}
-            onClick={() => setConnected(!connected)}
-          >
-            {connected ? 'Gỡ kết nối' : 'Kết nối'}
-          </Button>
+          <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2} sx={{ alignItems: { xs: 'stretch', sm: 'center' } }}>
+            <Button
+              variant='outlined'
+              color='secondary'
+              component={Link}
+              href='/3m/upstream/suppliers'
+              startIcon={<i className='tabler-arrow-left' />}
+            >
+              Quay lại danh sách NCC
+            </Button>
+            <Button
+              variant={connected ? 'tonal' : 'contained'}
+              color={connected ? 'error' : 'success'}
+              startIcon={<i className={connected ? 'tabler-plug-x' : 'tabler-plug'} />}
+              onClick={() => setConnected(!connected)}
+            >
+              {connected ? 'Gỡ kết nối' : 'Kết nối'}
+            </Button>
+          </Stack>
         }
         className='mbe-6'
       />
